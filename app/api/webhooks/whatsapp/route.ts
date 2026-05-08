@@ -71,9 +71,20 @@ export async function POST(request: Request) {
 // ==========================================
 async function processWhatsAppMessage(message: any, contactName: string): Promise<void> {
   const fromPhone = message?.from;
+  const messageId = message?.id; // Grab Meta's unique message ID
   if (!fromPhone) return;
 
   try {
+    // 🔥 UPGRADE 1: THE DEDUPLICATOR (STOPS DOUBLE MESSAGES)
+    if (messageId) {
+      const msgRef = adminDb.collection("processed_messages").doc(messageId);
+      const msgDoc = await msgRef.get();
+      // If we already processed this exact message ID, Meta is just retrying. Ignore it!
+      if (msgDoc.exists) return; 
+      // Otherwise, save it so we know we've seen it.
+      await msgRef.set({ timestamp: Date.now() });
+    }
+
     // 📊 CRM DATA CAPTURE
     adminDb.collection("customers").doc(fromPhone).set({
       phone: fromPhone,
@@ -269,7 +280,7 @@ async function handleLeadConversion(fromPhone: string, contactName: string, text
 
     const itemsStr = orderData.cartItems.map((i: any) => `${i.quantity}x ${i.name}`).join(", ");
 
-    // 🔥 THE FIX: EXPLICIT SUCCESS MESSAGE SENT IMMEDIATELY
+    // 🔥 EXPLICIT SUCCESS MESSAGE SENT IMMEDIATELY
     await sendWhatsAppMessage(
       fromPhone, 
       "✅ *Your order is confirmed.*\n\nYou will pay only after receiving the item. 🛡️ We are here to help if anything goes wrong."
@@ -341,14 +352,27 @@ async function getActiveChatPartner(senderPhone: string): Promise<{ phone: strin
 async function routeToAIAgent(phone: string, name: string, text: string): Promise<string> {
   const { executeAIAgent } = await import("@/lib/bot/aiService");
   
-  // Now we get BOTH the AI text AND the pure database results
-  const aiResponse = await executeAIAgent([{ role: "user", content: text }], name);
+  // 🔥 UPGRADE 2: CONVERSATIONAL MEMORY! Pull the last 6 messages from Firebase.
+  const customerRef = adminDb.collection("customers").doc(phone);
+  const customerDoc = await customerRef.get();
+  let history = customerDoc.data()?.chatHistory || [];
+
+  // Add the new user message to the memory array
+  history.push({ role: "user", content: text });
+  if (history.length > 6) history = history.slice(-6); // Keep token usage lean
+
+  // Send the FULL HISTORY to April!
+  const aiResponse = await executeAIAgent(history, name);
   
   const cleanReply = aiResponse.text.trim();
   const products = aiResponse.products;
+
+  // Save April's reply back to the memory array so she remembers it next time
+  history.push({ role: "assistant", content: cleanReply });
+  await customerRef.update({ chatHistory: history });
+  
   let menuRows: any[] = [];
 
-  // We build the menu directly from the exact Algolia IDs (Zero AI Hallucination!)
   if (products && Array.isArray(products) && products.length > 0) {
     for (const p of products) {
       if (p.id && p.title) {
@@ -360,7 +384,6 @@ async function routeToAIAgent(phone: string, name: string, text: string): Promis
     }
   }
 
-  // Render the final message
   if (menuRows.length > 0) {
     await sendWhatsAppListMenu(
       phone,
@@ -369,7 +392,6 @@ async function routeToAIAgent(phone: string, name: string, text: string): Promis
       [{ title: "Available Items", rows: menuRows }]
     );
   } else if (cleanReply) {
-    // If no products were found, just send the text and a main menu fallback
     if (cleanReply.includes("MENU") || cleanReply.includes("categories")) {
         await sendWhatsAppInteractiveButtons(
             phone, 
