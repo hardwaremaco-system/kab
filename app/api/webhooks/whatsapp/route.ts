@@ -224,7 +224,7 @@ async function processWhatsAppMessage(message: any, contactName: string): Promis
       return;
     } 
 
-    // ==========================================
+        // ==========================================
     // 🧠 THE AI STOREFRONT ROUTER
     // ==========================================
     try {
@@ -232,9 +232,10 @@ async function processWhatsAppMessage(message: any, contactName: string): Promis
       logChat(fromPhone, "outgoing", "text", finalReply).catch(console.error);
     } catch (error: any) {
       console.error(`❌ AI Routing Error:`, error.message);
-      const fallbackText = `Whoops, my system is taking a quick break! 😅\n\nVisit www.kabaleonline.com or tap the menu below to keep browsing.`;
+      const fallbackText = `It looks like I had a quick network hiccup on my end. That's on me! 🙏\n\nCould you please ask that one more time, or tap below to view the catalog?`;
       await sendWhatsAppInteractiveButtons(fromPhone, fallbackText, [{ id: "btn_shop", title: "🛍️ Main Menu" }]);
     }
+
 
   } catch (error: any) {
     console.error(`❌ FAILED TO PROCESS MESSAGE FROM ${fromPhone}:`, error.message);
