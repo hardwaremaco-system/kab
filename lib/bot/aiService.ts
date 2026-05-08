@@ -71,10 +71,14 @@ export async function executeAIAgent(userMessages: any[], userName: string = "Us
         let args;
         try {
           args = JSON.parse(toolCall.function.arguments);
-        } catch (e) {
-          console.error("⚠️ AI generated bad JSON.");
-          return { text: "I had a tiny brain freeze looking that up! 😅 Could you ask me one more time?", products: null };
-        }
+          } catch (error: any) {
+    console.error("🔥 Fatal Error in AI Agent Engine:", error.message);
+    return { 
+      text: "It looks like I had a quick network problem. That's on me! 🙏 Could you please ask that one more time?", 
+      products: null 
+    };
+  }
+
         
         console.log(`🔍 April is querying Algolia for: ${args.search_query}`);
         
