@@ -1,47 +1,60 @@
-import { ShieldCheck, Truck, Headphones } from "lucide-react";
+import { MessageSquare, Layers, ShieldCheck } from "lucide-react";
 
 export default function ExperienceBanner() {
   const features = [
     {
-      icon: <ShieldCheck className="text-[#FF6A00]" size={28} />,
-      title: "Genuine Electronics",
-      desc: "100% verified authentic products with warranty."
+      // Using fill="currentColor" makes the outline icons look solid like the screenshot
+      icon: <MessageSquare className="text-[#0a0a0a]" size={28} fill="currentColor" />,
+      title: "Quick and Friendly Support",
+      desc: "Our support team responds quickly and is friendly, ensuring your experience is efficient and pleasant. We prioritize your needs and assist you every step."
     },
     {
-      icon: <Truck className="text-[#FF6A00]" size={28} />,
-      title: "Fast Delivery",
-      desc: "Swift and secure dispatch directly to your door."
+      icon: <Layers className="text-[#0a0a0a]" size={28} fill="currentColor" />,
+      title: "New Collection Everyday",
+      desc: "Explore our new collection launched daily! Each piece is carefully selected to add a fresh twist to your lifestyle. Stay tuned for updates and find something special."
     },
     {
-      icon: <Headphones className="text-[#FF6A00]" size={28} />,
-      title: "Customer Support",
-      desc: "We are here to help you before and after you buy."
+      icon: <ShieldCheck className="text-[#0a0a0a]" size={28} fill="currentColor" />,
+      title: "Satisfaction Guaranteed",
+      desc: "We guarantee your satisfaction with our products and support team. Your experience is our priority, and we're here to assist you."
     }
   ];
 
   return (
-    <div className="w-full bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800/60">
-      <div className="text-center mb-8">
-        <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">
-          We deliver customer experiences
-        </h3>
-        <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">
-          Shopping for electronics should be seamless and secure.
+    // Hardcoded dark background to match the screenshot's vibe regardless of light/dark mode
+    <div className="w-full bg-[#111111] rounded-2xl p-8 sm:p-12 md:p-16 border border-slate-800 shadow-xl">
+      
+      {/* HEADER SECTION */}
+      <div className="text-center mb-12 sm:mb-16">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white uppercase tracking-widest mb-4 sm:mb-6 leading-tight">
+          We Deliver Customer<br className="hidden sm:block" /> Experiences
+        </h2>
+        <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+          We are committed to delivering exceptional customer experiences that
+          exceed expectations and make every interaction memorable.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-800">
+      {/* 3-COLUMN GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12">
         {features.map((feature, idx) => (
-          <div key={idx} className="flex flex-col items-center text-center pt-6 md:pt-0 px-4 first:pt-0">
-            <div className="w-14 h-14 rounded-2xl bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center mb-4 shadow-inner">
+          <div key={idx} className="flex flex-col items-center text-center">
+            
+            {/* White Circular Icon Background */}
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white flex items-center justify-center mb-6 shadow-lg transform transition-transform hover:scale-105 duration-300">
               {feature.icon}
             </div>
-            <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">
+            
+            {/* Feature Title */}
+            <h4 className="font-bold text-white text-sm sm:text-base uppercase tracking-widest mb-4">
               {feature.title}
             </h4>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            
+            {/* Feature Description */}
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-[280px]">
               {feature.desc}
             </p>
+            
           </div>
         ))}
       </div>
