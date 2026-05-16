@@ -2,59 +2,24 @@ import { MessageSquare, Layers, ShieldCheck } from "lucide-react";
 
 export default function ExperienceBanner() {
   const features = [
-    {
-      // Using fill="currentColor" makes the outline icons look solid like the screenshot
-      icon: <MessageSquare className="text-[#0a0a0a]" size={28} fill="currentColor" />,
-      title: "Quick and Friendly Support",
-      desc: "Our support team responds quickly and is friendly, ensuring your experience is efficient and pleasant. We prioritize your needs and assist you every step."
-    },
-    {
-      icon: <Layers className="text-[#0a0a0a]" size={28} fill="currentColor" />,
-      title: "New Collection Everyday",
-      desc: "Explore our new collection launched daily! Each piece is carefully selected to add a fresh twist to your lifestyle. Stay tuned for updates and find something special."
-    },
-    {
-      icon: <ShieldCheck className="text-[#0a0a0a]" size={28} fill="currentColor" />,
-      title: "Satisfaction Guaranteed",
-      desc: "We guarantee your satisfaction with our products and support team. Your experience is our priority, and we're here to assist you."
-    }
+    { icon: <MessageSquare size={24} fill="currentColor" />, title: "QUICK SUPPORT", desc: "Fast, friendly help whenever you need it." },
+    { icon: <Layers size={24} fill="currentColor" />, title: "DAILY DROPS", desc: "Fresh electronics added to our catalog every day." },
+    { icon: <ShieldCheck size={24} fill="currentColor" />, title: "GUARANTEED", desc: "100% satisfaction on all your orders." }
   ];
 
   return (
-    // Hardcoded dark background to match the screenshot's vibe regardless of light/dark mode
-    <div className="w-full bg-[#111111] rounded-2xl p-8 sm:p-12 md:p-16 border border-slate-800 shadow-xl">
-      
-      {/* HEADER SECTION */}
-      <div className="text-center mb-12 sm:mb-16">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white uppercase tracking-widest mb-4 sm:mb-6 leading-tight">
-          We Deliver Customer<br className="hidden sm:block" /> Experiences
-        </h2>
-        <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-          We are committed to delivering exceptional customer experiences that
-          exceed expectations and make every interaction memorable.
-        </p>
-      </div>
-
-      {/* 3-COLUMN GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12">
-        {features.map((feature, idx) => (
-          <div key={idx} className="flex flex-col items-center text-center">
-            
-            {/* White Circular Icon Background */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white flex items-center justify-center mb-6 shadow-lg transform transition-transform hover:scale-105 duration-300">
-              {feature.icon}
+    <div className="w-full bg-slate-50 dark:bg-[#111] rounded-2xl p-6 md:p-10 border border-slate-200 dark:border-slate-800 shadow-sm text-center">
+      <h2 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white uppercase tracking-widest mb-8">
+        We Deliver Customer Experiences
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {features.map((f, i) => (
+          <div key={i} className="flex flex-col items-center">
+            <div className="w-14 h-14 rounded-full bg-white text-slate-900 flex items-center justify-center mb-4 shadow-md border border-slate-100 dark:border-none hover:scale-105 transition-transform">
+              {f.icon}
             </div>
-            
-            {/* Feature Title */}
-            <h4 className="font-bold text-white text-sm sm:text-base uppercase tracking-widest mb-4">
-              {feature.title}
-            </h4>
-            
-            {/* Feature Description */}
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-[280px]">
-              {feature.desc}
-            </p>
-            
+            <h4 className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-widest mb-2">{f.title}</h4>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-[220px] leading-relaxed">{f.desc}</p>
           </div>
         ))}
       </div>
