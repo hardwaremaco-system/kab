@@ -7,12 +7,12 @@ export default function ThemedCategoryGrid() {
     { 
       name: "Watches", 
       href: "/category/watches", 
-      image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=500&q=80" // Sleek wristwatch
+      image: "https://images.unsplash.com/photo-1620625515032-6ed0c1790c75?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8d2F0Y2hlc3xlbnwwfHwwfHx8MA%3D%3D" // Sleek wristwatch
     },
     { 
       name: "Phones & TVs", 
       href: "/category/phones-tvs", 
-      image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80" // Modern smartphone
+      image: "https://images.unsplash.com/photo-1560209617-059c0bd661ba?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGhvbmVzfGVufDB8fDB8fHww" // Modern smartphone
     },
     { 
       name: "Sound Systems", 
