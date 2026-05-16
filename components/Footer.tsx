@@ -45,7 +45,7 @@ export default function Footer() {
             Kabale Online Marketplace
           </h2>
           <p className="text-gray-300 text-sm md:text-base mb-6">
-            Everything You Need, Delivered .
+            Everything You Need, Delivered.
           </p>
 
           {/* WhatsApp CTA (Replaces Newsletter) */}
@@ -109,15 +109,16 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Shop Categories */}
+          {/* Column 3: Shop Categories (Updated to new electronics pivot) */}
           <div>
             <h3 className="text-white font-bold text-base mb-5">Categories</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/category/mega-bundles" className={getLinkStyle('/category/mega-bundles')}>Mega Bundles</Link></li>
-              <li><Link href="/category/campus-life" className={getLinkStyle('/category/campus-life')}>Campus Life</Link></li>
-              <li><Link href="/category/tech-appliances" className={getLinkStyle('/category/tech-appliances')}>Tech & Gadgets</Link></li>
-              <li><Link href="/category/food-groceries" className={getLinkStyle('/category/food-groceries')}>Farm Fresh</Link></li>
-              <li><Link href="/category/beauty-fashion" className={getLinkStyle('/category/beauty-fashion')}>Beauty & Fashion</Link></li>
+              <li><Link href="/category/watches" className={getLinkStyle('/category/watches')}>Watches</Link></li>
+              <li><Link href="/category/phones-tvs" className={getLinkStyle('/category/phones-tvs')}>Phones & TVs</Link></li>
+              <li><Link href="/category/sound-systems" className={getLinkStyle('/category/sound-systems')}>Sound Systems</Link></li>
+              <li><Link href="/category/accessories" className={getLinkStyle('/category/accessories')}>Accessories</Link></li>
+              <li><Link href="/category/appliances" className={getLinkStyle('/category/appliances')}>Appliances</Link></li>
+              <li><Link href="/category/other-products" className={getLinkStyle('/category/other-products')}>Other Products</Link></li>
             </ul>
           </div>
 
