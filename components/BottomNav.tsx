@@ -11,12 +11,12 @@ import {
   ShoppingCart, 
   User, 
   ShieldAlert, 
-  Package,
-  Bed,
-  Laptop,
-  Leaf,
-  Sparkles,
-  Wrench
+  Watch, 
+  Smartphone, 
+  Speaker, 
+  Headphones, 
+  Plug, 
+  Package
 } from "lucide-react";
 
 export default function BottomNav() {
@@ -74,14 +74,14 @@ export default function BottomNav() {
     ? [...baseNavItems, { label: "Admin", href: "/admin", Icon: ShieldAlert }]
     : baseNavItems;
 
-  // 5. The 6 Frontend Category Buckets
+  // 5. The NEW 6 Frontend Category Buckets
   const categoryLinks = [
-    { label: "Mega Bundles & Packs", href: "/category/mega-bundles", Icon: Package },
-    { label: "Campus Life & Study Gear", href: "/category/campus-life", Icon: Bed },
-    { label: "Tech, Gadgets & Appliances", href: "/category/tech-appliances", Icon: Laptop },
-    { label: "Farm Fresh & Groceries", href: "/category/food-groceries", Icon: Leaf },
-    { label: "Beauty, Health & Fashion", href: "/category/beauty-fashion", Icon: Sparkles },
-    { label: "Expert Repairs & Services", href: "/category/repairs-services", Icon: Wrench }
+    { label: "Watches", href: "/category/watches", Icon: Watch },
+    { label: "Phones & TVs", href: "/category/phones-tvs", Icon: Smartphone },
+    { label: "Sound Systems", href: "/category/sound-systems", Icon: Speaker },
+    { label: "Accessories", href: "/category/accessories", Icon: Headphones },
+    { label: "Appliances", href: "/category/appliances", Icon: Plug },
+    { label: "Other Products", href: "/category/other-products", Icon: Package }
   ];
 
   return (
@@ -104,7 +104,7 @@ export default function BottomNav() {
                     size={22} 
                     strokeWidth={isActive ? 2.5 : 2} 
                     className={`transition-colors duration-300 ${
-                      isActive ? "text-[#D97706]" : "text-slate-500 dark:text-slate-400"
+                      isActive ? "text-[#FF6A00]" : "text-slate-500 dark:text-slate-400"
                     }`} 
                   />
 
@@ -119,7 +119,7 @@ export default function BottomNav() {
                 {/* Text Label */}
                 <span 
                   className={`text-[10px] uppercase tracking-wider transition-all duration-300 ${
-                    isActive ? "font-black text-[#D97706]" : "font-bold text-slate-500 dark:text-slate-400"
+                    isActive ? "font-black text-[#FF6A00]" : "font-bold text-slate-500 dark:text-slate-400"
                   }`}
                 >
                   {label}
@@ -127,7 +127,7 @@ export default function BottomNav() {
 
                 {/* Animated Underline Indicator */}
                 <div 
-                  className={`absolute bottom-0 h-[3px] bg-[#D97706] rounded-t-full transition-all duration-300 ease-out ${
+                  className={`absolute bottom-0 h-[3px] bg-[#FF6A00] rounded-t-full transition-all duration-300 ease-out ${
                     isActive ? "w-8 opacity-100" : "w-0 opacity-0"
                   }`}
                 />
@@ -161,14 +161,14 @@ export default function BottomNav() {
         </div>
       </div>
 
-      {/* ORIGINAL SLIDE-UP CATEGORIES MODAL */}
+      {/* CATEGORIES SLIDE-UP MODAL */}
       {isCategoryModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity">
           <div className="bg-[#1a1a1a] w-full sm:w-[400px] rounded-t-3xl sm:rounded-3xl p-6 text-white animate-slide-up border border-slate-800 shadow-2xl">
-            
+
             {/* Drag Handle */}
             <div className="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-6"></div>
-            
+
             {/* Title */}
             <h3 className="text-center text-xl font-bold mb-6 tracking-wide">Categories</h3>
 
@@ -179,7 +179,7 @@ export default function BottomNav() {
                   key={label}
                   href={href} 
                   onClick={() => setIsCategoryModalOpen(false)} 
-                  className="flex items-center gap-4 hover:text-[#D97706] transition-colors py-3 px-2 rounded-lg hover:bg-slate-800/50"
+                  className="flex items-center gap-4 hover:text-[#FF6A00] transition-colors py-3 px-2 rounded-lg hover:bg-slate-800/50"
                 >
                   <Icon className="text-slate-400" size={20} />
                   {label}
