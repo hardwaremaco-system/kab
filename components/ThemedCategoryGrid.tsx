@@ -5,34 +5,34 @@ import Link from "next/link";
 export default function ThemedCategoryGrid() {
   const categories = [
     { 
-      name: "Mega Bundles", 
-      href: "/category/mega-bundles", 
-      image: "https://images.unsplash.com/photo-1513885045260-6b3086b24c17?w=500&q=80" // Wrapped boxes/shopping
+      name: "Watches", 
+      href: "/category/watches", 
+      image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=500&q=80" // Sleek wristwatch
     },
     { 
-      name: "Campus Life", 
-      href: "/category/campus-life", 
-      image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" // Backpack/study
+      name: "Phones & TVs", 
+      href: "/category/phones-tvs", 
+      image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80" // Modern smartphone
     },
     { 
-      name: "Tech & Gadgets", 
-      href: "/category/tech-appliances", 
-      image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=500&q=80" // Laptop/desk
+      name: "Sound Systems", 
+      href: "/category/sound-systems", 
+      image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=500&q=80" // Premium speaker
     },
     { 
-      name: "Farm Fresh", 
-      href: "/category/food-groceries", 
-      image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&q=80" // Vegetables/basket
+      name: "Accessories", 
+      href: "/category/accessories", 
+      image: "https://images.unsplash.com/photo-1572569438061-9d11fc7b14d5?w=500&q=80" // Earbuds / Tech accessories
     },
     { 
-      name: "Beauty & Fashion", 
-      href: "/category/beauty-fashion", 
-      image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=80" // Makeup/beauty
+      name: "Appliances", 
+      href: "/category/appliances", 
+      image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500&q=80" // Modern home appliances
     },
     { 
-      name: "Repairs & Services", 
-      href: "/category/repairs-services", 
-      image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500&q=80" // Tools/technician
+      name: "Other Products", 
+      href: "/products", 
+      image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=500&q=80" // Store/Lifestyle collection
     },
   ];
 
