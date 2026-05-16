@@ -11,10 +11,11 @@ import AboutKabaleOnline from "@/components/AboutKabaleOnline";
 import ThemedCategoryGrid from "@/components/ThemedCategoryGrid";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import LeftSidebar from "@/components/LeftSidebar"; 
-import ServiceScroller from "@/components/ServiceScroller"; 
-import BundleScroller from "@/components/BundleScroller"; 
 
-
+// BANNERS
+import TimepieceBanner from "@/components/banners/TimepieceBanner";
+import ExperienceBanner from "@/components/banners/ExperienceBanner";
+import WhatsAppBanner from "@/components/banners/WhatsAppBanner";
 
 const shuffleArray = (array: any[]) => {
   const shuffled = [...array];
@@ -26,53 +27,27 @@ const shuffleArray = (array: any[]) => {
 };
 
 export default async function Home() {
-  const now = Date.now();
+  // Fetch from the newly optimized firebase/fetchers
   const data = await getCachedHomepageData();
 
-  const trendingProducts = data.trendingProducts;
   const heroProducts = data.heroProducts || [];
+  const trendingProducts = data.trendingProducts || [];
+  const officialProducts = data.officialProducts || [];
+  const latestProducts = data.latestProducts || [];
+  
+  // New Admin-curated collections
+  const featuredCollection = data.featuredCollection || [];
+  const save4kProducts = data.save4kProducts || [];
+  const handPickedProducts = shuffleArray(data.handPickedProducts || []);
 
-  const dealsProducts = [...data.basePool]
-    .filter(p => Number(p.price) > 0)
-    .sort((a, b) => {
-      const scoreA = ((a.views || 0) + 1) / Number(a.price);
-      const scoreB = ((b.views || 0) + 1) / Number(b.price);
-      return scoreB - scoreA;
-    })
-    .slice(0, 10);
-
-  // 1. Combine all fetched pools to make sure we don't miss anything (Official + Regular + Latest)
-  const allAvailableProducts = [...data.basePool, ...data.officialProducts, ...data.latestProducts];
-
-  // 2. Remove any duplicates (since an item might be in both "Latest" and "Official")
-  const uniqueProducts = Array.from(new Map(allAvailableProducts.map(p => [p.id, p])).values());
-
-  // 3. Filter for services from the complete list!
-  const serviceProviders = uniqueProducts.filter(p => 
-    p.category === "services" || (p.tags && p.tags.includes("service"))
-  ).slice(0, 10);
-
-
-  const bundlesProducts = data.bundlesProducts || [];
-
-
-  // 🔥 Bypasses the shuffle so your manual admin picks stay exactly how you want them
-  const officialProducts = data.officialProducts;
-
-  const approvedProducts = shuffleArray(data.approvedProducts);
-  const ladiesProducts = shuffleArray(data.ladiesProducts);
-  const watchProducts = shuffleArray(data.watchProducts);
-
-  // 🔥 FIX 1: Removed shuffleArray! Now it respects your exact Admin picks.
-  const electronicsProducts = data.electronicsProducts; 
-
-  const studentProducts = shuffleArray(data.studentProducts);
-  const agriProducts = shuffleArray(data.agriProducts);
-  const latestProducts = data.latestProducts;
+  // Filter for "Other Products" (Exclude the new main electronics categories)
+  const mainCategories = ["watches", "phones", "phones-tvs", "tvs", "sound-systems", "accessories", "appliances"];
+  const otherProducts = data.basePool.filter(p => 
+    p.category && !mainCategories.includes(p.category.toLowerCase())
+  ).slice(0, 12);
 
   return (
     <ThemeProvider>
-      {/* Changed bg-slate-50 and dark:bg-[#0a0a0a] to bg-transparent */}
       <div className="min-h-screen bg-transparent pb-10 pt-2 sm:pt-4 font-sans selection:bg-[#FF6A00] selection:text-white overflow-x-hidden">
         <WhatsAppPopup />
         <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4">
@@ -85,61 +60,83 @@ export default async function Home() {
 
             {/* MAIN FEED */}
             <div className="flex-grow min-w-0 flex flex-col w-full">
+              
+              {/* 1. Hero */}
               <div className="mb-4">
                 <HeroCarousel products={heroProducts} />
               </div>
 
               <div className="w-full flex flex-col gap-4 sm:gap-6">
 
+                {/* 2. Continue Browsing (HorizontalScroller wrapper) */}
                 <ContinueBrowsing 
                   title="Continue Browsing"
                   subtitle="Pick up exactly where you left off"
                   fallbackProducts={trendingProducts} 
                 />
 
-                {electronicsProducts.length > 0 && (
-                  <HorizontalScroller 
-                    title="Tech and Appliances" 
-                    subtitle="Gadgets, phones, and computing"
-                    products={electronicsProducts} 
-                    viewAllLink="/category/tech-appliances" 
+                {/* 3. Find the perfect timepiece banner */}
+                <TimepieceBanner />
+
+                {/* 4. Explore by category */}
+                <div className="bg-transparent rounded-2xl p-2 sm:p-4 shadow-sm border border-slate-100 dark:border-slate-800/60">
+                  <ThemedCategoryGrid />
+                </div>
+
+                {/* 5. Featured collection (Vertical Grid) */}
+                {featuredCollection.length > 0 && (
+                  <ProductSection 
+                    title="Featured collection" 
+                    subtitle="Premium picks of the week"
+                    products={featuredCollection} 
+                    viewAllLink="/category/featured"
                   />
                 )}
 
-                {/* 15. New arrivals (Now Vertical Grid) */}
+                {/* 6. Save up to 4k (Vertical Grid) */}
+                {save4kProducts.length > 0 && (
+                  <ProductSection 
+                    title="Save up to 4k" 
+                    subtitle="Massive discounts on top electronics"
+                    products={save4kProducts} 
+                    viewAllLink="/deals"
+                  />
+                )}
+
+                {/* 7. Hand picked for you (Vertical Grid) */}
+                {handPickedProducts.length > 0 && (
+                  <ProductSection 
+                    title="Hand picked for you" 
+                    subtitle="Curated electronics tailored for performance"
+                    products={handPickedProducts} 
+                    viewAllLink="/products"
+                  />
+                )}
+
+                {/* 8. Trending Products (Vertical Grid) */}
+                {trendingProducts.length > 0 && (
+                  <ProductSection 
+                    title="Trending Now" 
+                    subtitle="What everyone is looking at right now"
+                    products={trendingProducts} 
+                    viewAllLink="/products?sort=trending"
+                  />
+                )}
+
+                {/* 9. We deliver customer experiences banner */}
+                <ExperienceBanner />
+
+                {/* 10. Recently added (Vertical Grid) */}
                 {latestProducts.length > 0 && (
                   <ProductSection 
-                    title="New arrivals" 
-                    subtitle="Fresh drops just added to the market"
+                    title="Recently added" 
+                    subtitle="Fresh electronics straight out of the box"
                     products={latestProducts.slice(0, 12)} 
                     viewAllLink="/products"
                   />
                 )}
 
-                             {bundlesProducts.length > 0 && (
-               <BundleScroller 
-                 title="Bundles and packs" 
-                 subtitle="Curated collections to save you more"
-                 products={bundlesProducts} 
-                 viewAllLink="/category/mega-bundles" 
-               />
-             )}
-
-
-                {dealsProducts.length > 0 && (
-                  <HorizontalScroller 
-                    title="Best deals in Kabale" 
-                    subtitle="Affordable & popular items people love"
-                    products={dealsProducts} 
-                    viewAllLink="/category/tech-appliances?max=50000" 
-                  />
-                )}
-
-                {/* Changed bg-white to bg-transparent */}
-                <div className="bg-transparent rounded-2xl p-2 sm:p-4 shadow-sm border border-slate-100 dark:border-slate-800/60">
-                  <ThemedCategoryGrid />
-                </div>
-
+                {/* 11. Official Store (Horizontal Scroller) */}
                 {officialProducts.length > 0 && (
                   <HorizontalScroller 
                     title="From the Official Store" 
@@ -149,72 +146,19 @@ export default async function Home() {
                   />
                 )}
 
-                {trendingProducts.length > 0 && (
+                {/* 12. Other products (Horizontal Scroller) */}
+                {otherProducts.length > 0 && (
                   <HorizontalScroller 
-                    title="Trending Now" 
-                    subtitle="Most viewed items right now"
-                    products={trendingProducts} 
-                    viewAllLink="/category/tech-appliances?max=50000" 
+                    title="Other Products" 
+                    subtitle="Explore beyond electronics"
+                    products={otherProducts} 
+                    viewAllLink="/products" 
                   />
                 )}
 
-                {/* 7. Services and Expert help (Using the custom layout!) */}
-                {serviceProviders.length > 0 && (
-                  <ServiceScroller 
-                    title="Services and Expert Help" 
-                    subtitle="Hire verified local professionals"
-                    products={serviceProviders} 
-                    viewAllLink="/category/repairs-services" 
-                  />
-                )}
+                {/* 13. Shop via WhatsApp banner */}
+                <WhatsAppBanner />
 
-                {watchProducts.length > 0 && (
-                  <HorizontalScroller 
-                    title="Discover your watch style" 
-                    subtitle="Premium timepieces just for you"
-                    products={watchProducts} 
-                    viewAllLink="/category/tech-appliances" 
-                  />
-                )}
-
-                {/* APPROVED QUALITY VERTICAL GRID */}
-                {approvedProducts.length > 0 && (
-                  <ProductSection 
-                    title="Approved quality" 
-                    subtitle="Shop safely from top-rated sellers"
-                    products={approvedProducts.slice(0, 8)} 
-                    viewAllLink="/officialStore"
-                  />
-                )}
-
-                {ladiesProducts.length > 0 && (
-                  <HorizontalScroller 
-                    title="For Her" 
-                    subtitle="The latest fashion, beauty & accessories"
-                    products={ladiesProducts} 
-                    viewAllLink="/category/beauty-fashion" 
-                  />
-                )}
-
-                {studentProducts.length > 0 && (
-                  <HorizontalScroller 
-                    title="Campus Life and study gear" 
-                    subtitle="Student-friendly prices and essentials"
-                    products={studentProducts} 
-                    viewAllLink="/category/campus-life" 
-                  />
-                )}
-
-                {agriProducts.length > 0 && (
-                  <HorizontalScroller 
-                    title="Farm Fresh and groceries" 
-                    subtitle="Direct from the garden to your doorstep"
-                    products={agriProducts} 
-                    viewAllLink="/category/food-groceries" 
-                  />
-                )}
-
-                
                 <AboutKabaleOnline />
 
               </div>
