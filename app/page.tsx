@@ -62,6 +62,11 @@ export default async function Home() {
 
               <div className="w-full flex flex-col gap-4 sm:gap-6">
 
+{/* 4. Explore by category */}
+                <div className="bg-transparent rounded-2xl p-2 sm:p-4 shadow-sm border border-slate-100 dark:border-slate-800/60">
+                  <ThemedCategoryGrid />
+                </div>
+
                 {/* 2. Continue Browsing (Original wrapper) */}
                 <ContinueBrowsing 
                   title="Continue Browsing"
@@ -71,10 +76,7 @@ export default async function Home() {
 
                 
 
-                {/* 4. Explore by category */}
-                <div className="bg-transparent rounded-2xl p-2 sm:p-4 shadow-sm border border-slate-100 dark:border-slate-800/60">
-                  <ThemedCategoryGrid />
-                </div>
+                
 
                 {/* 5. Featured collection (ProductSection Grid) */}
                 {featuredCollection.length > 0 && (
