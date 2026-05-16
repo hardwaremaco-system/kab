@@ -6,82 +6,84 @@ import { Suspense } from "react";
 import { collection, query, where, getDocs, orderBy, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import CategoryProductFeed from "@/components/CategoryProductFeed";
-import ServiceDirectoryFeed from "@/components/ServiceDirectoryFeed"; 
 import LeftSidebar from "@/components/LeftSidebar"; 
 import { 
-  Laptop, 
-  Leaf, 
-  ShoppingBag, 
-  ChevronRight, 
-  Package,
-  Bed,
-  Sparkles,
-  Wrench
+  Watch, 
+  Smartphone, 
+  Speaker, 
+  Headphones, 
+  Plug, 
+  Package, 
+  ChevronRight 
 } from "lucide-react"; 
 
 // 🔥 Caches this category page for 1 hour.
 export const revalidate = 3600;
 
 // ==========================================
-// 6 FRONTEND BUCKETS MAPPING (With Premium Imagery)
+// NEW ELECTRONICS FRONTEND BUCKETS MAPPING
 // ==========================================
 const frontendCategoryMap: Record<string, { title: string; description: string; backendCategories: string[]; bgImage: string }> = {
-  "tech-appliances": {
-    title: "Tech, Gadgets & Appliances",
-    description: "Laptops, phones, smart watches, sound systems, and essential home appliances.",
-    backendCategories: ["electronics", "watches"],
-    bgImage: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1200&q=80"
+  "watches": {
+    title: "Premium Watches",
+    description: "Classic timepieces, smartwatches, and luxury wristwear.",
+    backendCategories: ["watches", "watch"],
+    bgImage: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=1200&q=80"
   },
-  "beauty-fashion": {
-    title: "Beauty, Health & Fashion",
-    description: "Premium cosmetics, skincare, hygiene essentials, and trending fashion picks.",
-    backendCategories: ["beauty", "ladies_picks", "ladies"],
-    bgImage: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1200&q=80"
+  "phones-tvs": {
+    title: "Phones & TVs",
+    description: "The latest smartphones, tablets, and high-definition televisions.",
+    backendCategories: ["phones", "tvs", "phones-tvs", "smartphones"],
+    bgImage: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200&q=80"
   },
-  "food-groceries": {
-    title: "Farm Fresh & Daily Groceries",
-    description: "Fresh local agriculture produce, daily supermarket groceries, and quick snacks.",
-    backendCategories: ["agriculture", "groceries"],
-    bgImage: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80"
+  "sound-systems": {
+    title: "Sound Systems",
+    description: "Home theaters, soundbars, amplifiers, and premium speakers.",
+    backendCategories: ["sound-systems", "audio", "speakers"],
+    bgImage: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=1200&q=80"
   },
-  "campus-life": {
-    title: "Campus Life & Study Gear",
-    description: "Hostel essentials, stationery, textbooks, and fun gifts to thrive on campus.",
-    backendCategories: ["student_essentials", "student_item", "stationery", "gifts"],
-    bgImage: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&q=80"
+  "accessories": {
+    title: "Tech Accessories",
+    description: "Chargers, cables, cases, earbuds, and essential tech add-ons.",
+    backendCategories: ["accessories", "tech-accessories"],
+    bgImage: "https://images.unsplash.com/photo-1572569438061-9d11fc7b14d5?w=1200&q=80"
   },
-  "mega-bundles": {
-    title: "Mega Bundles & Starter Packs",
-    description: "Save big with our curated mega bundles and fresher starter kits. Everything in one box.",
-    backendCategories: ["bundles"],
-    bgImage: "https://images.unsplash.com/photo-1513885045260-6b3086b24c17?w=1200&q=80"
+  "appliances": {
+    title: "Home Appliances",
+    description: "Fridges, microwaves, blenders, and everyday electronic appliances.",
+    backendCategories: ["appliances", "home-appliances"],
+    bgImage: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1200&q=80"
   },
-  "repairs-services": {
-    title: "Expert Repairs & Services",
-    description: "Trusted local professionals for laptop repairs, CV writing, moving services, and more.",
-    backendCategories: ["services"],
-    bgImage: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&q=80"
+  "other-products": {
+    title: "Other Products",
+    description: "Explore a variety of other great products and lifestyle items.",
+    backendCategories: ["other", "other-products", "general", "beauty", "agriculture", "student_item"], // Add legacy backend strings here if needed
+    bgImage: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1200&q=80"
   }
 };
 
 // ==========================================
-// AUTOMATIC REDIRECT MAP
+// AUTOMATIC REDIRECT MAP (To handle legacy SEO links)
 // ==========================================
 const legacyMapping: Record<string, string> = {
-  "electronics": "tech-appliances",
-  "watches": "tech-appliances",
-  "official_store": "tech-appliances", 
-  "beauty": "beauty-fashion",
-  "ladies_picks": "beauty-fashion",
-  "ladies": "beauty-fashion",
-  "agriculture": "food-groceries",
-  "groceries": "food-groceries",
-  "student_essentials": "campus-life",
-  "student_item": "campus-life", 
-  "stationery": "campus-life",
-  "gifts": "campus-life",
-  "bundles": "mega-bundles",
-  "services": "repairs-services"
+  "tech-appliances": "appliances",
+  "electronics": "phones-tvs",
+  "beauty-fashion": "other-products",
+  "beauty": "other-products",
+  "ladies_picks": "other-products",
+  "ladies": "other-products",
+  "food-groceries": "other-products",
+  "agriculture": "other-products",
+  "groceries": "other-products",
+  "campus-life": "other-products",
+  "student_essentials": "other-products",
+  "student_item": "other-products", 
+  "stationery": "other-products",
+  "gifts": "other-products",
+  "mega-bundles": "other-products",
+  "bundles": "other-products",
+  "repairs-services": "other-products",
+  "services": "other-products"
 };
 
 // ==========================================
@@ -103,7 +105,7 @@ export async function generateMetadata({ params }: { params: { categorySlug: str
     title: `${title} | Kabale Online`,
     description: description,
     keywords: [
-      title, "Kabale Online", "Kabale University", "student market", slug.replace(/_/g, ' '), "buy online Kabale"
+      title, "Kabale Online", "Kabale Electronics", "buy electronics Kabale", slug.replace(/_/g, ' '), "buy online Kabale"
     ],
     openGraph: {
       title: `${title} | Kabale Online`,
@@ -178,14 +180,14 @@ export default async function CategoryPage({
     } as any; 
   });
 
-  // 5. THE 6 EXPLORE CATEGORIES
+  // 5. THE 6 NEW EXPLORE CATEGORIES
   const exploreCategories = [
-    { name: "Mega Bundles & Packs", link: "mega-bundles", desc: "Starter kits & combos", Icon: Package },
-    { name: "Campus Life & Study Gear", link: "campus-life", desc: "Hostel gear, gifts & books", Icon: Bed },
-    { name: "Tech, Gadgets & Appliances", link: "tech-appliances", desc: "Phones, laptops & home appliances", Icon: Laptop },
-    { name: "Farm Fresh & Groceries", link: "food-groceries", desc: "Daily food & supermarket", Icon: Leaf },
-    { name: "Beauty, Health & Fashion", link: "beauty-fashion", desc: "Cosmetics & ladies' picks", Icon: Sparkles },
-    { name: "Expert Repairs & Services", link: "repairs-services", desc: "Fixes, moving & typing", Icon: Wrench }
+    { name: "Watches", link: "watches", desc: "Classic & smart timepieces", Icon: Watch },
+    { name: "Phones & TVs", link: "phones-tvs", desc: "Latest screens & mobile tech", Icon: Smartphone },
+    { name: "Sound Systems", link: "sound-systems", desc: "Premium audio & speakers", Icon: Speaker },
+    { name: "Accessories", link: "accessories", desc: "Chargers, cases & cables", Icon: Headphones },
+    { name: "Appliances", link: "appliances", desc: "Home & kitchen electronics", Icon: Plug },
+    { name: "Other Products", link: "other-products", desc: "Explore more great deals", Icon: Package }
   ];
 
   return (
@@ -229,20 +231,15 @@ export default async function CategoryPage({
             <div className="w-full">
               {initialProducts.length > 0 ? (
                  <Suspense fallback={<div className="w-full h-[400px] bg-slate-50 dark:bg-slate-900/50 animate-pulse rounded-md" />}>
-                   {/* 🔥 THE FORK: Switches UI based on the category slug */}
-                   {slug === "repairs-services" ? (
-                     <ServiceDirectoryFeed initialProducts={initialProducts} />
-                   ) : (
                      <CategoryProductFeed 
                        initialProducts={initialProducts} 
                        categoryName={slug} 
                        title={`Latest Deals`} 
                      />
-                   )}
                  </Suspense>
               ) : (
                 <div className="bg-white dark:bg-[#151515] rounded-md border border-slate-200 dark:border-slate-800 shadow-sm p-12 text-center flex flex-col items-center justify-center min-h-[300px]">
-                  <ShoppingBag className="w-12 h-12 text-slate-300 dark:text-slate-700 mb-4" />
+                  <Package className="w-12 h-12 text-slate-300 dark:text-slate-700 mb-4" />
                   <h3 style={{ color: '#1A1A1A' }} className="text-sm font-black dark:text-white uppercase tracking-widest mb-2">No items yet</h3>
                   <p style={{ color: '#6B6B6B' }} className="text-xs font-medium max-w-md dark:text-slate-400">
                     Check back soon! New local deals are posted here daily.
