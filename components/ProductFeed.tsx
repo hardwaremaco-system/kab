@@ -8,16 +8,18 @@ import { db } from "@/lib/firebase/config";
 import ProductSection from "@/components/ProductSection";
 import { optimizeImage } from "@/lib/utils";
 
-// Note: Ensure your server page fetches this same amount to properly match 'hasMore' logic
-const PAGE_SIZE = 40;
+// 🔥 CRITICAL FIX: Must perfectly match the server-side fetch limit!
+const PAGE_SIZE = 100;
 
 export default function ProductFeed({ initialProducts }: { initialProducts: any[] }) {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<any[]>(initialProducts);
   const [loading, setLoading] = useState(false);
+  
+  // If the server gave us exactly the page size, assume there is more to load
   const [hasMore, setHasMore] = useState(initialProducts.length === PAGE_SIZE);
 
-  // Extract URL Parameters
+  // Extract URL Parameters for filtering/sorting
   const maxPrice = searchParams.get("max");
   const sortType = searchParams.get("sort");
 
@@ -54,14 +56,14 @@ export default function ProductFeed({ initialProducts }: { initialProducts: any[
         return {
           id: document.id,
           ...data,
-          createdAt: data.createdAt?.toMillis ? data.createdAt.toMillis() : data.createdAt
+          createdAt: data.createdAt?.toMillis ? data.createdAt.toMillis() : (new Date(data.createdAt || 0).getTime())
         };
       });
 
       // 4. Append new products to the existing list
       setProducts(prev => [...prev, ...newProducts]);
 
-      // 5. If we got fewer products than the PAGE_SIZE, we've hit the end
+      // 5. If we got fewer products than the PAGE_SIZE, we've hit the end of the database
       if (newProducts.length < PAGE_SIZE) {
         setHasMore(false);
       }
@@ -104,7 +106,7 @@ export default function ProductFeed({ initialProducts }: { initialProducts: any[
   }, [products, maxPrice, sortType]);
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-3 sm:px-4 pb-8">
+    <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4 pb-8">
       
       {displayedProducts.length > 0 ? (
         <ProductSection 
@@ -116,17 +118,17 @@ export default function ProductFeed({ initialProducts }: { initialProducts: any[
           <svg className="w-12 h-12 text-slate-300 dark:text-slate-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
-          <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest mb-2">No items found</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium max-w-md">
+          <h3 style={{ color: '#1A1A1A' }} className="text-sm font-black dark:text-white uppercase tracking-widest mb-2">No items found</h3>
+          <p style={{ color: '#6B6B6B' }} className="text-xs font-medium max-w-md dark:text-slate-400">
             {(maxPrice || sortType) 
               ? "Try clearing your filters to see more results." 
-              : "Check back soon! New local deals are posted here daily."}
+              : "Check back soon! New items are posted here daily."}
           </p>
           
           {(maxPrice || sortType) && (
             <Link 
               href="/products" 
-              className="mt-4 px-4 py-2 bg-[#D97706] text-white text-xs font-bold uppercase tracking-wider rounded-sm hover:bg-amber-600 transition-colors"
+              className="mt-4 px-6 py-2.5 bg-[#FF6A00] text-white text-xs font-bold uppercase tracking-wider rounded-md hover:bg-[#e65c00] transition-colors shadow-sm"
             >
               Clear Filters
             </Link>
@@ -138,18 +140,19 @@ export default function ProductFeed({ initialProducts }: { initialProducts: any[
         <div className="flex flex-col items-center justify-center mt-12 mb-8 h-20">
           {loading ? (
             <div className="flex flex-col items-center gap-3">
-              <svg className="w-8 h-8 text-[#D97706] animate-spin" fill="none" viewBox="0 0 24 24">
+              {/* Spinner updated to brand orange */}
+              <svg className="w-8 h-8 text-[#FF6A00] animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
               <span className="text-sm font-bold text-slate-500 animate-pulse uppercase tracking-widest">
-                Loading more finds...
+                Loading more items...
               </span>
             </div>
           ) : hasMore ? (
             <button 
               onClick={loadMore}
-              className="px-8 py-3.5 rounded-xl bg-white dark:bg-[#151515] border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-sm hover:border-[#D97706] hover:text-[#D97706] dark:hover:border-[#D97706] transition-all shadow-sm active:scale-95"
+              className="px-8 py-3.5 rounded-xl bg-white dark:bg-[#151515] border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-sm hover:border-[#FF6A00] hover:text-[#FF6A00] dark:hover:border-[#FF6A00] dark:hover:text-[#FF6A00] transition-all shadow-sm active:scale-95"
             >
               Load More Products
             </button>
