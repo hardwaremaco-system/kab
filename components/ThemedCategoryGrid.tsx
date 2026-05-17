@@ -7,53 +7,51 @@ export default function ThemedCategoryGrid() {
     { 
       name: "Watches", 
       href: "/category/watches", 
-      image: "https://images.unsplash.com/photo-1620625515032-6ed0c1790c75?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8d2F0Y2hlc3xlbnwwfHwwfHx8MA%3D%3D" // Sleek wristwatch
+      image: "https://images.unsplash.com/photo-1620625515032-6ed0c1790c75?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8d2F0Y2hlc3xlbnwwfHwwfHx8MA%3D%3D" 
     },
     { 
       name: "Phones & TVs", 
       href: "/category/phones-tvs", 
-      image: "https://images.unsplash.com/photo-1560209617-059c0bd661ba?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGhvbmVzfGVufDB8fDB8fHww" // Modern smartphone
+      image: "https://images.unsplash.com/photo-1560209617-059c0bd661ba?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGhvbmVzfGVufDB8fDB8fHww" 
     },
     { 
       name: "Sound Systems", 
       href: "/category/sound-systems", 
-      image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=500&q=80" // Premium speaker
+      image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=500&q=80" 
     },
     { 
       name: "Accessories", 
       href: "/category/accessories", 
-      image: "https://images.unsplash.com/photo-1602526432604-029a709e131c?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGhvbmUlMjBhY2Nlc3Nvcmllc3xlbnwwfHwwfHx8MA%3D%3D" // Earbuds / Tech accessories
+      image: "https://images.unsplash.com/photo-1602526432604-029a709e131c?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGhvbmUlMjBhY2Nlc3Nvcmllc3xlbnwwfHwwfHx8MA%3D%3D" 
     },
     { 
       name: "Appliances", 
       href: "/category/appliances", 
-      image: "https://images.unsplash.com/photo-1588854337115-1c67d9247e4d?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8YXBwbGlhbmNlfGVufDB8fDB8fHww" // Modern home appliances
+      image: "https://images.unsplash.com/photo-1588854337115-1c67d9247e4d?w=500&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8YXBwbGlhbmNlfGVufDB8fDB8fHww" 
     },
     { 
       name: "Other Products", 
       href: "/products", 
-      image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=500&q=80" // Store/Lifestyle collection
+      image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=500&q=80" 
     },
   ];
 
   return (
-    // Clean "White Island" container
-    <section className="bg-transparent sm:bg-white sm:dark:bg-[#151515] sm:rounded-md sm:shadow-sm sm:border border-slate-200 dark:border-slate-800 p-2 sm:p-4 mb-4 select-none">
+    // 🔥 STRIPPED: Removed bg, borders, paddings, and mb-4. 
+    // The parent in page.tsx controls the spacing now!
+    <section className="w-full select-none">
 
-      {/* Centered Heading following UI Rules */}
+      {/* Centered Heading */}
       <h2 style={{ color: '#1A1A1A' }} className="text-xl sm:text-2xl font-bold dark:text-white text-center mb-4 sm:mb-6 tracking-tight">
         Browse by category
       </h2>
 
-      {/* Mobile: 3 columns (creates 2 rows for 6 items). 
-          Desktop (md and up): 6 columns (forces all 6 items into 1 single line).
-      */}
+      {/* Mobile: 3 columns. Desktop: 6 columns. */}
       <div className="grid grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 w-full">
         {categories.map((cat) => (
           <Link key={cat.name} href={cat.href} className="group flex flex-col items-center outline-none">
 
             {/* Rectangular Image Container */}
-            {/* aspect-[4/3] ensures a perfect horizontal rectangle shape regardless of screen size */}
             <div className="w-full aspect-[4/3] bg-slate-50 dark:bg-slate-800 rounded-md overflow-hidden mb-2 sm:mb-3 relative shadow-sm group-hover:shadow-md transition-all duration-300 border border-slate-100 dark:border-slate-700">
               <img 
                 src={cat.image} 
