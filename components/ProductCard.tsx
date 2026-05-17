@@ -15,15 +15,12 @@ export default function ProductCard({ product }: { product: any }) {
   const optimizedImage = product.images?.[0] ? optimizeImage(product.images[0]) : null;
   const isJustPosted = checkIsNew(product);
   const isSold = product.status === "sold";
-  const isApproved = product.isApprovedQuality;
-  const isOfficial = product.isOfficialStore || product.isAdminUpload;
   
   const titleStr = product.title || product.name || 'Product';
   
   // 2. Short Title Logic
-  // If the title is short enough (e.g., "iPhone 13 Pro"), it likely only takes up 1 line.
-  // Appending this text fills the 2nd line nicely and acts as a great conversion booster.
-  const isShortTitle = titleStr.length <= 22;
+  // Increased to 32 characters. If it fits, we append the free delivery text.
+  const isShortTitle = titleStr.length <= 32;
   const displayTitle = (!isSold && isShortTitle) 
     ? `${titleStr} (Free delivery available)` 
     : titleStr;
@@ -49,7 +46,7 @@ export default function ProductCard({ product }: { product: any }) {
         {/* ======================= */}
         {/* TOP: IMAGE & BADGES     */}
         {/* ======================= */}
-        <div className="relative aspect-square w-full bg-slate-50 dark:bg-[#0a0a0a] overflow-hidden">
+        <div className="relative aspect-square w-full bg-slate-50 dark:bg-[#0a0a0a] overflow-hidden border-b border-slate-100 dark:border-slate-800/60">
           {optimizedImage ? (
             <Image 
               src={optimizedImage} 
@@ -73,18 +70,11 @@ export default function ProductCard({ product }: { product: any }) {
             </div>
           )}
 
-          {/* New Arrival Badge (Shrunk down & tucked in corner) */}
+          {/* New Arrival Badge (Sitting flush against the exact top-left corner) */}
           {!isSold && isJustPosted && (
-            <div className="absolute top-1.5 left-1.5 bg-slate-900/90 backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-sm flex items-center gap-1 z-10 shadow-sm">
+            <div className="absolute top-0 left-0 bg-slate-900/90 backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-bold px-2 py-1 rounded-br-lg flex items-center gap-1 z-10">
                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
                NEW
-            </div>
-          )}
-
-          {/* Trust Badges (Changed from a full-width bar to a tiny floating pill at the bottom) */}
-          {!isSold && (isApproved || isOfficial) && (
-            <div className={`absolute bottom-1.5 left-1.5 rounded-sm ${isApproved ? 'bg-emerald-600/95' : 'bg-[#FF6A00]/95'} backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 leading-none z-10 tracking-widest uppercase shadow-sm`}>
-               {isApproved ? 'Verified Quality' : 'Official Store'}
             </div>
           )}
         </div>
