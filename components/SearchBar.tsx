@@ -158,7 +158,7 @@ function SearchBarContent({ onSearch }: SearchBarProps) {
           value={query}
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
-          placeholder="Search products, brands and categories"
+          placeholder="Search products, brands and category"
           // Increased pr-[130px] so text doesn't hide behind the new wide button
           className="w-full pl-4 pr-[130px] py-2 md:py-2.5 border border-slate-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6A00] focus:border-transparent transition-all shadow-sm"
         />
