@@ -42,12 +42,15 @@ export default function HorizontalScroller({
         )}
       </div>
 
-      {/* VERTICAL GRID CONTAINER (Retained exactly as you had it, capped at 6 items) */}
+      {/* HORIZONTAL SCROLLING TRACK */}
       <div className="p-3 sm:p-4">
-        {/* The grid layout keeps desktop 100% flexible */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 pb-2">
+        {/* flex, overflow-x-auto, and flex-nowrap create the horizontal swipe track */}
+        <div className="flex flex-nowrap overflow-x-auto gap-3 sm:gap-4 pb-4 snap-x snap-mandatory scroll-smooth w-full scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
           {products.slice(0, 12).map((p) => (
-            <ProductCard key={p.id} product={p} />
+            /* shrink-0 prevents the cards from squishing, fixed widths give them standard sizing */
+            <div key={p.id} className="w-[150px] sm:w-[180px] md:w-[200px] shrink-0 snap-start">
+              <ProductCard product={p} />
+            </div>
           ))}
         </div>
       </div>
