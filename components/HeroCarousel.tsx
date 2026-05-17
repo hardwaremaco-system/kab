@@ -19,7 +19,8 @@ export default function HeroCarousel({ products }: { products: any[] }) {
   ];
 
   return (
-    <div className="w-full bg-transparent mb-4 select-none">
+    // 🔥 Removed mb-4 so it sits flush with the components below it
+    <div className="w-full bg-transparent select-none z-0">
       <Swiper
         modules={[Autoplay, Pagination]}
         speed={800}
@@ -27,12 +28,14 @@ export default function HeroCarousel({ products }: { products: any[] }) {
         loop={products.length > 1}
         pagination={{ 
           clickable: true, 
-          bulletActiveClass: 'swiper-pagination-bullet-active bg-[#D97706] w-6 rounded-full',
+          // 🔥 Updated to #FF6A00
+          bulletActiveClass: 'swiper-pagination-bullet-active bg-[#FF6A00] w-6 rounded-full',
           bulletClass: 'swiper-pagination-bullet bg-white/30 hover:bg-white/60 w-2 h-2 inline-block rounded-full mx-1 cursor-pointer transition-all duration-300'
         }}
         slidesPerView={1}
         spaceBetween={0}
-        className="w-full rounded-md shadow-sm overflow-hidden"
+        // 🔥 Removed rounded-md so the corners don't leak white space
+        className="w-full overflow-hidden"
       >
         {products.map((product, index) => {
           const theme = slideThemes[index % slideThemes.length];
@@ -52,7 +55,7 @@ export default function HeroCarousel({ products }: { products: any[] }) {
 
                     {/* Hot Deal Label */}
                     <div className="mb-2 sm:mb-3 transform transition-transform duration-500 group-hover:translate-x-1">
-                      <span className="bg-[#D97706] text-white text-[9px] sm:text-[10px] md:text-xs font-black uppercase tracking-widest px-2 sm:px-3 py-1 rounded-sm shadow-md inline-block">
+                      <span className="bg-[#FF6A00] text-white text-[9px] sm:text-[10px] md:text-xs font-black uppercase tracking-widest px-2 sm:px-3 py-1 rounded-sm shadow-md inline-block">
                         Hot Deal
                       </span>
                     </div>
@@ -64,7 +67,7 @@ export default function HeroCarousel({ products }: { products: any[] }) {
 
                     {/* Price Block */}
                     <div className="flex flex-col transform transition-transform duration-500 group-hover:translate-x-1">
-                      <div className="flex items-baseline gap-1 text-[#D97706] drop-shadow-md">
+                      <div className="flex items-baseline gap-1 text-[#FF6A00] drop-shadow-md">
                         <span className="text-xs sm:text-sm md:text-lg font-bold uppercase tracking-widest">UGX</span>
                         <span className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter">
                           {price}
@@ -91,7 +94,7 @@ export default function HeroCarousel({ products }: { products: any[] }) {
 
                   {/* SHOP NOW BUTTON - Tucked into bottom right */}
                   <div className="absolute bottom-0 right-0 z-30">
-                     <button className="bg-slate-900 text-white text-[10px] sm:text-xs md:text-sm font-black uppercase tracking-widest px-5 py-3 sm:px-8 sm:py-5 rounded-tl-2xl hover:bg-[#D97706] transition-all duration-300 shadow-2xl flex items-center gap-2 group-hover:pr-6 sm:group-hover:pr-10">
+                     <button className="bg-slate-900 text-white text-[10px] sm:text-xs md:text-sm font-black uppercase tracking-widest px-5 py-3 sm:px-8 sm:py-5 rounded-tl-2xl hover:bg-[#FF6A00] transition-all duration-300 shadow-2xl flex items-center gap-2 group-hover:pr-6 sm:group-hover:pr-10">
                        Shop Now
                        <svg className="w-3 h-3 md:w-4 md:h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                      </button>
