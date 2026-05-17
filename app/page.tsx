@@ -46,10 +46,11 @@ export default async function Home() {
         <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4">
           <div className="flex flex-col md:flex-row gap-4 w-full">
 
-            {/* LEFT SIDEBAR */}
-            <div className="hidden md:flex flex-col gap-4 w-[220px] lg:w-[240px] shrink-0 sticky top-[110px] h-max z-10">
+                        {/* LEFT SIDEBAR */}
+            <div className="hidden md:flex flex-col gap-4 w-[220px] lg:w-[240px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto no-scrollbar overscroll-contain z-10 pb-6">
               <LeftSidebar />
             </div>
+
 
             {/* MAIN FEED */}
             <div className="flex-grow min-w-0 flex flex-col w-full">
