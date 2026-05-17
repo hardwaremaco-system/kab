@@ -13,6 +13,7 @@ import LeftSidebar from "@/components/LeftSidebar";
 
 // BANNERS
 import TimepieceBanner from "@/components/banners/TimepieceBanner";
+import ValuePropBanner from "@/components/banners/ValuePropBanner";
 
 const shuffleArray = (array: any[]) => {
   const shuffled = [...array];
@@ -36,7 +37,6 @@ export default async function Home() {
   const save4kProducts = data.save4kProducts || [];
   const handPickedProducts = shuffleArray(data.handPickedProducts || []);
 
-  // 🔥 THE FIX: Now using the dedicated direct array from Firebase
   const otherProducts = data.otherProducts || [];
 
   return (
@@ -54,28 +54,39 @@ export default async function Home() {
             {/* MAIN FEED */}
             <div className="flex-grow min-w-0 flex flex-col w-full">
 
+              {/* ========================================== */}
+              {/* 🏆 THE "SEAMLESS STACK" DASHBOARD BLOCK     */}
+              {/* ========================================== */}
+              <div className="w-full flex flex-col shadow-sm mb-4 sm:mb-6">
+                
+                {/* 1. Value Prop Banner (Top of stack - White) */}
+                <ValuePropBanner />
 
-              
-              {/* 1. Hero */}
-              <div className="mb-4">
-                <HeroCarousel products={heroProducts} />
-              </div>
-
-              <div className="w-full flex flex-col gap-4 sm:gap-6">
-
-                {/* 4. Explore by category */}
-                <div className="bg-transparent rounded-2xl p-2 sm:p-4 shadow-sm border border-slate-100 dark:border-slate-800/60">
-                  <ThemedCategoryGrid />
+                {/* 2. Hero (Middle of stack - Dark, No margins) */}
+                <div className="w-full z-0">
+                  <HeroCarousel products={heroProducts} />
                 </div>
 
-                {/* 2. Continue Browsing (This is now the ONLY horizontal scroller) */}
+                {/* 3. Explore by category (Bottom of stack - White) */}
+                <div className="w-full bg-white dark:bg-[#151515] sm:rounded-b-xl border-x border-b border-slate-200 dark:border-slate-800 p-4 pt-5 sm:pt-6">
+                  <ThemedCategoryGrid />
+                </div>
+                
+              </div>
+
+              {/* ========================================== */}
+              {/* 🛍️ REST OF THE PRODUCT FEED                 */}
+              {/* ========================================== */}
+              <div className="w-full flex flex-col gap-4 sm:gap-6">
+
+                {/* Continue Browsing */}
                 <ContinueBrowsing 
                   title="Continue Browsing"
                   subtitle="Pick up exactly where you left off"
                   fallbackProducts={trendingProducts} 
                 />
 
-                {/* 5. Featured collection (ProductSection Grid) */}
+                {/* Featured collection */}
                 {featuredCollection.length > 0 && (
                   <ProductSection 
                     title="Featured collection" 
@@ -85,7 +96,7 @@ export default async function Home() {
                   />
                 )}
 
-                {/* 6. Save up to 4k (ProductSection Grid) */}
+                {/* Save up to 4k */}
                 {save4kProducts.length > 0 && (
                   <ProductSection 
                     title="Save up to 4k" 
@@ -95,7 +106,7 @@ export default async function Home() {
                   />
                 )}
 
-                {/* 7. Hand picked for you (ProductSection Grid) */}
+                {/* Hand picked for you */}
                 {handPickedProducts.length > 0 && (
                   <ProductSection 
                     title="Hand picked for you" 
@@ -105,10 +116,10 @@ export default async function Home() {
                   />
                 )}
 
-                {/* 3. Find the perfect timepiece banner */}
+                {/* Find the perfect timepiece banner */}
                 <TimepieceBanner />
 
-                {/* 8. Trending Products (ProductSection Grid) */}
+                {/* Trending Products */}
                 {trendingProducts.length > 0 && (
                   <ProductSection 
                     title="Trending Now" 
@@ -117,9 +128,8 @@ export default async function Home() {
                     viewAllLink="/products?sort=trending"
                   />
                 )}
-
                 
-                {/* 10. Recently added (ProductSection Grid) */}
+                {/* Recently added */}
                 {latestProducts.length > 0 && (
                   <ProductSection 
                     title="Recently added" 
@@ -129,7 +139,7 @@ export default async function Home() {
                   />
                 )}
 
-                {/* 11. Official Store (ProductSection Grid) */}
+                {/* Official Store */}
                 {officialProducts.length > 0 && (
                   <ProductSection 
                     title="From the Official Store" 
@@ -139,7 +149,7 @@ export default async function Home() {
                   />
                 )}
 
-                {/* 12. Other products (ProductSection Grid) */}
+                {/* Other products */}
                 {otherProducts.length > 0 && (
                   <ProductSection 
                     title="Other Products" 
