@@ -49,10 +49,15 @@ export default async function Home() {
           {/* 🔥 FIX 2: Added items-start here so the sidebar doesn't stretch to the bottom */}
           <div className="flex flex-col md:flex-row items-start gap-4 w-full">
 
-            {/* LEFT SIDEBAR */}
-            <div className="hidden md:flex flex-col gap-4 w-[220px] lg:w-[240px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto no-scrollbar overscroll-contain z-10 pb-6">
+                        {/* LEFT SIDEBAR */}
+            {/* Removed independent scroll. Added smart CSS top calculation */}
+            <div 
+              className="hidden md:flex flex-col gap-4 w-[220px] lg:w-[240px] shrink-0 sticky z-10 pb-6"
+              style={{ top: "min(85px, calc(100vh - 100% - 24px))" }}
+            >
               <LeftSidebar />
             </div>
+
 
             {/* MAIN FEED */}
             <div className="flex-grow min-w-0 flex flex-col w-full">
