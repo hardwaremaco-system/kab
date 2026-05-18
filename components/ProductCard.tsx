@@ -16,6 +16,9 @@ export default function ProductCard({ product }: { product: any }) {
   const isJustPosted = checkIsNew(product);
   const isSold = product.status === "sold";
   
+  // 🔥 Check if the price is 0 (Negotiable)
+  const isNegotiable = Number(product.price) === 0;
+  
   const titleStr = product.title || product.name || 'Product';
   
   // 2. Short Title Logic
@@ -96,8 +99,9 @@ export default function ProductCard({ product }: { product: any }) {
 
           {/* Price (Pushed to bottom using mt-auto) */}
           <div className="mt-auto pt-2 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between">
-            <span className={`text-sm sm:text-base font-black ${isSold ? 'text-slate-400 line-through' : 'text-slate-900 dark:text-white group-hover:text-[#FF6A00]'} transition-colors`}>
-              UGX {Number(product.price).toLocaleString()}
+            {/* 🔥 UPDATED: Displays "Negotiable" in orange if price is 0 */}
+            <span className={`text-sm sm:text-base font-black ${isSold ? 'text-slate-400 line-through' : isNegotiable ? 'text-[#FF6A00]' : 'text-slate-900 dark:text-white group-hover:text-[#FF6A00]'} transition-colors`}>
+              {isNegotiable ? "Negotiable" : `UGX ${Number(product.price).toLocaleString()}`}
             </span>
             
             {/* Subtle View Button Icon (Appears on hover) */}
