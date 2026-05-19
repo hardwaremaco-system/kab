@@ -242,13 +242,26 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
           </p>  
         </div>  
 
-        {/* RIGHT COLUMN: Product Details */}  
+                {/* RIGHT COLUMN: Product Details */}  
         <div className="flex flex-col overflow-hidden">  
+
+          {/* 🔥 NEW: CAMPAIGN TYPE BADGE */}
+          {isSale && pAny.campaignType && (
+            <div className="mb-3 animate-in fade-in slide-in-from-bottom-2">
+               <Link 
+                 href={`/deals?campaign=${pAny.campaignType}`}
+                 className="bg-red-50 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white transition-colors text-[10px] sm:text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-sm flex items-center w-fit gap-2"
+               >
+                 <span className="animate-pulse">🔥</span> {pAny.campaignType.replace(/-/g, ' ')}
+               </Link>
+            </div>
+          )}
 
           {/* 3. TITLE (Big and light gray) */}
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-400 leading-tight mb-3">  
             {safeName}
           </h1>  
+
 
           {/* 🔥 4. PRICE (Displays Flash Sale Logic or Negotiable) */}
           <div className="mb-4 flex items-start gap-4">  
