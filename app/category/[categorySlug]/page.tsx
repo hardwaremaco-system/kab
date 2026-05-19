@@ -190,10 +190,11 @@ export default async function CategoryPage({
     { name: "Other Products", link: "other-products", desc: "Explore more great deals", Icon: Package }
   ];
 
+    // 🔥 FIX 1: Removed overflow-x-hidden so the sidebar can stick!
   return (
-    {/* 🔥 FIX 1: Removed overflow-x-hidden so the sidebar can stick! */}
     <div className="min-h-screen bg-transparent pb-12 pt-2 sm:pt-4 font-sans selection:bg-[#FF6A00] selection:text-white">
       <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4">
+
         
         {/* 🔥 FIX 2: Added items-start so columns track independently */}
         <div className="flex flex-col md:flex-row items-start gap-4 w-full">
