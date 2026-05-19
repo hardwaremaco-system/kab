@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Premium Requests", href: "/admin/premium", icon: "💎" },
     { name: "All Products", href: "/admin/products", icon: "📦" },
 { name: "Partners", href: "/admin/partners", icon: "🤝" },
-
+    { name: "Deals center", href: "/admin/deals", icon: "😶‍🌫️" },
     { name: "Official Store", href: "/admin/official", icon: "🏪" },
     { name: "Upload Official Item", href: "/admin/upload", icon: "✨" }, 
     { name: "Users", href: "/admin/users", icon: "👥" },
