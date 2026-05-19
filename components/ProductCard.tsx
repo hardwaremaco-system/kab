@@ -28,20 +28,22 @@ export default function ProductCard({ product }: { product: any }) {
     : titleStr;
 
   // ==========================================
-  // 🔥 DYNAMIC STOCK BAR LOGIC
+  // 🔥 UPGRADED STOCK BAR LOGIC
   // ==========================================
-  // Safely grab stock. If it doesn't exist, assume it's full (10)
-  const rawStock = product.stock !== undefined && product.stock !== null ? Number(product.stock) : 10;
-  const safeStock = isNaN(rawStock) ? 10 : Math.max(0, rawStock);
-  const maxStock = 10;
+  // 1. Check if we actually have stock data (prevents localStorage bugs)
+  const hasStockData = product.stock !== undefined && product.stock !== null && product.stock !== "";
   
-  // Calculate width (capped at 100%)
+  const rawStock = hasStockData ? Number(product.stock) : 0;
+  const safeStock = isNaN(rawStock) ? 0 : Math.max(0, rawStock);
+  
+  // Visual scale: 10 represents a "full" bar for UI purposes
+  const maxStock = 10;
   const stockWidth = Math.min(100, (safeStock / maxStock) * 100);
 
-  // Determine Color based on your exact logic
-  let stockColorClass = "bg-green-500"; // 7 - 10
-  if (safeStock <= 6) stockColorClass = "bg-amber-500"; // 4 - 6
-  if (safeStock <= 3) stockColorClass = "bg-red-500"; // 1 - 3
+  // 2. Local Market Psychology: Adjusted color thresholds
+  let stockColorClass = "bg-green-500"; // 4 or more
+  if (safeStock <= 3) stockColorClass = "bg-amber-500"; // 2 to 3
+  if (safeStock === 1) stockColorClass = "bg-red-500"; // Exactly 1
 
   return (
     <div 
@@ -115,8 +117,8 @@ export default function ProductCard({ product }: { product: any }) {
           {/* Wrapper to push bottom items to the bottom of the card */}
           <div className="mt-auto flex flex-col gap-3">
             
-            {/* 🔥 NEW: VISUAL STOCK BAR */}
-            {!isSold && (
+            {/* 🔥 CONDITIONAL STOCK BAR: Only renders if real stock data exists */}
+            {!isSold && hasStockData && (
               <div className="flex flex-col gap-1.5 w-full">
                 <div className="w-full h-[5px] bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div 
