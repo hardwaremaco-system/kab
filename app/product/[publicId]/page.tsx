@@ -7,6 +7,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation"; 
 import { getProductByPublicId, getProducts } from "@/lib/firebase/firestore";
+// 🔥 Import updateDoc for the Lazy Revert
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+
 import ImageGallery from "@/components/ImageGallery";
 import ProductActions from "@/components/ProductActions";
 import ProductTracker from "@/components/ProductTracker";
@@ -24,8 +28,13 @@ export async function generateMetadata({ params }: { params: { publicId: string 
   if (!product) return { title: "Item Not Found | Kabale Online" };
 
   const safeName = product.name || "Unnamed Item";
-  // Format metadata price to say Negotiable if 0
-  const formattedPrice = Number(product.price) === 0 ? "Negotiable" : `UGX ${(Number(product.price) || 0).toLocaleString()}`;
+  
+  // Factor in potential sales for metadata
+  const currentPrice = product.isSale && new Date(product.saleEndDate).getTime() > Date.now() 
+    ? Number(product.price) 
+    : (Number(product.originalPrice) || Number(product.price));
+
+  const formattedPrice = currentPrice === 0 ? "Negotiable" : `UGX ${(currentPrice || 0).toLocaleString()}`;
 
   const title = `${safeName} - Available in Kabale | ${formattedPrice}`;
   const description = product.description?.slice(0, 150) || `Buy this ${safeName} for ${formattedPrice}. Pay strictly Cash on Delivery in Kabale town.`;
@@ -79,8 +88,41 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
   }
 
   const safeName = product.name || "Unnamed Item";
-  const safePrice = Number(product.price) || 0;
-  const isNegotiable = safePrice === 0; // 🔥 CHECK IF ZERO
+  
+  // ==========================================
+  // 🧹 THE "LAZY REVERT" SECURITY SYSTEM
+  // ==========================================
+  let isSale = product.isSale === true;
+  let safePrice = Number(product.price) || 0;
+  let originalPrice = Number(product.originalPrice) || 0;
+  let saleEndDate = product.saleEndDate ? new Date(product.saleEndDate).getTime() : 0;
+  const now = Date.now();
+
+  if (isSale && saleEndDate > 0 && saleEndDate <= now) {
+    // DEAL EXPIRED! Intercept it immediately.
+    isSale = false;
+    safePrice = originalPrice > 0 ? originalPrice : safePrice; // Restore UI price
+    
+    try {
+      // Silently clean up Firebase in the background
+      const docRef = doc(db, "products", product.id);
+      updateDoc(docRef, {
+        price: safePrice,
+        originalPrice: null,
+        isSale: false,
+        campaignType: null,
+        saleEndDate: null
+      });
+      console.log(`🧹 Lazy Revert: Cleaned up expired deal on product page for ${product.id}`);
+    } catch (error) {
+      console.error("Failed to lazy revert product:", error);
+    }
+  }
+
+  const isNegotiable = safePrice === 0;
+  const discountPercent = isSale && originalPrice > safePrice 
+    ? Math.round(((originalPrice - safePrice) / originalPrice) * 100) 
+    : 0;
   
   const safeCondition = product.condition || "used";
   const safeCategory = product.category || "general";
@@ -202,18 +244,31 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
         <div className="flex flex-col overflow-hidden">  
 
           {/* 3. TITLE (Big and light gray) */}
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-400 leading-tight mb-4">  
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-400 leading-tight mb-3">  
             {safeName}
           </h1>  
 
-          {/* 4. PRICE (Displays Negotiable if 0) */}
-          <div className="mb-4 flex items-end gap-3">  
-            <span className={`font-black ${isNegotiable ? 'text-3xl sm:text-4xl text-[#FF6A00]' : 'text-4xl sm:text-5xl text-[#1A1A1A]'}`}>  
-              {isNegotiable ? "Price Negotiable" : `UGX ${safePrice.toLocaleString()}`}
-            </span>  
+          {/* 🔥 4. PRICE (Displays Flash Sale Logic or Negotiable) */}
+          <div className="mb-4 flex items-start gap-4">  
+            <div className="flex flex-col">
+              <span className={`font-black leading-none ${isNegotiable ? 'text-3xl sm:text-4xl text-[#FF6A00]' : 'text-4xl sm:text-5xl text-[#1A1A1A]'}`}>  
+                {isNegotiable ? "Price Negotiable" : `UGX ${safePrice.toLocaleString()}`}
+              </span>  
+              {isSale && originalPrice > 0 && (
+                <span className="text-lg font-bold text-slate-400 line-through mt-1.5">
+                  UGX {originalPrice.toLocaleString()}
+                </span>
+              )}
+            </div>
+
+            {isSale && discountPercent > 0 && (
+              <span className="bg-red-50 border border-red-200 text-red-600 px-2.5 py-1 rounded-md text-sm font-black shadow-sm mt-1">
+                -{discountPercent}%
+              </span>
+            )}
           </div>  
 
-          {/* 🔥 REAL SCARCITY TRIGGER: LOW STOCK WARNING */}
+          {/* REAL SCARCITY TRIGGER: LOW STOCK WARNING */}
           {!isSoldOut && isLowStock && !isNegotiable && (
             <div className="mb-6 flex items-center gap-2 text-[#FF6A00] bg-orange-50 px-3 py-2.5 rounded-md w-fit border border-[#FF6A00]/20 shadow-sm">
               <span className="animate-bounce">⚠️</span>
@@ -223,7 +278,8 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
 
           {/* MAIN CALL TO ACTIONS (HYBRID) */}
           <div className={`mb-8 ${isSoldOut ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
-            <ProductActions product={{...product, images: optimizedImages}}>
+            {/* Pass the corrected price down to ProductActions so cart is accurate */}
+            <ProductActions product={{...product, price: safePrice, images: optimizedImages}}>
                 <div className="flex flex-col gap-3 mt-2 w-full">
                   <SaveProductButton product={product} />
                 </div>
@@ -309,8 +365,20 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
               const isRelApproved = relAny.isApprovedQuality;
               const isRelOfficial = relAny.isOfficialStore || relAny.isAdminUpload;
               
-              // 🔥 Check if related product is negotiable
-              const isRelNegotiable = Number(relProduct.price) === 0;
+              // Apply Lazy Revert Logic for Related Items too to avoid fake pricing
+              let relIsSale = relProduct.isSale === true;
+              let relPrice = Number(relProduct.price) || 0;
+              let relOrigPrice = Number(relProduct.originalPrice) || 0;
+              let relEndDate = relProduct.saleEndDate ? new Date(relProduct.saleEndDate).getTime() : 0;
+              
+              if (relIsSale && relEndDate > 0 && relEndDate <= now) {
+                relIsSale = false;
+                relPrice = relOrigPrice > 0 ? relOrigPrice : relPrice;
+              }
+
+              const isRelNegotiable = relPrice === 0;
+              const relDiscount = relIsSale && relOrigPrice > relPrice 
+                ? Math.round(((relOrigPrice - relPrice) / relOrigPrice) * 100) : 0;
 
               return (
                 <Link   
@@ -346,6 +414,12 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
                       </div>
                     )}
 
+                    {!isRelSold && relIsSale && relDiscount > 0 && (
+                      <div className="absolute top-2 right-2 bg-red-50 text-red-600 border border-red-200 text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm z-10">
+                        -{relDiscount}%
+                      </div>
+                    )}
+
                     {!isRelSold && (isRelApproved || isRelOfficial) && (
                       <div className={`absolute bottom-0 left-0 ${isRelApproved ? 'bg-emerald-600' : 'bg-[#FF6A00]'} text-white text-[8px] font-bold px-1.5 py-1 leading-none rounded-tr-sm z-10 tracking-widest uppercase shadow-sm`}>
                          {isRelApproved ? 'Approved Quality' : 'Official Product'}
@@ -359,9 +433,13 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
                     </h3>  
                     <div className="mt-auto pt-1 flex flex-col">  
                       <span className={`text-sm sm:text-base font-black ${isRelSold ? 'text-slate-500' : isRelNegotiable ? 'text-[#FF6A00]' : 'text-[#1A1A1A]'}`}>
-                        {/* 🔥 Display Negotiable or formatted price */}
-                        {isRelNegotiable ? "Negotiable" : `UGX ${Number(relProduct.price).toLocaleString()}`}
+                        {isRelNegotiable ? "Negotiable" : `UGX ${relPrice.toLocaleString()}`}
                       </span>  
+                      {relIsSale && relOrigPrice > 0 && (
+                        <span className="text-[9px] font-bold text-slate-400 line-through mt-0.5">
+                          UGX {relOrigPrice.toLocaleString()}
+                        </span>
+                      )}
                     </div>  
                   </div>  
                 </Link>  
