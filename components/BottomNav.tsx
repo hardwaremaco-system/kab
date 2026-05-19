@@ -31,8 +31,10 @@ export default function BottomNav() {
 
   const isAdmin = user?.role === "admin";
 
-  // Hide entirely on admin routes
-  if (pathname?.startsWith("/admin")) return null;
+  // 🔥 UPDATED: Hide entirely on admin routes AND product routes
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/product/")) {
+    return null;
+  }
 
   // 1. Admin Session Cookie Management
   useEffect(() => {
