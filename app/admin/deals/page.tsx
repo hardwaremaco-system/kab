@@ -3,31 +3,52 @@
 import { useState, useEffect } from "react";
 import { collection, query, where, getDocs, doc, updateDoc, writeBatch } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { Zap, Clock, Trash2, Tag, AlertTriangle } from "lucide-react";
+import { Zap, Clock, Trash2, Tag, AlertTriangle, Lock, Unlock, Plus } from "lucide-react";
 
 export default function AdminDealsPage() {
   const [activeDeals, setActiveDeals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Form State for creating a new deal
+  // 1. CAMPAIGN STATE (The Master Timer)
+  const [campaignType, setCampaignType] = useState("flash-sales");
+  const [endDate, setEndDate] = useState("");
+  const [campaignLocked, setCampaignLocked] = useState(false);
+
+  // 2. PRODUCT STATE
   const [searchId, setSearchId] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [salePrice, setSalePrice] = useState("");
-  const [campaignType, setCampaignType] = useState("flash-sales");
-  const [endDate, setEndDate] = useState("");
 
   // Fetch all currently active deals
   const fetchDeals = async () => {
     setLoading(true);
     const q = query(collection(db, "products"), where("isSale", "==", true));
     const snap = await getDocs(q);
-    setActiveDeals(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const deals = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    setActiveDeals(deals);
     setLoading(false);
+    return deals;
   };
 
   useEffect(() => {
     fetchDeals();
   }, []);
+
+  // 🔥 SMART AUTO-DETECT: If they select a campaign that is already running, grab its end date!
+  useEffect(() => {
+    if (activeDeals.length > 0 && !campaignLocked) {
+      const existingDeal = activeDeals.find(d => d.campaignType === campaignType);
+      if (existingDeal && existingDeal.saleEndDate) {
+        // Convert ISO string back to datetime-local format (YYYY-MM-DDThh:mm)
+        const dateObj = new Date(existingDeal.saleEndDate);
+        // Add offset to get local time properly formatted for the input
+        const localIso = new Date(dateObj.getTime() - (dateObj.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        setEndDate(localIso);
+      } else {
+        setEndDate(""); // Clear it if this is a brand new campaign
+      }
+    }
+  }, [campaignType, activeDeals, campaignLocked]);
 
   // Handle Finding a Product to put on sale
   const handleSearch = async () => {
@@ -48,7 +69,7 @@ export default function AdminDealsPage() {
   // Handle Starting a Deal
   const handleStartDeal = async () => {
     if (!selectedProduct || !salePrice || !endDate) {
-      alert("Please fill in all fields.");
+      alert("Please ensure the campaign is locked in and a sale price is set.");
       return;
     }
     
@@ -60,19 +81,18 @@ export default function AdminDealsPage() {
     try {
       const docRef = doc(db, "products", selectedProduct.id);
       await updateDoc(docRef, {
-        originalPrice: Number(selectedProduct.price), // Save the old price
-        price: Number(salePrice),                     // Overwrite with new price
+        originalPrice: Number(selectedProduct.price), 
+        price: Number(salePrice),                     
         isSale: true,
         campaignType: campaignType,
-        saleEndDate: new Date(endDate).toISOString(), // Save as ISO string for the timer
+        saleEndDate: new Date(endDate).toISOString(), 
       });
       
-      alert("Deal activated successfully!");
+      alert(`Success! Added to ${campaignType}.`);
       setSelectedProduct(null);
       setSearchId("");
       setSalePrice("");
-      setEndDate("");
-      fetchDeals(); 
+      fetchDeals(); // Refresh table
     } catch (error) {
       console.error(error);
       alert("Error starting deal.");
@@ -86,7 +106,7 @@ export default function AdminDealsPage() {
     try {
       const docRef = doc(db, "products", product.id);
       await updateDoc(docRef, {
-        price: Number(product.originalPrice), // Restore original price
+        price: Number(product.originalPrice), 
         originalPrice: null,
         isSale: false,
         campaignType: null,
@@ -100,26 +120,18 @@ export default function AdminDealsPage() {
     }
   };
 
-  // ==========================================
-  // 🚨 THE EMERGENCY KILL SWITCH 
-  // ==========================================
+  // EMERGENCY KILL SWITCH 
   const handleEmergencyStop = async () => {
-    if (activeDeals.length === 0) {
-      alert("There are no active deals to stop.");
-      return;
-    }
-
+    if (activeDeals.length === 0) return;
     const confirmed = window.confirm(
-      "🚨 EMERGENCY STOP 🚨\n\nAre you absolutely sure you want to instantly end ALL active deals?\n\nThis will immediately restore the original prices for every item currently on sale across the entire platform."
+      "🚨 EMERGENCY STOP 🚨\n\nAre you absolutely sure you want to instantly end ALL active deals?\n\nThis will immediately restore the original prices for every item currently on sale."
     );
 
     if (!confirmed) return;
 
     setLoading(true);
     try {
-      // Use writeBatch to update all documents simultaneously
       const batch = writeBatch(db);
-
       activeDeals.forEach((deal) => {
         const docRef = doc(db, "products", deal.id);
         batch.update(docRef, {
@@ -130,14 +142,13 @@ export default function AdminDealsPage() {
           saleEndDate: null,
         });
       });
-
-      await batch.commit(); // Fires all updates at once
-      
-      alert("All deals have been successfully terminated. Original prices are restored.");
+      await batch.commit(); 
+      alert("All deals have been successfully terminated.");
+      setCampaignLocked(false);
       fetchDeals(); 
     } catch (error) {
       console.error("Emergency stop failed:", error);
-      alert("Critical Error: Failed to stop all deals. Check console.");
+      alert("Critical Error: Failed to stop all deals.");
       setLoading(false);
     }
   };
@@ -146,7 +157,7 @@ export default function AdminDealsPage() {
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <h1 className="text-2xl font-black flex items-center gap-2 text-slate-800">
-          <Zap className="text-[#FF6A00]" /> Campaign & Deals Manager
+          <Zap className="text-[#FF6A00]" /> Campaign Manager
         </h1>
         
         {/* EMERGENCY STOP BUTTON */}
@@ -156,91 +167,126 @@ export default function AdminDealsPage() {
           className="bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white font-black uppercase text-xs tracking-widest px-6 py-3 rounded-md flex items-center gap-2 transition-all shadow-sm active:scale-95"
         >
           <AlertTriangle className="w-4 h-4" />
-          Emergency Stop All Deals
+          Stop All Deals
         </button>
       </div>
 
-      {/* ========================================== */}
-      {/* 1. CREATE A DEAL SECTION                   */}
-      {/* ========================================== */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-10">
-        <h2 className="text-sm font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-          <Tag className="w-4 h-4" /> Create New Deal
-        </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
         
-        <div className="flex gap-2 mb-6">
-          <input 
-            type="text" 
-            placeholder="Enter Product Public ID..." 
-            value={searchId}
-            onChange={(e) => setSearchId(e.target.value)}
-            className="flex-1 border border-slate-300 rounded-md px-4 py-3 outline-none focus:border-[#FF6A00] transition-colors font-medium"
-          />
-          <button onClick={handleSearch} className="bg-slate-900 text-white px-8 py-3 rounded-md font-bold hover:bg-slate-800 transition-colors">
-            Find Product
-          </button>
+        {/* ========================================== */}
+        {/* STEP 1: CAMPAIGN CONFIGURATION (LEFT)        */}
+        {/* ========================================== */}
+        <div className="lg:col-span-4 bg-white border border-slate-200 rounded-xl p-6 shadow-sm h-fit">
+          <h2 className="text-sm font-black uppercase tracking-widest text-slate-800 mb-6 flex items-center gap-2">
+            1. Campaign Setup
+          </h2>
+          
+          <div className="flex flex-col gap-5">
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Select Campaign</label>
+              <select 
+                value={campaignType}
+                onChange={(e) => setCampaignType(e.target.value)}
+                disabled={campaignLocked}
+                className="w-full border border-slate-300 rounded-md px-4 py-2.5 outline-none focus:border-[#FF6A00] font-bold bg-white disabled:bg-slate-100 disabled:text-slate-500 transition-colors"
+              >
+                <option value="flash-sales">Flash Sales</option>
+                <option value="weekend-deals">Weekend Deals</option>
+                <option value="clearance">Clearance Sale</option>
+                <option value="student-deals">Student Deals</option>
+                <option value="mega-sale">Mega Sale</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Master End Date</label>
+              <input 
+                type="datetime-local" 
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                disabled={campaignLocked}
+                className="w-full border border-slate-300 rounded-md px-4 py-2.5 outline-none focus:border-[#FF6A00] font-bold text-slate-700 disabled:bg-slate-100 disabled:text-slate-500 transition-colors"
+              />
+            </div>
+
+            {!campaignLocked ? (
+              <button 
+                onClick={() => {
+                  if (!endDate) return alert("Please set an end date first.");
+                  setCampaignLocked(true);
+                }}
+                className="bg-slate-900 text-white font-black uppercase tracking-widest py-3 rounded-md mt-2 hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+              >
+                <Lock className="w-4 h-4" /> Lock Campaign
+              </button>
+            ) : (
+              <button 
+                onClick={() => setCampaignLocked(false)}
+                className="bg-slate-100 text-slate-600 border border-slate-200 font-black uppercase tracking-widest py-3 rounded-md mt-2 hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
+              >
+                <Unlock className="w-4 h-4" /> Edit Campaign
+              </button>
+            )}
+          </div>
         </div>
 
-        {selectedProduct && (
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in">
-            <div className="flex flex-col gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Selected Product</span>
-              <p className="font-bold text-lg text-slate-800 leading-tight">{selectedProduct.name || selectedProduct.title}</p>
-              <p className="text-sm font-medium text-slate-500 mb-2">
-                Current Price: <span className="font-black text-slate-900">UGX {Number(selectedProduct.price).toLocaleString()}</span>
-              </p>
-            </div>
-            
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">New Sale Price (UGX)</label>
-                <input 
-                  type="number" 
-                  value={salePrice}
-                  onChange={(e) => setSalePrice(e.target.value)}
-                  className="w-full border border-slate-300 rounded-md px-4 py-2.5 outline-none focus:border-[#FF6A00] font-bold"
-                  placeholder="e.g. 90000"
-                />
+        {/* ========================================== */}
+        {/* STEP 2: ADD PRODUCTS TO CAMPAIGN (RIGHT)   */}
+        {/* ========================================== */}
+        <div className={`lg:col-span-8 bg-white border border-slate-200 rounded-xl p-6 shadow-sm transition-opacity duration-300 ${!campaignLocked ? 'opacity-50 pointer-events-none grayscale-[50%]' : 'opacity-100'}`}>
+          <h2 className="text-sm font-black uppercase tracking-widest text-slate-800 mb-6 flex items-center gap-2">
+            2. Add Products to <span className="text-[#FF6A00]">{campaignType.replace('-', ' ')}</span>
+          </h2>
+          
+          <div className="flex gap-2 mb-6">
+            <input 
+              type="text" 
+              placeholder="Enter Product Public ID..." 
+              value={searchId}
+              onChange={(e) => setSearchId(e.target.value)}
+              className="flex-1 border border-slate-300 rounded-md px-4 py-3 outline-none focus:border-[#FF6A00] font-medium"
+            />
+            <button onClick={handleSearch} className="bg-slate-900 text-white px-8 py-3 rounded-md font-bold hover:bg-slate-800 transition-colors">
+              Search
+            </button>
+          </div>
+
+          {selectedProduct && (
+            <div className="bg-orange-50 border border-[#FF6A00]/20 rounded-lg p-5 flex flex-col sm:flex-row gap-6 items-center animate-in fade-in">
+              <div className="flex-1">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#FF6A00]">Selected Product</span>
+                <p className="font-bold text-lg text-slate-800 leading-tight mb-1">{selectedProduct.name || selectedProduct.title}</p>
+                <p className="text-sm font-medium text-slate-500">
+                  Current Price: <span className="line-through">UGX {Number(selectedProduct.price).toLocaleString()}</span>
+                </p>
               </div>
               
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Campaign Type</label>
-                <select 
-                  value={campaignType}
-                  onChange={(e) => setCampaignType(e.target.value)}
-                  className="w-full border border-slate-300 rounded-md px-4 py-2.5 outline-none focus:border-[#FF6A00] font-bold bg-white"
+              <div className="flex items-end gap-3 w-full sm:w-auto">
+                <div className="flex-1 sm:w-48">
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Discount Price</label>
+                  <input 
+                    type="number" 
+                    value={salePrice}
+                    onChange={(e) => setSalePrice(e.target.value)}
+                    className="w-full border border-slate-300 rounded-md px-4 py-2.5 outline-none focus:border-[#FF6A00] font-black text-slate-900"
+                    placeholder="e.g. 90000"
+                  />
+                </div>
+                
+                <button 
+                  onClick={handleStartDeal}
+                  className="bg-[#FF6A00] text-white font-black uppercase tracking-widest px-6 py-2.5 h-[42px] rounded-md hover:bg-[#e65f00] transition-colors shadow-sm flex items-center gap-2 shrink-0"
                 >
-                  <option value="flash-sales">Flash Sales</option>
-                  <option value="weekend-deals">Weekend Deals</option>
-                  <option value="clearance">Clearance Sale</option>
-                  <option value="student-deals">Student Deals</option>
-                  <option value="mega-sale">Mega Sale</option>
-                </select>
+                  <Plus className="w-4 h-4" /> Add
+                </button>
               </div>
-
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">End Date & Time</label>
-                <input 
-                  type="datetime-local" 
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full border border-slate-300 rounded-md px-4 py-2.5 outline-none focus:border-[#FF6A00] font-bold text-slate-700"
-                />
-              </div>
-
-              <button 
-                onClick={handleStartDeal}
-                className="bg-[#FF6A00] text-white font-black uppercase tracking-widest py-3.5 rounded-md mt-2 hover:bg-[#e65f00] transition-colors shadow-sm active:scale-[0.98]"
-              >
-                Activate Deal
-              </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* ========================================== */}
-      {/* 2. ACTIVE DEALS TABLE                      */}
+      {/* 3. ACTIVE DEALS TABLE                      */}
       {/* ========================================== */}
       <h2 className="text-sm font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
         <Clock className="w-4 h-4" /> Currently Active Deals ({activeDeals.length})
