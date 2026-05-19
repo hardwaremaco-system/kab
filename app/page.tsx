@@ -2,6 +2,10 @@ import ContinueBrowsing from "@/components/ContinueBrowsing";
 import Link from "next/link";
 import { getCachedHomepageData } from "@/lib/firebase/fetchers";
 
+// 🔥 1. Firebase imports for the active deals query
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+
 // VIP UI COMPONENTS
 import HeroCarousel from "@/components/HeroCarousel";
 import WhatsAppPopup from "@/components/WhatsAppPopup";
@@ -11,9 +15,11 @@ import ThemedCategoryGrid from "@/components/ThemedCategoryGrid";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import LeftSidebar from "@/components/LeftSidebar"; 
 
-// BANNERS
+// BANNERS & SCROLLERS
 import TimepieceBanner from "@/components/banners/TimepieceBanner";
 import ValuePropBanner from "@/components/banners/ValuePropBanner";
+// 🔥 2. Import the new Campaign Scroller
+import CampaignScroller from "@/components/CampaignScroller";
 
 const shuffleArray = (array: any[]) => {
   const shuffled = [...array];
@@ -31,7 +37,7 @@ export default async function Home() {
   const trendingProducts = data.trendingProducts || [];
   const officialProducts = data.officialProducts || [];
   const latestProducts = data.latestProducts || [];
-  
+
   // Admin-curated collections
   const featuredCollection = data.featuredCollection || [];
   const save4kProducts = data.save4kProducts || [];
@@ -39,12 +45,42 @@ export default async function Home() {
 
   const otherProducts = data.otherProducts || [];
 
+  // ==========================================
+  // 🔥 3. FETCH ACTIVE DEALS
+  // ==========================================
+  let activeDeals: any[] = [];
+  let earliestEndDate = "";
+
+  try {
+    const dealsQ = query(
+      collection(db, "products"), 
+      where("isSale", "==", true), 
+      limit(10)
+    );
+    const dealsSnap = await getDocs(dealsQ);
+
+    dealsSnap.docs.forEach(doc => {
+      const dealData = doc.data();
+      // Only show deals that haven't expired yet
+      if (new Date(dealData.saleEndDate).getTime() > Date.now()) {
+        activeDeals.push({ id: doc.id, ...dealData });
+
+        // Find the earliest end date to pass to the master countdown timer
+        if (!earliestEndDate || new Date(dealData.saleEndDate) < new Date(earliestEndDate)) {
+          earliestEndDate = dealData.saleEndDate;
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Failed to fetch deals for homepage:", error);
+  }
+
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-transparent pb-10 pt-2 sm:pt-4 font-sans selection:bg-[#FF6A00] selection:text-white">
         <WhatsAppPopup />
         <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4">
-          
+
           <div className="flex flex-col md:flex-row items-start gap-4 w-full">
 
             {/* ========================================== */}
@@ -69,7 +105,7 @@ export default async function Home() {
               {/* 🏆 THE "SEAMLESS STACK" DASHBOARD BLOCK     */}
               {/* ========================================== */}
               <div className="w-full flex flex-col shadow-sm mb-4 sm:mb-6">
-                
+
                 {/* 1. Value Prop Banner (Top of stack - White) */}
                 <ValuePropBanner />
 
@@ -82,8 +118,22 @@ export default async function Home() {
                 <div className="w-full bg-white dark:bg-[#151515] sm:rounded-b-xl border-x border-b border-slate-200 dark:border-slate-800 p-4 pt-5 sm:pt-6">
                   <ThemedCategoryGrid />
                 </div>
-                
+
               </div>
+
+              {/* ========================================== */}
+              {/* 🔥 4. INJECT THE CAMPAIGN SCROLLER HERE    */}
+              {/* ========================================== */}
+              {activeDeals.length > 0 && (
+                <div className="w-full mb-2">
+                  <CampaignScroller 
+                    title="Flash Sales" 
+                    endTime={earliestEndDate} 
+                    products={activeDeals} 
+                    campaignSlug="flash-sales" 
+                  />
+                </div>
+              )}
 
               {/* ========================================== */}
               {/* 🛍️ REST OF THE PRODUCT FEED                 */}
@@ -139,7 +189,7 @@ export default async function Home() {
                     viewAllLink="/products?sort=trending"
                   />
                 )}
-                
+
                 {/* Recently added */}
                 {latestProducts.length > 0 && (
                   <ProductSection 
