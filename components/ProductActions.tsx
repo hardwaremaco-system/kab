@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useCart } from "@/context/CartContext"; 
 import { Product } from "@/types";
 import { FaWhatsapp } from "react-icons/fa";
-// 🔥 Import the Send (paper plane) icon
-import { Send } from "lucide-react";
 
 export default function ProductActions({ product, children }: { product: Product, children?: React.ReactNode }) {
   const { user } = useAuth();
@@ -17,20 +15,36 @@ export default function ProductActions({ product, children }: { product: Product
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   
-  // NEW STATE FOR THE WHATSAPP INTERCEPTION POPUP
+  // WHATSAPP POPUP STATE
   const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(false);
   const [loadingWhatsApp, setLoadingWhatsApp] = useState(false);
   
   const [showMore, setShowMore] = useState(false);
   const [copied, setCopied] = useState(false);
+  
+  // STICKY MOBILE BAR STATE
+  const [showStickyBar, setShowStickyBar] = useState(false);
 
   const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
-
+  
+  // Check if price is 0
   const isNegotiable = Number(product.price) === 0;
 
-  // ==========================================
-  // 🛒 CART LOGIC
-  // ==========================================
+  // Track scrolling for the mobile sticky bar
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show sticky bar when user scrolls past 400px down the page
+      if (window.scrollY > 400) {
+        setShowStickyBar(true);
+      } else {
+        setShowStickyBar(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const handleAddToCart = () => {
     if (isNegotiable) {
       alert("This item's price is negotiable. Please use WhatsApp to contact the seller.");
@@ -50,9 +64,6 @@ export default function ProductActions({ product, children }: { product: Product
     alert("✅ Added to cart successfully!");
   };
 
-  // ==========================================
-  // 🚀 WHATSAPP LEAD CAPTURE & REDIRECT
-  // ==========================================
   const handleBotInquiry = async () => {
     setLoadingWhatsApp(true);
 
@@ -66,7 +77,7 @@ export default function ProductActions({ product, children }: { product: Product
       };
       const referralCode = getCookie("kabale_ref");
 
-      // We only generate the lead once they confirm on the popup!
+      // Generate lead ONLY when they click "Continue" in the popup
       const res = await fetch("/api/orders/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -99,7 +110,7 @@ export default function ProductActions({ product, children }: { product: Product
       window.open(`https://wa.me/${botPhoneNumber}?text=${encodeURIComponent(rawMessage)}`, "_blank");
     } finally {
       setLoadingWhatsApp(false);
-      setShowWhatsAppPopup(false); // Close the popup after redirecting
+      setShowWhatsAppPopup(false); 
     }
   };
 
@@ -130,16 +141,11 @@ export default function ProductActions({ product, children }: { product: Product
     }
   };
 
-  // 🔥 CUSTOM INLINE ICON COMPONENT
-  // This replicates the dark plane on a green circle look from your image.
-  const WhatsAppSendIcon = () => (
-    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#25D366] border border-green-600 align-sub ml-1 shadow-inner">
-      <Send className="w-3 h-3 text-black" strokeWidth={3} />
-    </span>
-  );
-
   return (
     <>
+      {/* ========================================== */}
+      {/* MAIN DESKTOP / TOP MOBILE BUTTONS          */}
+      {/* ========================================== */}
       <div className="mt-6 flex flex-col gap-4">
 
         {/* 1. QUANTITY & ADD TO CART (Hidden if Negotiable) */}
@@ -179,7 +185,7 @@ export default function ProductActions({ product, children }: { product: Product
           </div>
         )}
 
-        {/* 2. ASK OR ORDER ON WHATSAPP */}
+        {/* 2. ASK OR ORDER ON WHATSAPP (Opens Popup) */}
         <button 
           onClick={() => setShowWhatsAppPopup(true)}
           className={`w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-md shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] ${isNegotiable ? 'animate-pulse' : ''}`}
@@ -216,14 +222,37 @@ export default function ProductActions({ product, children }: { product: Product
       </div>
 
       {/* ========================================== */}
-      {/* 🛑 THE UX INTERCEPTION POPUP               */}
+      {/* 📱 MOBILE STICKY BOTTOM CHECKOUT BAR       */}
+      {/* ========================================== */}
+      <div 
+        className={`fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-[#151515] border-t border-slate-200 dark:border-slate-800 p-3 lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-transform duration-300 ease-in-out flex items-center gap-3 ${showStickyBar ? 'translate-y-0' : 'translate-y-[150%]'}`}
+      >
+        <div className="flex flex-col flex-grow min-w-0 px-1">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">
+            {product.name}
+          </span>
+          <span className={`text-sm font-black truncate ${isNegotiable ? 'text-[#FF6A00]' : 'text-slate-900 dark:text-white'}`}>
+            {isNegotiable ? "Negotiable" : `UGX ${Number(product.price).toLocaleString()}`}
+          </span>
+        </div>
+
+        <button 
+          onClick={() => setShowWhatsAppPopup(true)}
+          className="bg-[#25D366] text-white px-5 py-3 rounded-md font-bold text-xs shadow-sm whitespace-nowrap flex items-center gap-2 active:scale-95 transition-transform"
+        >
+          <FaWhatsapp className="text-sm" />
+          {isNegotiable ? "Negotiate" : "Order Now"}
+        </button>
+      </div>
+
+      {/* ========================================== */}
+      {/* 🛑 THE WHATSAPP INTERCEPTION POPUP         */}
       {/* ========================================== */}
       {showWhatsAppPopup && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
           <div className="bg-white dark:bg-[#151515] w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200 dark:border-slate-800">
             
             <div className="p-6 md:p-8">
-              {/* WhatsApp Icon Header */}
               <div className="w-14 h-14 rounded-full bg-green-50 dark:bg-green-500/10 flex items-center justify-center mb-5 mx-auto border border-green-100 dark:border-green-500/20">
                 <FaWhatsapp className="text-3xl text-[#25D366]" />
               </div>
@@ -232,12 +261,15 @@ export default function ProductActions({ product, children }: { product: Product
                 Complete Your Order
               </h3>
               
-              {/* 🔥 UPDATED: Added icon in brackets to the message text */}
+              {/* RAW SVG FOR THE PAPER PLANE TO PREVENT CRASHES */}
               <p className="text-[13px] text-slate-500 dark:text-slate-400 text-center mb-6 leading-relaxed">
-                When WhatsApp opens, tap <strong className="text-slate-800 dark:text-slate-200">SEND</strong> (looks like <WhatsAppSendIcon/> on mobile) to send the pre-filled message and confirm your order instantly.
+                When WhatsApp opens, tap <strong className="text-slate-800 dark:text-slate-200">SEND</strong> (looks like 
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#25D366] border border-green-600 align-sub ml-1 shadow-inner">
+                  <svg className="w-3 h-3 text-black ml-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                </span>
+                on mobile) to send the pre-filled message and confirm your order instantly.
               </p>
 
-              {/* Trust Indicators */}
               <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 mb-8 border border-slate-100 dark:border-slate-800">
                 <ul className="flex flex-col gap-3">
                   <li className="flex items-center gap-3 text-sm font-bold text-slate-700 dark:text-slate-300">
@@ -255,7 +287,6 @@ export default function ProductActions({ product, children }: { product: Product
                 </ul>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col gap-3">
                 <button
                   onClick={handleBotInquiry}
