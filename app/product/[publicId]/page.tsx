@@ -42,12 +42,13 @@ export async function generateMetadata({ params }: { params: { publicId: string 
   };
 }
 
-function getDailyRandomScore(id: string) {
-  const today = new Date().toISOString().split('T')[0];
-  const seedString = id + today; 
+// ==========================================
+// 🔥 STABLE SHUFFLE ALGORITHM (No Timezones)
+// ==========================================
+function getStableRandomScore(id: string) {
   let hash = 0;
-  for (let i = 0; i < seedString.length; i++) {
-    hash = (hash << 5) - hash + seedString.charCodeAt(i);
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash << 5) - hash + id.charCodeAt(i);
     hash |= 0; 
   }
   return Math.abs(hash); 
@@ -84,7 +85,6 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
     if (!isNaN(parsed)) safeStock = Math.max(0, parsed);
   }
 
-  // Trigger Low Stock warning if 5 or fewer items remain
   const isLowStock = safeStock > 0 && safeStock <= 5;
   const isSoldOut = safeStock <= 0 || product.status === "sold";
 
@@ -96,7 +96,8 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
 
   const relatedProducts = rawCategoryProducts
     .filter((p) => p.id !== product.id && p.publicId !== product.publicId)
-    .sort((a, b) => getDailyRandomScore(a.id) - getDailyRandomScore(b.id))
+    // 🔥 FIX: Using the stable score to prevent server/client array mismatch
+    .sort((a, b) => getStableRandomScore(a.id) - getStableRandomScore(b.id))
     .slice(0, 8) 
     .map((p) => ({
       ...p,
@@ -135,7 +136,6 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
       "url": `https://www.kabaleonline.com/product/${params.publicId}`,
       "priceCurrency": "UGX",
       "price": safePrice,
-      // 🔥 FIX: Hardcoded future date to completely prevent timezone hydration mismatch crashes
       "priceValidUntil": "2027-12-31",
       "availability": isSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
       "itemCondition": safeCondition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition",
@@ -149,9 +149,10 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
   return (
     <div className="py-8 w-full max-w-full overflow-x-hidden mx-auto px-4 sm:px-6 bg-white min-h-screen">
       
-      {/* INJECT JSON-LD FOR GOOGLE SEARCH RANKING */}
+      {/* JSON-LD FOR GOOGLE SEARCH RANKING */}
       <script
         type="application/ld+json"
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
