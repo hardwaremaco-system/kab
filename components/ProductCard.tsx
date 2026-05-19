@@ -6,7 +6,9 @@ import { optimizeImage } from "@/lib/utils";
 import { trackSelectItem } from "@/lib/analytics"; 
 
 export default function ProductCard({ product }: { product: any }) {
-  // 1. Helper Logic
+  // ==========================================
+  // 1. BASE LOGIC & DATE CHECK
+  // ==========================================
   const checkIsNew = (p: any) => {
     const pDate = p.createdAt?.seconds ? p.createdAt.seconds * 1000 : new Date(p.createdAt || 0).getTime();
     return pDate > 0 && (Date.now() - pDate) < (7 * 24 * 60 * 60 * 1000); 
@@ -16,21 +18,29 @@ export default function ProductCard({ product }: { product: any }) {
   const isJustPosted = checkIsNew(product);
   const isSold = product.status === "sold";
 
-  // Check if the price is 0 (Negotiable)
-  const isNegotiable = Number(product.price) === 0;
-
   const titleStr = product.title || product.name || 'Product';
-
-  // 2. Short Title Logic
   const isShortTitle = titleStr.length <= 32;
   const displayTitle = (!isSold && isShortTitle) 
     ? `${titleStr} (Free delivery available)` 
     : titleStr;
 
   // ==========================================
-  // 🔥 UPGRADED STOCK BAR LOGIC
+  // 2. PRICING & CAMPAIGN DEALS LOGIC
   // ==========================================
-  // 1. Check if we actually have stock data (prevents localStorage bugs)
+  const currentPrice = Number(product.price) || 0;
+  const originalPrice = Number(product.originalPrice) || 0;
+  
+  const isNegotiable = currentPrice === 0;
+  const isSale = product.isSale === true && !isNegotiable && originalPrice > currentPrice;
+  
+  const discountPercent = isSale 
+    ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) 
+    : 0;
+
+  // ==========================================
+  // 3. SAFE STOCK BAR LOGIC
+  // ==========================================
+  // Check if we actually have stock data (prevents localStorage/Recently Viewed bugs)
   const hasStockData = product.stock !== undefined && product.stock !== null && product.stock !== "";
   
   const rawStock = hasStockData ? Number(product.stock) : 0;
@@ -40,7 +50,7 @@ export default function ProductCard({ product }: { product: any }) {
   const maxStock = 10;
   const stockWidth = Math.min(100, (safeStock / maxStock) * 100);
 
-  // 2. Local Market Psychology: Adjusted color thresholds
+  // Local Market Psychology: Adjusted color thresholds
   let stockColorClass = "bg-green-500"; // 4 or more
   if (safeStock <= 3) stockColorClass = "bg-amber-500"; // 2 to 3
   if (safeStock === 1) stockColorClass = "bg-red-500"; // Exactly 1
@@ -57,7 +67,7 @@ export default function ProductCard({ product }: { product: any }) {
             trackSelectItem({
               id: product.id,
               name: titleStr, 
-              price: Number(product.price) || 0,
+              price: currentPrice,
               category: product.category || "electronics",
             });
           }
@@ -90,11 +100,18 @@ export default function ProductCard({ product }: { product: any }) {
             </div>
           )}
 
-          {/* New Arrival Badge */}
+          {/* New Arrival Badge (Top Left) */}
           {!isSold && isJustPosted && (
             <div className="absolute top-0 left-0 bg-slate-900/90 backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-bold px-2 py-1 rounded-br-lg flex items-center gap-1 z-10">
                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
                NEW
+            </div>
+          )}
+
+          {/* 🔥 Discount Badge (Top Right) */}
+          {!isSold && isSale && discountPercent > 0 && (
+            <div className="absolute top-2 right-2 bg-red-50 text-red-600 border border-red-200 text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded shadow-sm z-10">
+              -{discountPercent}%
             </div>
           )}
         </div>
@@ -117,7 +134,7 @@ export default function ProductCard({ product }: { product: any }) {
           {/* Wrapper to push bottom items to the bottom of the card */}
           <div className="mt-auto flex flex-col gap-3">
             
-            {/* 🔥 CONDITIONAL STOCK BAR: Only renders if real stock data exists */}
+            {/* CONDITIONAL STOCK BAR: Only renders if real stock data exists */}
             {!isSold && hasStockData && (
               <div className="flex flex-col gap-1.5 w-full">
                 <div className="w-full h-[5px] bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -134,13 +151,24 @@ export default function ProductCard({ product }: { product: any }) {
 
             {/* Price Line */}
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between">
-              <span className={`text-sm sm:text-base font-black ${isSold ? 'text-slate-400 line-through' : isNegotiable ? 'text-[#FF6A00]' : 'text-slate-900 dark:text-white group-hover:text-[#FF6A00]'} transition-colors`}>
-                {isNegotiable ? "Negotiable" : `UGX ${Number(product.price).toLocaleString()}`}
-              </span>
+              
+              {/* Stacked Prices */}
+              <div className="flex flex-col justify-center">
+                <span className={`text-sm sm:text-base font-black leading-none ${isSold ? 'text-slate-400 line-through' : isNegotiable ? 'text-[#FF6A00]' : 'text-slate-900 dark:text-white group-hover:text-[#FF6A00]'} transition-colors`}>
+                  {isNegotiable ? "Negotiable" : `UGX ${currentPrice.toLocaleString()}`}
+                </span>
+                
+                {/* Crossed-out original price (only shows if on sale) */}
+                {isSale && (
+                  <span className="text-[10px] font-bold text-slate-400 line-through mt-0.5">
+                    UGX {originalPrice.toLocaleString()}
+                  </span>
+                )}
+              </div>
 
               {/* View Button Icon */}
               {!isSold && (
-                <div className="w-6 h-6 rounded-full bg-orange-50 dark:bg-orange-500/10 text-[#FF6A00] flex items-center justify-center opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                <div className="w-6 h-6 shrink-0 rounded-full bg-orange-50 dark:bg-orange-500/10 text-[#FF6A00] flex items-center justify-center opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                 </div>
               )}
