@@ -1,14 +1,11 @@
-// 1. REMOVE force-dynamic
-// 2. ADD revalidate to cache this product page for 1 hour
-export const revalidate = 3600;
+export const revalidate = 60; 
 
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation"; 
 import { getProductByPublicId, getProducts } from "@/lib/firebase/firestore";
-// 🔥 Import updateDoc for the Lazy Revert
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 
 import ImageGallery from "@/components/ImageGallery";
@@ -17,68 +14,57 @@ import ProductTracker from "@/components/ProductTracker";
 import RecentlyViewedTracker from "@/components/RecentlyViewedTracker";
 import SaveProductButton from "@/components/SaveProductButton";
 import ProductReviews from "@/components/ProductReviews"; 
-import { optimizeImage, calculateDepositAmount } from "@/lib/utils"; 
+import { optimizeImage } from "@/lib/utils"; 
 import { MdVerifiedUser } from "react-icons/md";
-import { Zap } from "lucide-react"; // For the flash banner icon
+import { Zap } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: { publicId: string } }): Promise<Metadata> {
   const product = await getProductByPublicId(params.publicId);
-
   if (!product) return { title: "Item Not Found | Kabale Online" };
 
-  const safeName = product.name || "Unnamed Item";
+  // Bypass to ensure deal fields are fetched accurately for SEO tags
+  const productRef = doc(db, "products", product.id);
+  const rawSnap = await getDoc(productRef);
+  const rawData = rawSnap.exists() ? rawSnap.data() : {};
 
-  // 🔥 FIXED TYPESCRIPT ERROR: Cast to any to access new deal fields safely
-  const pAny = product as any;
-  const currentPrice = pAny.isSale && pAny.saleEndDate && new Date(pAny.saleEndDate).getTime() > Date.now() 
+  let saleEndDateMs = 0;
+  if (rawData.saleEndDate) {
+    saleEndDateMs = typeof rawData.saleEndDate === 'object' && rawData.saleEndDate.seconds 
+      ? rawData.saleEndDate.seconds * 1000 
+      : new Date(rawData.saleEndDate).getTime();
+  }
+
+  const safeName = product.name || "Unnamed Item";
+  
+  const currentPrice = rawData.isSale === true && saleEndDateMs > Date.now() 
     ? Number(product.price) 
-    : (Number(pAny.originalPrice) || Number(product.price));
+    : (Number(rawData.originalPrice) || Number(product.price));
 
   const formattedPrice = currentPrice === 0 ? "Negotiable" : `UGX ${(currentPrice || 0).toLocaleString()}`;
-
   const title = `${safeName} - Available in Kabale | ${formattedPrice}`;
   const description = product.description?.slice(0, 150) || `Buy this ${safeName} for ${formattedPrice}. Pay strictly Cash on Delivery in Kabale town.`;
-
   const imageUrl = product.images?.[0] || "https://www.kabaleonline.com/og-image.jpg";
 
   return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      url: `https://www.kabaleonline.com/product/${params.publicId}`,
-      siteName: "Kabale Online",
-      images: [{ url: imageUrl, width: 1200, height: 630, alt: safeName }],
-      type: "website",
-    },
+    title, description,
+    openGraph: { title, description, url: `https://www.kabaleonline.com/product/${params.publicId}`, siteName: "Kabale Online", images: [{ url: imageUrl, width: 1200, height: 630, alt: safeName }], type: "website" },
     twitter: { card: "summary_large_image", title, description, images: [imageUrl] },
   };
 }
 
-// ==========================================
-// THE DAILY SHUFFLE ALGORITHM
-// ==========================================
 function getDailyRandomScore(id: string) {
   const today = new Date().toISOString().split('T')[0];
   const seedString = id + today; 
   let hash = 0;
-  for (let i = 0; i < seedString.length; i++) {
-    hash = (hash << 5) - hash + seedString.charCodeAt(i);
-    hash |= 0; 
-  }
+  for (let i = 0; i < seedString.length; i++) { hash = (hash << 5) - hash + seedString.charCodeAt(i); hash |= 0; }
   return hash;
 }
 
-// ==========================================
-// HELPER: CHECK IF ITEM IS NEW (< 7 DAYS)
-// ==========================================
 const checkIsNew = (p: any) => {
   const pDate = p.createdAt?.seconds ? p.createdAt.seconds * 1000 : new Date(p.createdAt || 0).getTime();
   return pDate > 0 && (Date.now() - pDate) < (7 * 24 * 60 * 60 * 1000); 
 };
 
-// Map slug terms to elegant UI headers
 const campaignDisplayNames: Record<string, string> = {
   "flash-sales": "Flash Sale",
   "weekend-deals": "Weekend Deal",
@@ -91,292 +77,206 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
   const product = await getProductByPublicId(params.publicId);
 
   if (!product) notFound();
-
-  if (product.category === "services") {
-    redirect(`/service/${product.id}`); 
-  }
+  if (product.category === "services") redirect(`/service/${product.id}`); 
 
   const safeName = product.name || "Unnamed Item";
-
+  
   // ==========================================
-  // 🧹 THE "LAZY REVERT" SECURITY SYSTEM
+  // 🔥 DEAL LOGIC (Using Raw DB Bypass)
   // ==========================================
-  const pAny = product as any;
+  const productRef = doc(db, "products", product.id);
+  const rawSnap = await getDoc(productRef);
+  const rawData = rawSnap.exists() ? rawSnap.data() : {};
 
-  let safePrice = Number(product.price) || 0;
-  let originalPrice = Number(pAny.originalPrice) || 0;
+  let saleEndDateMs = 0;
+  if (rawData.saleEndDate) {
+    saleEndDateMs = typeof rawData.saleEndDate === 'object' && rawData.saleEndDate.seconds 
+      ? rawData.saleEndDate.seconds * 1000 
+      : new Date(rawData.saleEndDate).getTime();
+  }
+
   const now = Date.now();
-  
-  // Robust Date Parsing
-  const endDateObj = pAny.saleEndDate ? new Date(pAny.saleEndDate) : new Date(0);
-  const saleEndDate = endDateObj.getTime();
-  
-  let isSale = pAny.isSale === true && saleEndDate > now;
+  let isSale = rawData.isSale === true && saleEndDateMs > now;
+  let safePrice = Number(product.price) || 0;
+  let originalPrice = Number(rawData.originalPrice) || 0;
+  let campaignType = rawData.campaignType || "";
 
-  if (pAny.isSale === true && saleEndDate > 0 && saleEndDate <= now) {
-    // DEAL EXPIRED! Intercept it immediately.
+  // Lazy Revert Security Check
+  if (rawData.isSale === true && saleEndDateMs > 0 && saleEndDateMs <= now) {
     isSale = false;
-    safePrice = originalPrice > 0 ? originalPrice : safePrice; // Restore UI price
+    safePrice = originalPrice > 0 ? originalPrice : safePrice;
 
     try {
-      // Silently clean up Firebase in the background
-      const docRef = doc(db, "products", product.id);
-      updateDoc(docRef, {
-        price: safePrice,
-        originalPrice: null,
-        isSale: false,
-        campaignType: null,
-        saleEndDate: null
-      });
-      console.log(`🧹 Lazy Revert: Cleaned up expired deal on product page for ${product.id}`);
-    } catch (error) {
-      console.error("Failed to lazy revert product:", error);
-    }
+      updateDoc(productRef, { price: safePrice, originalPrice: null, isSale: false, campaignType: null, saleEndDate: null });
+    } catch (error) { console.error("Failed to lazy revert product:", error); }
   }
 
   const isNegotiable = safePrice === 0;
+  const discountPercent = isSale && originalPrice > safePrice 
+    ? Math.round(((originalPrice - safePrice) / originalPrice) * 100) 
+    : 0;
 
   const safeCondition = product.condition || "used";
   const safeCategory = product.category || "general";
-
+  const pAny = product as any;
   const isMainProductNew = checkIsNew(product);
   const isMainApproved = pAny.isApprovedQuality;
   const isMainOfficial = pAny.isOfficialStore || pAny.isAdminUpload;
-
+  
   let safeStock = 1;
   if (product.stock !== undefined && product.stock !== null) {
     const parsed = Number(product.stock);
-    if (!isNaN(parsed)) {
-      safeStock = parsed;
-    }
+    if (!isNaN(parsed)) safeStock = parsed;
   }
 
   const isLowStock = safeStock > 0 && safeStock <= 5;
   const isSoldOut = safeStock <= 0 || product.status === "sold";
-
   const sellerNameStr = String(product.sellerName || "").toLowerCase();
   const isAdmin = sellerNameStr.includes('admin') || sellerNameStr.includes('kabale online') || sellerNameStr.includes('official');
 
   const optimizedImages = product.images?.map((img: string) => optimizeImage(img)) || [];
-
   const rawCategoryProducts = await getProducts(safeCategory, 12);
-
   const relatedProducts = rawCategoryProducts
     .filter((p) => p.id !== product.id && p.publicId !== product.publicId)
     .sort((a, b) => getDailyRandomScore(a.id) - getDailyRandomScore(b.id))
     .slice(0, 8) 
-    .map((p) => ({
-      ...p,
-      images: p.images?.map((img: string) => optimizeImage(img)) || []
-    }));
+    .map((p) => ({ ...p, images: p.images?.map((img: string) => optimizeImage(img)) || [] }));
 
   const renderDescription = (desc?: string) => {
     if (!desc) return <p className="text-[#6B6B6B] text-sm">No description provided by the seller.</p>;
-
-    const lines = desc.split('\n').filter(line => line.trim() !== '');
-
     return (
       <ul className="space-y-2">
-        {lines.map((line, idx) => {
-          const cleanLine = line.replace(/^[-*•]\s*/, '').trim();
-          return (
-            <li key={idx} className="text-[#6B6B6B] text-sm leading-relaxed flex items-start gap-2">
-              <span className="text-slate-400 mt-[2px]">•</span>
-              <span>{cleanLine}</span>
-            </li>
-          );
-        })}
+        {desc.split('\n').filter(line => line.trim() !== '').map((line, idx) => (
+          <li key={idx} className="text-[#6B6B6B] text-sm leading-relaxed flex items-start gap-2">
+            <span className="text-slate-400 mt-[2px]">•</span><span>{line.replace(/^[-*•]\s*/, '').trim()}</span>
+          </li>
+        ))}
       </ul>
     );
   };
 
-  // ==========================================
-  // 🚀 SEO JSON-LD STRUCTURED DATA
-  // ==========================================
   const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": safeName,
-    "image": optimizedImages[0] || "",
+    "@context": "https://schema.org", "@type": "Product", "name": safeName, "image": optimizedImages[0] || "",
     "description": product.description || `Buy ${safeName} safely in Kabale.`,
-    "offers": {
-      "@type": "Offer",
-      "url": `https://www.kabaleonline.com/product/${params.publicId}`,
-      "priceCurrency": "UGX",
-      "price": safePrice,
-      "availability": isSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
-      "itemCondition": safeCondition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition",
-      "seller": {
-        "@type": "Organization",
-        "name": product.sellerName || "Kabale Online"
-      }
-    }
+    "offers": { "@type": "Offer", "url": `https://www.kabaleonline.com/product/${params.publicId}`, "priceCurrency": "UGX", "price": safePrice, "availability": isSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock", "itemCondition": safeCondition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition", "seller": { "@type": "Organization", "name": product.sellerName || "Kabale Online" } }
   };
 
-  // Format the deal title nicely for the UI
-  const campaignTitle = pAny.campaignType 
-    ? (campaignDisplayNames[pAny.campaignType] || pAny.campaignType.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())) 
+  const campaignTitle = campaignType 
+    ? (campaignDisplayNames[campaignType] || campaignType.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())) 
     : "Special Deal";
 
   return (
-    <div className="py-8 w-full max-w-full overflow-x-hidden mx-auto px-4 sm:px-6 bg-white min-h-screen">
-
-      {/* INJECT JSON-LD FOR GOOGLE SEARCH RANKING */}
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
+    <div className="py-8 w-full max-w-full overflow-x-hidden mx-auto px-4 sm:px-6 bg-white min-h-screen font-sans">
+      <script type="application/ld+json" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ProductTracker product={product} />
       <RecentlyViewedTracker product={product} />   
 
-      {/* BREADCRUMBS */}  
+      {/* BREADCRUMBS */}
       <div className="mb-6 flex items-center text-sm text-[#6B6B6B] font-medium overflow-x-auto whitespace-nowrap scrollbar-hide">  
-        <Link href="/" className="hover:text-[#FF6A00] transition-colors">Home</Link>  
-        <span className="mx-2">/</span>  
-        <Link href={`/category/${safeCategory}`} className="hover:text-[#FF6A00] transition-colors capitalize">  
-          {safeCategory.replace(/_/g, ' ')}  
-        </Link>  
-        <span className="mx-2">/</span>  
+        <Link href="/" className="hover:text-[#FF6A00] transition-colors">Home</Link><span className="mx-2">/</span>  
+        <Link href={`/category/${safeCategory}`} className="hover:text-[#FF6A00] transition-colors capitalize">{safeCategory.replace(/_/g, ' ')}</Link><span className="mx-2">/</span>  
         <span className="text-[#1A1A1A] truncate max-w-[200px]">{safeName}</span>  
       </div>  
 
-      {/* 🔥 TOP STICKY FLASH BANNER */}
+      {/* TOP FLASH BANNER */}
       {isSale && (
         <div className="w-full bg-gradient-to-r from-[#FF6A00] to-[#e65f00] rounded-xl px-5 py-3.5 text-white flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 shadow-sm animate-in fade-in slide-in-from-top-4">
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 fill-white animate-pulse" />
-            <span className="text-sm font-black uppercase tracking-wider">
-              LIMITED TIME {campaignTitle.toUpperCase()}!
-            </span>
+            <span className="text-sm font-black uppercase tracking-wider">LIMITED TIME {campaignTitle.toUpperCase()}!</span>
           </div>
-          <div className="text-xs sm:text-sm font-black bg-black/10 px-4 py-1.5 rounded-md backdrop-blur-sm tracking-wide">
-            Don't miss out on this price drop in Kabale!
-          </div>
+          <div className="text-xs sm:text-sm font-black bg-black/10 px-4 py-1.5 rounded-md backdrop-blur-sm tracking-wide">Don't miss out on this price drop in Kabale!</div>
         </div>
       )}
 
-      {/* MODERN E-COMMERCE LAYOUT */}
+      {/* MAIN E-COMMERCE LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">  
-
-        {/* LEFT COLUMN: Image Gallery */}  
+        
+        {/* LEFT: IMAGE GALLERY */}
         <div className="w-full flex flex-col lg:sticky lg:top-24 h-fit">  
           <ImageGallery images={optimizedImages} title={safeName} />  
-          <p className="text-[11px] text-slate-400 mt-4 text-center italic">  
-            * Note: Actual color variations may occur due to lighting or screen settings.  
-          </p>  
+          <p className="text-[11px] text-slate-400 mt-4 text-center italic">* Note: Actual color variations may occur due to lighting or screen settings.</p>  
         </div>  
 
-        {/* RIGHT COLUMN: Product Details */}  
+        {/* RIGHT: DETAILS, PRICING & CTA */}
         <div className="flex flex-col overflow-hidden">  
-
-          {/* 🔥 DYNAMIC CAMPAIGN LINK BADGE */}
-          {isSale && pAny.campaignType && (
-            <div className="mb-3 animate-in fade-in slide-in-from-bottom-2">
-               <Link 
-                 href={`/deals?campaign=${pAny.campaignType}`}
-                 className="bg-red-50 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white transition-colors text-[10px] sm:text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-sm flex items-center w-fit gap-2"
-               >
-                 <span className="animate-pulse">🔥</span> {campaignTitle}
-               </Link>
+          
+          {/* 🔥 TOP ROW: Campaign Badge, Discount & Clean Scarcity Text */}
+          <div className="flex items-center justify-between mb-4 w-full">
+            <div className="flex items-center gap-2">
+              {isSale && campaignType && (
+                <span className="font-black uppercase tracking-wider text-[11px] sm:text-xs text-slate-700 bg-slate-100 px-2 py-1 rounded">
+                  {campaignTitle}
+                </span>
+              )}
+              {isSale && discountPercent > 0 && (
+                <span className="bg-red-50 text-red-600 border border-red-100 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-sm">
+                  -{discountPercent}%
+                </span>
+              )}
             </div>
-          )}
 
-          {/* TITLE */}
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 leading-tight mb-4">  
+            {!isSoldOut && isLowStock && !isNegotiable && (
+              <span className="text-[#FF6A00] text-[11px] sm:text-xs font-semibold lowercase tracking-wide">
+                only {safeStock} left
+              </span>
+            )}
+          </div>
+
+          {/* 🔥 TITLE: Big, Bold, Gray */}
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-500 leading-tight mb-5">  
             {safeName}
           </h1>  
 
-          {/* REAL SCARCITY TRIGGER: LOW STOCK WARNING */}
-          {!isSoldOut && isLowStock && !isNegotiable && (
-            <div className="mb-4 flex items-center gap-2 text-[#FF6A00] bg-orange-50 px-3 py-2.5 rounded-md w-fit border border-[#FF6A00]/20 shadow-sm">
-              <span className="animate-bounce">⚠️</span>
-              <span className="text-xs font-black uppercase tracking-wider">Only {safeStock} left in stock - order soon!</span>
-            </div>
-          )}
+          {/* 🔥 PRICING STACK: Small gray old price (red cross), massive dark gray new price */}
+          <div className="flex flex-col mb-6">
+            {isSale && originalPrice > 0 && (
+              <span className="text-sm font-medium text-slate-400 line-through decoration-red-400 decoration-[1.5px] mb-1">
+                UGX {originalPrice.toLocaleString()}
+              </span>
+            )}
+            <span className={`font-black tracking-tight leading-none ${isNegotiable ? 'text-3xl text-slate-600' : 'text-4xl text-slate-800'}`}>
+              {isNegotiable ? "Price Negotiable" : `UGX ${safePrice.toLocaleString()}`}
+            </span>
+          </div>
 
-          {/* MAIN PRICING & CALL TO ACTIONS (HYBRID) */}
+          {/* 🔥 CTA ACTIONS: Quantity, Add to Cart, WhatsApp */}
           <div className={`mb-8 ${isSoldOut ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
-            {/* 🔥 Pass the corrected price down to ProductActions so cart is accurate. ProductActions renders the price UI now! */}
-            <ProductActions product={{...product, price: safePrice, images: optimizedImages}}>
-                <div className="flex flex-col gap-3 mt-2 w-full">
-                  <SaveProductButton product={product} />
-                </div>
+            <ProductActions product={{ ...product, price: safePrice, images: optimizedImages }}>
+                <div className="flex flex-col gap-3 mt-2 w-full"><SaveProductButton product={product} /></div>
             </ProductActions>
           </div> 
 
-          {/* NATIVE HTML ACCORDIONS (SEO FRIENDLY) */}
+          {/* ACCORDIONS: Description & Info */}
           <div className="border border-slate-200 rounded-xl overflow-hidden mt-auto mb-10 bg-white shadow-sm divide-y divide-slate-200">
-
             <details className="group" open>
-              <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-4 text-green-700 bg-slate-50 hover:bg-slate-100 transition-colors text-sm">
-                Description
-                <span className="transition group-open:rotate-180">
-                  <svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
-                </span>
-              </summary>
-              <div className="p-4 text-[#6B6B6B] bg-white break-words overflow-hidden">
-                {renderDescription(product.description)}
-              </div>
+              <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-4 text-green-700 bg-slate-50 hover:bg-slate-100 transition-colors text-sm">Description<span className="transition group-open:rotate-180"><svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg></span></summary>
+              <div className="p-4 text-[#6B6B6B] bg-white break-words overflow-hidden">{renderDescription(product.description)}</div>
             </details>
-
             <details className="group" open>
-              <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-4 text-[#1A1A1A] hover:bg-slate-50 transition-colors text-sm">
-                Additional Information
-                <span className="transition group-open:rotate-180">
-                  <svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
-                </span>
-              </summary>
+              <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-4 text-[#1A1A1A] hover:bg-slate-50 transition-colors text-sm">Additional Information<span className="transition group-open:rotate-180"><svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg></span></summary>
               <div className="p-0 bg-white overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <tbody className="divide-y divide-slate-100">
-                    <tr>
-                      <th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Condition</th>
-                      <td className="px-4 py-3 text-[#1A1A1A] capitalize">{safeCondition}</td>
-                    </tr>
-                    <tr>
-                      <th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Location</th>
-                      <td className="px-4 py-3 text-[#1A1A1A]">Available locally in Kabale</td>
-                    </tr>
-                    <tr>
-                      <th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Sold By</th>
-                      <td className="px-4 py-3 text-[#1A1A1A] font-bold flex items-center gap-2">
-                        {product.sellerName || "Verified Seller"} 
-                        {isAdmin && <span className="text-blue-600"><MdVerifiedUser /></span>}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <table className="w-full text-sm text-left"><tbody className="divide-y divide-slate-100">
+                    <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Condition</th><td className="px-4 py-3 text-[#1A1A1A] capitalize">{safeCondition}</td></tr>
+                    <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Location</th><td className="px-4 py-3 text-[#1A1A1A]">Available locally in Kabale</td></tr>
+                    <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Sold By</th><td className="px-4 py-3 text-[#1A1A1A] font-bold flex items-center gap-2">{product.sellerName || "Verified Seller"} {isAdmin && <span className="text-blue-600"><MdVerifiedUser /></span>}</td></tr>
+                </tbody></table>
               </div>
             </details>
-
             <details className="group" id="reviews">
-              <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-4 text-[#1A1A1A] hover:bg-slate-50 transition-colors text-sm">
-                Customer Reviews
-                <span className="transition group-open:rotate-180">
-                  <svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
-                </span>
-              </summary>
+              <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-4 text-[#1A1A1A] hover:bg-slate-50 transition-colors text-sm">Customer Reviews<span className="transition group-open:rotate-180"><svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg></span></summary>
               <div className="p-4 bg-white overflow-hidden">
                 <ProductReviews productId={product.id} />
               </div>
             </details>
-
           </div>
-
         </div>  
       </div>  
 
-      {/* ========================================== */}  
-      {/* HORIZONTALLY SCROLLABLE RELATED PRODUCTS   */}  
-      {/* ========================================== */}  
+      {/* RELATED PRODUCTS */}
       {relatedProducts.length > 0 && (  
         <div className="mt-16 mb-8 pt-10 border-t border-slate-200">  
-          <div className="flex items-center justify-between mb-8">  
-            <h2 className="text-2xl font-black text-[#1A1A1A] uppercase tracking-tight">You Might Also Like</h2>  
-          </div>  
-
+          <div className="flex items-center justify-between mb-8"><h2 className="text-2xl font-black text-[#1A1A1A] uppercase tracking-tight">You Might Also Like</h2></div>  
           <div className="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory scrollbar-hide">  
             {relatedProducts.map((relProduct) => {
               const relAny = relProduct as any; 
@@ -385,116 +285,48 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
               const isRelApproved = relAny.isApprovedQuality;
               const isRelOfficial = relAny.isOfficialStore || relAny.isAdminUpload;
               
-              // Apply Lazy Revert Logic for Related Items too to avoid fake pricing
               let relPrice = Number(relProduct.price) || 0;
               let relOrigPrice = Number(relAny.originalPrice) || 0;
-              let relEndDateObj = relAny.saleEndDate ? new Date(relAny.saleEndDate) : new Date(0);
-              let relEndDate = relEndDateObj.getTime();
-              
-              let relIsSale = relAny.isSale === true && relEndDate > now;
-
-              if (relAny.isSale === true && relEndDate > 0 && relEndDate <= now) {
-                relIsSale = false;
-                relPrice = relOrigPrice > 0 ? relOrigPrice : relPrice;
-              }
-
+              let relEndDateMs = relAny.saleEndDate ? (typeof relAny.saleEndDate === 'object' && relAny.saleEndDate.seconds ? relAny.saleEndDate.seconds * 1000 : new Date(relAny.saleEndDate).getTime()) : 0;
+              let relIsSale = relAny.isSale === true && relEndDateMs > now;
+              if (relAny.isSale === true && relEndDateMs > 0 && relEndDateMs <= now) { relIsSale = false; relPrice = relOrigPrice > 0 ? relOrigPrice : relPrice; }
               const isRelNegotiable = relPrice === 0;
-              const relDiscount = relIsSale && relOrigPrice > relPrice 
-                ? Math.round(((relOrigPrice - relPrice) / relOrigPrice) * 100) : 0;
+              const relDiscount = relIsSale && relOrigPrice > relPrice ? Math.round(((relOrigPrice - relPrice) / relOrigPrice) * 100) : 0;
 
               return (
-                <Link   
-                  key={relProduct.id}   
-                  href={`/product/${relProduct.publicId || relProduct.id}`}   
-                  className={`flex-none w-[150px] sm:w-[190px] snap-start bg-white rounded-md border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-all relative ${isRelSold ? 'opacity-80 grayscale-[20%]' : ''}`}  
-                >  
+                <Link key={relProduct.id} href={`/product/${relProduct.publicId || relProduct.id}`} className={`flex-none w-[150px] sm:w-[190px] snap-start bg-white rounded-md border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-all relative ${isRelSold ? 'opacity-80 grayscale-[20%]' : ''}`}>  
                   <div className="aspect-square relative bg-slate-50 overflow-hidden border-b border-slate-100">  
-                    {relProduct.images?.[0] ? (  
-                      <Image   
-                        src={relProduct.images[0]}   
-                        alt={relProduct.name}  
-                        fill   
-                        sizes="(max-width: 768px) 150px, 190px"  
-                        className="object-cover transition-transform duration-500 hover:scale-105"  
-                      />  
-                    ) : (  
-                      <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-slate-400 uppercase">No Image</div>  
-                    )}  
-
-                    {isRelSold && (
-                      <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/40 backdrop-blur-[2px]">
-                         <span className="bg-slate-900 text-white text-[10px] sm:text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-lg transform -rotate-6">
-                           Sold Out
-                         </span>
-                      </div>
-                    )}
-
-                    {!isRelSold && isRelNew && (
-                      <div className="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-sm flex items-center gap-1 z-10">
-                         <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                         New
-                      </div>
-                    )}
-
-                    {!isRelSold && relIsSale && relDiscount > 0 && (
-                      <div className="absolute top-2 right-2 bg-red-50 text-red-600 border border-red-200 text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm z-10">
-                        -{relDiscount}%
-                      </div>
-                    )}
-
-                    {!isRelSold && (isRelApproved || isRelOfficial) && (
-                      <div className={`absolute bottom-0 left-0 ${isRelApproved ? 'bg-emerald-600' : 'bg-[#FF6A00]'} text-white text-[8px] font-bold px-1.5 py-1 leading-none rounded-tr-sm z-10 tracking-widest uppercase shadow-sm`}>
-                         {isRelApproved ? 'Approved Quality' : 'Official Product'}
-                      </div>
-                    )}
+                    {relProduct.images?.[0] ? <Image src={relProduct.images[0]} alt={relProduct.name} fill sizes="(max-width: 768px) 150px, 190px" className="object-cover transition-transform duration-500 hover:scale-105" /> : <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-slate-400 uppercase">No Image</div>}  
+                    {isRelSold && <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/40 backdrop-blur-[2px]"><span className="bg-slate-900 text-white text-[10px] sm:text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-lg transform -rotate-6">Sold Out</span></div>}
+                    {!isRelSold && isRelNew && <div className="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-sm flex items-center gap-1 z-10"><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>New</div>}
+                    {!isRelSold && relIsSale && relDiscount > 0 && <div className="absolute top-2 right-2 bg-red-50 text-red-600 border border-red-200 text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm z-10">-{relDiscount}%</div>}
+                    {!isRelSold && (isRelApproved || isRelOfficial) && <div className={`absolute bottom-0 left-0 ${isRelApproved ? 'bg-emerald-600' : 'bg-[#FF6A00]'} text-white text-[8px] font-bold px-1.5 py-1 leading-none rounded-tr-sm z-10 tracking-widest uppercase shadow-sm`}>{isRelApproved ? 'Approved Quality' : 'Official Product'}</div>}
                   </div>  
-
                   <div className="p-3 flex flex-col flex-grow">  
-                    <h3 className="text-xs sm:text-sm font-medium text-[#6B6B6B] line-clamp-2 leading-snug mb-1">  
-                      {relProduct.name}  
-                    </h3>  
+                    <h3 className="text-xs sm:text-sm font-medium text-[#6B6B6B] line-clamp-2 leading-snug mb-1">{relProduct.name}</h3>  
                     <div className="mt-auto pt-1 flex flex-col">  
-                      <span className={`text-sm sm:text-base font-black ${isRelSold ? 'text-slate-500' : isRelNegotiable ? 'text-[#FF6A00]' : 'text-[#1A1A1A]'}`}>
-                        {isRelNegotiable ? "Negotiable" : `UGX ${relPrice.toLocaleString()}`}
-                      </span>  
-                      {relIsSale && relOrigPrice > 0 && (
-                        <span className="text-[9px] font-bold text-slate-400 line-through mt-0.5">
-                          UGX {relOrigPrice.toLocaleString()}
-                        </span>
-                      )}
+                      <span className={`text-sm sm:text-base font-black ${isRelSold ? 'text-slate-500' : isRelNegotiable ? 'text-[#FF6A00]' : 'text-[#1A1A1A]'}`}>{isRelNegotiable ? "Negotiable" : `UGX ${relPrice.toLocaleString()}`}</span>  
+                      {relIsSale && relOrigPrice > 0 && <span className="text-[9px] font-bold text-slate-400 line-through mt-0.5">UGX {relOrigPrice.toLocaleString()}</span>}
                     </div>  
                   </div>  
                 </Link>  
               )
             })}  
-
-            <Link 
-              href={`/category/${safeCategory}`} 
-              className="flex-none w-[150px] sm:w-[190px] snap-start bg-slate-50 rounded-md border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-500 p-4 hover:border-[#FF6A00] hover:text-[#FF6A00] transition-colors group"
-            >
+            <Link href={`/category/${safeCategory}`} className="flex-none w-[150px] sm:w-[190px] snap-start bg-slate-50 rounded-md border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-500 p-4 hover:border-[#FF6A00] hover:text-[#FF6A00] transition-colors group">
               <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center mb-3 transition-transform group-hover:scale-110">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
               </div>
-              <span className="text-sm font-black text-center uppercase tracking-wider">
-                View All
-              </span>
+              <span className="text-sm font-black text-center uppercase tracking-wider">View All</span>
             </Link>
           </div>  
         </div>  
       )}  
 
       <div className="mt-8 mb-12 border-t border-slate-200 pt-8 text-center px-4">
-        <p className="text-[#6B6B6B] text-sm font-medium">
-          Got something to sell?{' '}
-          <Link 
-            href="/sell" 
-            className="text-[#FF6A00] font-bold underline decoration-2 underline-offset-4"
-          >
-            Start selling on Kabale Online
-          </Link>
+        <p className="text-[#6B6B6B] text-sm font-medium">Got something to sell?{' '}
+          <Link href="/sell" className="text-[#FF6A00] font-bold underline decoration-2 underline-offset-4">Start selling on Kabale Online</Link>
         </p>
       </div>
-
     </div>
   );
 }
