@@ -14,26 +14,40 @@ export default function ProductActions({ product, children }: { product: Product
 
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
-  
+
   // WHATSAPP POPUP STATE
   const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(false);
   const [loadingWhatsApp, setLoadingWhatsApp] = useState(false);
-  
+
   const [showMore, setShowMore] = useState(false);
   const [copied, setCopied] = useState(false);
-  
+
   // STICKY MOBILE BAR STATE
   const [showStickyBar, setShowStickyBar] = useState(false);
 
   const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
+
+  // ==========================================
+  // 🔥 DEAL LOGIC & SECURITY CHECK
+  // ==========================================
+  const pAny = product as any;
+  const now = Date.now();
+  const saleEndDate = pAny.saleEndDate ? new Date(pAny.saleEndDate).getTime() : 0;
   
-  // Check if price is 0
-  const isNegotiable = Number(product.price) === 0;
+  // Only true if the deal flag is on AND the timer hasn't hit zero
+  const isSale = pAny.isSale === true && saleEndDate > now;
+  
+  const originalPrice = Number(pAny.originalPrice) || 0;
+  const currentPrice = Number(product.price) || 0;
+  const isNegotiable = currentPrice === 0;
+
+  const discountPercent = isSale && originalPrice > currentPrice 
+    ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) 
+    : 0;
 
   // Track scrolling for the mobile sticky bar
   useEffect(() => {
     const handleScroll = () => {
-      // Show sticky bar when user scrolls past 400px down the page
       if (window.scrollY > 400) {
         setShowStickyBar(true);
       } else {
@@ -54,7 +68,7 @@ export default function ProductActions({ product, children }: { product: Product
     addToCart({
       id: product.id,
       title: product.name || "Unknown Item", 
-      price: Number(product.price),
+      price: currentPrice, // 🔥 Ensures cart uses the exact current/sale price
       image: product.images?.[0] || "",
       quantity: quantity,
       sellerId: product.sellerId || "SYSTEM", 
@@ -77,7 +91,6 @@ export default function ProductActions({ product, children }: { product: Product
       };
       const referralCode = getCookie("kabale_ref");
 
-      // Generate lead ONLY when they click "Continue" in the popup
       const res = await fetch("/api/orders/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -86,7 +99,7 @@ export default function ProductActions({ product, children }: { product: Product
           productName: product.name, 
           sellerId: product.sellerId,
           sellerPhone: product.sellerPhone,
-          price: product.price,
+          price: currentPrice,
           referralCodeUsed: referralCode || null 
         }),
       });
@@ -98,7 +111,7 @@ export default function ProductActions({ product, children }: { product: Product
         referenceCode = data.leadId; 
       }
 
-      const priceText = isNegotiable ? "Price: Negotiable" : `Price: UGX ${Number(product.price).toLocaleString()}`;
+      const priceText = isNegotiable ? "Price: Negotiable" : `Price: UGX ${currentPrice.toLocaleString()}`;
       const rawMessage = `Hi! I want to order or ask about this item on Kabale Online:\n\n*${product.name}*\n${priceText}\n\nRef: [${referenceCode}]`;
       const encodedMessage = encodeURIComponent(rawMessage);
 
@@ -144,9 +157,32 @@ export default function ProductActions({ product, children }: { product: Product
   return (
     <>
       {/* ========================================== */}
+      {/* 🔥 THE PRICING UI BLOCK                    */}
+      {/* ========================================== */}
+      <div className="mb-6 p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center justify-between gap-4">  
+        <div className="flex flex-col">
+          {isSale && originalPrice > 0 && (
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+              Regular Price: <span className="line-through">UGX {originalPrice.toLocaleString()}</span>
+            </span>
+          )}
+          <span className={`font-black tracking-tight leading-none ${isNegotiable ? 'text-2xl sm:text-3xl text-[#FF6A00]' : 'text-3xl sm:text-4xl text-slate-900'}`}>  
+            {isNegotiable ? "Price Negotiable" : `UGX ${currentPrice.toLocaleString()}`}
+          </span>  
+        </div>
+
+        {isSale && discountPercent > 0 && (
+          <div className="bg-red-600 text-white px-3 py-2 rounded-lg flex flex-col items-center justify-center shadow-md">
+            <span className="text-xs font-black leading-none uppercase">Save</span>
+            <span className="text-lg font-black leading-none mt-0.5">-{discountPercent}%</span>
+          </div>
+        )}
+      </div>
+
+      {/* ========================================== */}
       {/* MAIN DESKTOP / TOP MOBILE BUTTONS          */}
       {/* ========================================== */}
-      <div className="mt-6 flex flex-col gap-4">
+      <div className="mt-2 flex flex-col gap-4">
 
         {/* 1. QUANTITY & ADD TO CART (Hidden if Negotiable) */}
         {!isNegotiable ? (
@@ -177,9 +213,9 @@ export default function ProductActions({ product, children }: { product: Product
             </button>
           </div>
         ) : (
-          <div className="bg-orange-50 dark:bg-[#FF6A00]/10 border border-[#FF6A00]/30 rounded-md p-3 flex items-start gap-2 animate-in fade-in">
+          <div className="bg-orange-50 border border-[#FF6A00]/30 rounded-md p-3 flex items-start gap-2 animate-in fade-in">
             <span className="text-lg">🤝</span>
-            <p className="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               The price for this item is <strong className="text-[#FF6A00]">Negotiable</strong>. "Add to Cart" is disabled. Please contact the seller via WhatsApp to agree on a price.
             </p>
           </div>
@@ -232,7 +268,7 @@ export default function ProductActions({ product, children }: { product: Product
             {product.name}
           </span>
           <span className={`text-sm font-black truncate ${isNegotiable ? 'text-[#FF6A00]' : 'text-slate-900 dark:text-white'}`}>
-            {isNegotiable ? "Negotiable" : `UGX ${Number(product.price).toLocaleString()}`}
+            {isNegotiable ? "Negotiable" : `UGX ${currentPrice.toLocaleString()}`}
           </span>
         </div>
 
@@ -251,37 +287,36 @@ export default function ProductActions({ product, children }: { product: Product
       {showWhatsAppPopup && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
           <div className="bg-white dark:bg-[#151515] w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200 dark:border-slate-800">
-            
+
             <div className="p-6 md:p-8">
-              <div className="w-14 h-14 rounded-full bg-green-50 dark:bg-green-500/10 flex items-center justify-center mb-5 mx-auto border border-green-100 dark:border-green-500/20">
+              <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5 mx-auto border border-green-100">
                 <FaWhatsapp className="text-3xl text-[#25D366]" />
               </div>
-              
-              <h3 className="text-xl font-black text-slate-900 dark:text-white text-center mb-2 tracking-tight">
+
+              <h3 className="text-xl font-black text-slate-900 text-center mb-2 tracking-tight">
                 Complete Your Order
               </h3>
-              
-              {/* RAW SVG FOR THE PAPER PLANE TO PREVENT CRASHES */}
-              <p className="text-[13px] text-slate-500 dark:text-slate-400 text-center mb-6 leading-relaxed">
-                When WhatsApp opens, tap <strong className="text-slate-800 dark:text-slate-200">SEND</strong> (looks like 
+
+              <p className="text-[13px] text-slate-500 text-center mb-6 leading-relaxed">
+                When WhatsApp opens, tap <strong className="text-slate-800">SEND</strong> (looks like 
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#25D366] border border-green-600 align-sub ml-1 shadow-inner">
                   <svg className="w-3 h-3 text-black ml-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                 </span>
                 on mobile) to send the pre-filled message and confirm your order instantly.
               </p>
 
-              <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 mb-8 border border-slate-100 dark:border-slate-800">
+              <div className="bg-slate-50 rounded-xl p-4 mb-8 border border-slate-100">
                 <ul className="flex flex-col gap-3">
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700 dark:text-slate-300">
-                    <span className="w-5 h-5 rounded-full bg-green-100 dark:bg-green-500/20 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
+                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                    <span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
                     Fast confirmation
                   </li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700 dark:text-slate-300">
-                    <span className="w-5 h-5 rounded-full bg-green-100 dark:bg-green-500/20 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
+                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                    <span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
                     Quick delivery
                   </li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700 dark:text-slate-300">
-                    <span className="w-5 h-5 rounded-full bg-green-100 dark:bg-green-500/20 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
+                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700">
+                    <span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
                     Trusted support
                   </li>
                 </ul>
@@ -302,11 +337,11 @@ export default function ProductActions({ product, children }: { product: Product
                     <>Continue to WhatsApp</>
                   )}
                 </button>
-                
+
                 <button
                   onClick={() => setShowWhatsAppPopup(false)}
                   disabled={loadingWhatsApp}
-                  className="w-full py-3 text-sm font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                  className="w-full py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors"
                 >
                   Cancel
                 </button>
