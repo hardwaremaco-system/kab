@@ -18,9 +18,8 @@ import RecentlyViewedTracker from "@/components/RecentlyViewedTracker";
 import SaveProductButton from "@/components/SaveProductButton";
 import ProductReviews from "@/components/ProductReviews"; 
 import { optimizeImage, calculateDepositAmount } from "@/lib/utils"; 
-import { FaCheck, FaTruck } from "react-icons/fa";
 import { MdVerifiedUser } from "react-icons/md";
-import BatchDeliveryCountdown from "@/components/BatchDeliveryCountdown"; 
+import { Zap } from "lucide-react"; // For the flash banner icon
 
 export async function generateMetadata({ params }: { params: { publicId: string } }): Promise<Metadata> {
   const product = await getProductByPublicId(params.publicId);
@@ -28,7 +27,7 @@ export async function generateMetadata({ params }: { params: { publicId: string 
   if (!product) return { title: "Item Not Found | Kabale Online" };
 
   const safeName = product.name || "Unnamed Item";
-  
+
   // 🔥 FIXED TYPESCRIPT ERROR: Cast to any to access new deal fields safely
   const pAny = product as any;
   const currentPrice = pAny.isSale && pAny.saleEndDate && new Date(pAny.saleEndDate).getTime() > Date.now() 
@@ -79,34 +78,46 @@ const checkIsNew = (p: any) => {
   return pDate > 0 && (Date.now() - pDate) < (7 * 24 * 60 * 60 * 1000); 
 };
 
+// Map slug terms to elegant UI headers
+const campaignDisplayNames: Record<string, string> = {
+  "flash-sales": "Flash Sale",
+  "weekend-deals": "Weekend Deal",
+  "clearance": "Clearance Sale",
+  "student-deals": "Student Deal",
+  "mega-sale": "Mega Sale"
+};
+
 export default async function ProductDetailsPage({ params }: { params: { publicId: string } }) {
   const product = await getProductByPublicId(params.publicId);
 
   if (!product) notFound();
-  
+
   if (product.category === "services") {
     redirect(`/service/${product.id}`); 
   }
 
   const safeName = product.name || "Unnamed Item";
-  
+
   // ==========================================
   // 🧹 THE "LAZY REVERT" SECURITY SYSTEM
   // ==========================================
-  // 🔥 FIXED TYPESCRIPT ERROR: Cast to any
   const pAny = product as any;
 
-  let isSale = pAny.isSale === true;
   let safePrice = Number(product.price) || 0;
   let originalPrice = Number(pAny.originalPrice) || 0;
-  let saleEndDate = pAny.saleEndDate ? new Date(pAny.saleEndDate).getTime() : 0;
   const now = Date.now();
+  
+  // Robust Date Parsing
+  const endDateObj = pAny.saleEndDate ? new Date(pAny.saleEndDate) : new Date(0);
+  const saleEndDate = endDateObj.getTime();
+  
+  let isSale = pAny.isSale === true && saleEndDate > now;
 
-  if (isSale && saleEndDate > 0 && saleEndDate <= now) {
+  if (pAny.isSale === true && saleEndDate > 0 && saleEndDate <= now) {
     // DEAL EXPIRED! Intercept it immediately.
     isSale = false;
     safePrice = originalPrice > 0 ? originalPrice : safePrice; // Restore UI price
-    
+
     try {
       // Silently clean up Firebase in the background
       const docRef = doc(db, "products", product.id);
@@ -124,10 +135,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
   }
 
   const isNegotiable = safePrice === 0;
-  const discountPercent = isSale && originalPrice > safePrice 
-    ? Math.round(((originalPrice - safePrice) / originalPrice) * 100) 
-    : 0;
-  
+
   const safeCondition = product.condition || "used";
   const safeCategory = product.category || "general";
 
@@ -148,8 +156,6 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
 
   const sellerNameStr = String(product.sellerName || "").toLowerCase();
   const isAdmin = sellerNameStr.includes('admin') || sellerNameStr.includes('kabale online') || sellerNameStr.includes('official');
-
-  const depositRequired = safePrice >= 20000 ? calculateDepositAmount(safePrice, false) : 0;
 
   const optimizedImages = product.images?.map((img: string) => optimizeImage(img)) || [];
 
@@ -207,9 +213,14 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
     }
   };
 
+  // Format the deal title nicely for the UI
+  const campaignTitle = pAny.campaignType 
+    ? (campaignDisplayNames[pAny.campaignType] || pAny.campaignType.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())) 
+    : "Special Deal";
+
   return (
     <div className="py-8 w-full max-w-full overflow-x-hidden mx-auto px-4 sm:px-6 bg-white min-h-screen">
-      
+
       {/* INJECT JSON-LD FOR GOOGLE SEARCH RANKING */}
       <script
         type="application/ld+json"
@@ -231,6 +242,21 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
         <span className="text-[#1A1A1A] truncate max-w-[200px]">{safeName}</span>  
       </div>  
 
+      {/* 🔥 TOP STICKY FLASH BANNER */}
+      {isSale && (
+        <div className="w-full bg-gradient-to-r from-[#FF6A00] to-[#e65f00] rounded-xl px-5 py-3.5 text-white flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 shadow-sm animate-in fade-in slide-in-from-top-4">
+          <div className="flex items-center gap-2">
+            <Zap className="w-5 h-5 fill-white animate-pulse" />
+            <span className="text-sm font-black uppercase tracking-wider">
+              LIMITED TIME {campaignTitle.toUpperCase()}!
+            </span>
+          </div>
+          <div className="text-xs sm:text-sm font-black bg-black/10 px-4 py-1.5 rounded-md backdrop-blur-sm tracking-wide">
+            Don't miss out on this price drop in Kabale!
+          </div>
+        </div>
+      )}
+
       {/* MODERN E-COMMERCE LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">  
 
@@ -242,58 +268,37 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
           </p>  
         </div>  
 
-                {/* RIGHT COLUMN: Product Details */}  
+        {/* RIGHT COLUMN: Product Details */}  
         <div className="flex flex-col overflow-hidden">  
 
-          {/* 🔥 NEW: CAMPAIGN TYPE BADGE */}
+          {/* 🔥 DYNAMIC CAMPAIGN LINK BADGE */}
           {isSale && pAny.campaignType && (
             <div className="mb-3 animate-in fade-in slide-in-from-bottom-2">
                <Link 
                  href={`/deals?campaign=${pAny.campaignType}`}
                  className="bg-red-50 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white transition-colors text-[10px] sm:text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-sm flex items-center w-fit gap-2"
                >
-                 <span className="animate-pulse">🔥</span> {pAny.campaignType.replace(/-/g, ' ')}
+                 <span className="animate-pulse">🔥</span> {campaignTitle}
                </Link>
             </div>
           )}
 
-          {/* 3. TITLE (Big and light gray) */}
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-400 leading-tight mb-3">  
+          {/* TITLE */}
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 leading-tight mb-4">  
             {safeName}
           </h1>  
 
-
-          {/* 🔥 4. PRICE (Displays Flash Sale Logic or Negotiable) */}
-          <div className="mb-4 flex items-start gap-4">  
-            <div className="flex flex-col">
-              <span className={`font-black leading-none ${isNegotiable ? 'text-3xl sm:text-4xl text-[#FF6A00]' : 'text-4xl sm:text-5xl text-[#1A1A1A]'}`}>  
-                {isNegotiable ? "Price Negotiable" : `UGX ${safePrice.toLocaleString()}`}
-              </span>  
-              {isSale && originalPrice > 0 && (
-                <span className="text-lg font-bold text-slate-400 line-through mt-1.5">
-                  UGX {originalPrice.toLocaleString()}
-                </span>
-              )}
-            </div>
-
-            {isSale && discountPercent > 0 && (
-              <span className="bg-red-50 border border-red-200 text-red-600 px-2.5 py-1 rounded-md text-sm font-black shadow-sm mt-1">
-                -{discountPercent}%
-              </span>
-            )}
-          </div>  
-
           {/* REAL SCARCITY TRIGGER: LOW STOCK WARNING */}
           {!isSoldOut && isLowStock && !isNegotiable && (
-            <div className="mb-6 flex items-center gap-2 text-[#FF6A00] bg-orange-50 px-3 py-2.5 rounded-md w-fit border border-[#FF6A00]/20 shadow-sm">
+            <div className="mb-4 flex items-center gap-2 text-[#FF6A00] bg-orange-50 px-3 py-2.5 rounded-md w-fit border border-[#FF6A00]/20 shadow-sm">
               <span className="animate-bounce">⚠️</span>
               <span className="text-xs font-black uppercase tracking-wider">Only {safeStock} left in stock - order soon!</span>
             </div>
           )}
 
-          {/* MAIN CALL TO ACTIONS (HYBRID) */}
+          {/* MAIN PRICING & CALL TO ACTIONS (HYBRID) */}
           <div className={`mb-8 ${isSoldOut ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
-            {/* Pass the corrected price down to ProductActions so cart is accurate */}
+            {/* 🔥 Pass the corrected price down to ProductActions so cart is accurate. ProductActions renders the price UI now! */}
             <ProductActions product={{...product, price: safePrice, images: optimizedImages}}>
                 <div className="flex flex-col gap-3 mt-2 w-full">
                   <SaveProductButton product={product} />
@@ -381,12 +386,14 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
               const isRelOfficial = relAny.isOfficialStore || relAny.isAdminUpload;
               
               // Apply Lazy Revert Logic for Related Items too to avoid fake pricing
-              let relIsSale = relAny.isSale === true;
               let relPrice = Number(relProduct.price) || 0;
               let relOrigPrice = Number(relAny.originalPrice) || 0;
-              let relEndDate = relAny.saleEndDate ? new Date(relAny.saleEndDate).getTime() : 0;
+              let relEndDateObj = relAny.saleEndDate ? new Date(relAny.saleEndDate) : new Date(0);
+              let relEndDate = relEndDateObj.getTime();
               
-              if (relIsSale && relEndDate > 0 && relEndDate <= now) {
+              let relIsSale = relAny.isSale === true && relEndDate > now;
+
+              if (relAny.isSale === true && relEndDate > 0 && relEndDate <= now) {
                 relIsSale = false;
                 relPrice = relOrigPrice > 0 ? relOrigPrice : relPrice;
               }
