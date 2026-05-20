@@ -16,13 +16,11 @@ import SaveProductButton from "@/components/SaveProductButton";
 import ProductReviews from "@/components/ProductReviews"; 
 import { optimizeImage } from "@/lib/utils"; 
 import { MdVerifiedUser } from "react-icons/md";
-import { Zap } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: { publicId: string } }): Promise<Metadata> {
   const product = await getProductByPublicId(params.publicId);
   if (!product) return { title: "Item Not Found | Kabale Online" };
 
-  // Bypass to ensure deal fields are fetched accurately for SEO tags
   const productRef = doc(db, "products", product.id);
   const rawSnap = await getDoc(productRef);
   const rawData = rawSnap.exists() ? rawSnap.data() : {};
@@ -82,7 +80,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
   const safeName = product.name || "Unnamed Item";
   
   // ==========================================
-  // 🔥 DEAL LOGIC (Using Raw DB Bypass)
+  // 🔥 DEAL LOGIC 
   // ==========================================
   const productRef = doc(db, "products", product.id);
   const rawSnap = await getDoc(productRef);
@@ -178,17 +176,6 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
         <span className="text-[#1A1A1A] truncate max-w-[200px]">{safeName}</span>  
       </div>  
 
-      {/* TOP FLASH BANNER */}
-      {isSale && (
-        <div className="w-full bg-gradient-to-r from-[#FF6A00] to-[#e65f00] rounded-xl px-5 py-3.5 text-white flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 shadow-sm animate-in fade-in slide-in-from-top-4">
-          <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 fill-white animate-pulse" />
-            <span className="text-sm font-black uppercase tracking-wider">LIMITED TIME {campaignTitle.toUpperCase()}!</span>
-          </div>
-          <div className="text-xs sm:text-sm font-black bg-black/10 px-4 py-1.5 rounded-md backdrop-blur-sm tracking-wide">Don't miss out on this price drop in Kabale!</div>
-        </div>
-      )}
-
       {/* MAIN E-COMMERCE LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">  
         
@@ -201,53 +188,50 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
         {/* RIGHT: DETAILS, PRICING & CTA */}
         <div className="flex flex-col overflow-hidden">  
           
-          {/* 🔥 TOP ROW: Campaign Badge, Discount & Clean Scarcity Text */}
-          <div className="flex items-center justify-between mb-4 w-full">
-            <div className="flex items-center gap-2">
-              {isSale && campaignType && (
-                <span className="font-black uppercase tracking-wider text-[11px] sm:text-xs text-slate-700 bg-slate-100 px-2 py-1 rounded">
-                  {campaignTitle}
-                </span>
-              )}
-              {isSale && discountPercent > 0 && (
-                <span className="bg-red-50 text-red-600 border border-red-100 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-sm">
-                  -{discountPercent}%
-                </span>
-              )}
-            </div>
-
+          {/* 🔥 TOP ROW: Campaign Badge, Discount & Scarcity (all clumped together) */}
+          <div className="flex flex-wrap items-center gap-2.5 mb-4 w-full">
+            {isSale && campaignType && (
+              <span className="font-black uppercase tracking-wider text-sm sm:text-base text-black bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md shadow-sm">
+                {campaignTitle}
+              </span>
+            )}
+            {isSale && discountPercent > 0 && (
+              <span className="bg-orange-100 text-[#FF6A00] text-sm sm:text-base font-black px-3 py-1.5 rounded-md shadow-sm">
+                -{discountPercent}%
+              </span>
+            )}
             {!isSoldOut && isLowStock && !isNegotiable && (
-              <span className="text-[#FF6A00] text-[11px] sm:text-xs font-semibold lowercase tracking-wide">
+              <span className="bg-red-100 text-red-600 text-sm sm:text-base font-black lowercase px-3 py-1.5 rounded-md shadow-sm">
                 only {safeStock} left
               </span>
             )}
           </div>
 
-          {/* 🔥 TITLE: Big, Bold, Gray */}
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-500 leading-tight mb-5">  
+          {/* 🔥 TITLE: Massive, Bold, Gray */}
+          <h1 className="text-5xl sm:text-6xl md:text-6xl font-extrabold text-slate-500 leading-tight mb-5 tracking-tight">  
             {safeName}
           </h1>  
 
-          {/* 🔥 PRICING STACK: Small gray old price (red cross), massive dark gray new price */}
-          <div className="flex flex-col mb-6">
+          {/* 🔥 PRICING STACK: Small gray old price (red cross), massive dark gray new price (double size) */}
+          <div className="flex flex-col mb-8">
             {isSale && originalPrice > 0 && (
-              <span className="text-sm font-medium text-slate-400 line-through decoration-red-400 decoration-[1.5px] mb-1">
+              <span className="text-lg sm:text-xl font-bold text-slate-400 line-through decoration-red-400 decoration-[1.5px] mb-0.5">
                 UGX {originalPrice.toLocaleString()}
               </span>
             )}
-            <span className={`font-black tracking-tight leading-none ${isNegotiable ? 'text-3xl text-slate-600' : 'text-4xl text-slate-800'}`}>
+            <span className={`font-black tracking-tight leading-none ${isNegotiable ? 'text-3xl text-slate-600' : 'text-4xl sm:text-5xl text-slate-800'}`}>
               {isNegotiable ? "Price Negotiable" : `UGX ${safePrice.toLocaleString()}`}
             </span>
           </div>
 
-          {/* 🔥 CTA ACTIONS: Quantity, Add to Cart, WhatsApp */}
+          {/* CTA ACTIONS */}
           <div className={`mb-8 ${isSoldOut ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
             <ProductActions product={{ ...product, price: safePrice, images: optimizedImages }}>
                 <div className="flex flex-col gap-3 mt-2 w-full"><SaveProductButton product={product} /></div>
             </ProductActions>
           </div> 
 
-          {/* ACCORDIONS: Description & Info */}
+          {/* ACCORDIONS */}
           <div className="border border-slate-200 rounded-xl overflow-hidden mt-auto mb-10 bg-white shadow-sm divide-y divide-slate-200">
             <details className="group" open>
               <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-4 text-green-700 bg-slate-50 hover:bg-slate-100 transition-colors text-sm">Description<span className="transition group-open:rotate-180"><svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg></span></summary>
