@@ -7,19 +7,28 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // 🚀 NEW: Check if this is a referral invite
+    // 1. Check if it's an Invite
     const name = searchParams.get('name');
     const isInvite = !!name;
 
-    // Grab the dynamic text passed in the URL, with safe fallbacks and Invite Overrides
-    const title = isInvite 
-      ? `${name} invited you to Kabale Online! 🎁`
-      : (searchParams.get('title') || 'Kabale Online Marketplace');
+    // 2. Check if it's a Product/Deal
+    const price = searchParams.get('price');
+    const isProduct = !!price;
+    const discount = searchParams.get('discount');
+    const dealType = searchParams.get('dealType');
 
-    // 🔥 FIXED: Strictly e-commerce focused messaging
-    const description = isInvite
-      ? 'Accept the invite and shop safely on campus with Cash on Delivery.'
-      : (searchParams.get('desc') || 'The Better Way to Buy and Sell Locally');
+    // 3. Get Base Text
+    const rawTitle = searchParams.get('title');
+    const rawDesc = searchParams.get('desc');
+
+    // Determine Title & Description based on link type
+    let displayTitle = rawTitle || 'Kabale Online Marketplace';
+    let displayDesc = rawDesc || 'The Better Way to Buy and Sell Locally';
+
+    if (isInvite) {
+      displayTitle = `${name} invited you to Kabale Online! 🎁`;
+      displayDesc = 'Accept the invite and shop safely on campus with Cash on Delivery.';
+    }
 
     return new ImageResponse(
       (
@@ -31,38 +40,52 @@ export async function GET(request: Request) {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#0f172a', // A sleek dark slate background
+            backgroundColor: '#0f172a', // Sleek dark slate background
             fontFamily: 'sans-serif',
             padding: '40px',
-            borderTop: isInvite ? '20px solid #D97706' : '0px', // 🔥 Orange highlight only for invites
+            borderTop: '20px solid #D97706', // Brand orange highlight
           }}
         >
-          {/* Logo / Brand Name */}
-          <div style={{ display: 'flex', fontSize: 48, fontWeight: 'black', marginBottom: '20px', letterSpacing: '-0.05em' }}>
+          {/* Logo / Brand Name (Smaller if product, big if generic) */}
+          <div style={{ display: 'flex', fontSize: isProduct ? 36 : 48, fontWeight: 'black', marginBottom: isProduct ? '20px' : '20px', letterSpacing: '-0.05em' }}>
             <span style={{ color: 'white' }}>Kabale</span>
             <span style={{ color: '#D97706' }}>Online</span>
           </div>
 
-          {/* Dynamic Category Title */}
+          {/* 🔥 PRODUCT MODE: Deal Badge */}
+          {isProduct && dealType && (
+            <div style={{ display: 'flex', background: 'rgba(217, 119, 6, 0.15)', border: '2px solid #D97706', padding: '10px 25px', borderRadius: '12px', fontSize: 26, fontWeight: 'bold', color: '#fdba74', textTransform: 'uppercase', marginBottom: '20px' }}>
+              {dealType} {discount && <span style={{ color: '#ef4444', marginLeft: '12px' }}> -{discount}%</span>}
+            </div>
+          )}
+
+          {/* Dynamic Title */}
           <div style={{ 
             display: 'flex', 
-            fontSize: isInvite ? 72 : 84, // Slightly smaller if it's a long invite name
+            fontSize: isProduct ? 64 : (isInvite ? 72 : 84), // Adjust size based on mode
             fontWeight: 'black', 
             color: 'white', 
             textAlign: 'center', 
             lineHeight: 1.1,
-            marginBottom: '30px',
+            marginBottom: isProduct ? '20px' : '30px',
             padding: '0 40px'
           }}>
-            {title}
+            {displayTitle}
           </div>
 
-          {/* Dynamic Description or Tagline */}
-          <div style={{ display: 'flex', fontSize: 36, color: '#94a3b8', textAlign: 'center', fontWeight: 'bold' }}>
-            {description}
+          {/* 🔥 PRODUCT MODE: Massive Price */}
+          {isProduct && (
+            <div style={{ display: 'flex', fontSize: 80, fontWeight: 'black', color: '#f59e0b', marginBottom: '20px' }}>
+              UGX {price}
+            </div>
+          )}
+
+          {/* Dynamic Description / Tagline */}
+          <div style={{ display: 'flex', fontSize: isProduct ? 28 : 36, color: '#94a3b8', textAlign: 'center', fontWeight: 'bold' }}>
+            {isProduct && !rawDesc ? 'Fast Local Delivery in Kabale Town' : displayDesc}
           </div>
 
-          {/* 🔥 NEW: Extra Trust Badge specifically for Invites */}
+          {/* 🎁 INVITE MODE: Extra Trust Badge */}
           {isInvite && (
             <div style={{ display: 'flex', marginTop: '50px', background: 'rgba(217, 119, 6, 0.2)', border: '2px solid #D97706', color: '#fdba74', padding: '15px 40px', borderRadius: '15px', fontSize: '28px', fontWeight: 'bold' }}>
               Verified Partner Link
