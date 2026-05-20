@@ -25,7 +25,8 @@ function parseProduct(doc: FirebaseFirestore.DocumentSnapshot): Product {
     parsedImages = [data.image];
   }
 
-  return {
+  // Create the object first, including all new deal fields
+  const productData = {
     id: doc.id,
     publicId: data.publicId || "",
     name: data.name || data.title || "Unnamed Item",
@@ -36,22 +37,30 @@ function parseProduct(doc: FirebaseFirestore.DocumentSnapshot): Product {
     images: parsedImages,
     createdAt: parsedCreatedAt,
 
-    // --- NEW MAPPED FIELDS ---
+    // --- EXISTING MAPPED FIELDS ---
     condition: data.condition || "used",
     description: data.description || "",
-    // Fallback to older nested 'seller' object if it exists
     sellerId: data.sellerId || data.seller?.uid || data.storeId || "SYSTEM",
     sellerName: data.sellerName || data.seller?.name || "Verified Seller",
     sellerPhone: data.sellerPhone || data.whatsapp || "", 
     status: data.status || "active",
     views: data.views || 0,
+
+    // 🔥 NEW DEAL FIELDS SAFELY INCLUDED
+    isSale: data.isSale || false,
+    originalPrice: data.originalPrice ? Number(data.originalPrice) : null,
+    saleEndDate: data.saleEndDate || null,
+    campaignType: data.campaignType || null,
   };
+
+  // The "as Product" cast forces TypeScript to accept the object even if 
+  // your @/types definition doesn't officially know about the new fields yet.
+  return productData as Product;
 }
 
 // --- FETCH FUNCTIONS ---
 
-// 🔥 UPGRADE: limitCount now has a DEFAULT of 50. 
-// This is your ultimate safety net against Firebase quota exhaustion.
+// 🔥 LIMIT DEFAULT ADDED: Protects your Firebase read quotas
 export async function getProducts(category?: string, limitCount: number = 50): Promise<Product[]> {
   try {
     let query: FirebaseFirestore.Query = adminDb.collection("products");
@@ -63,8 +72,7 @@ export async function getProducts(category?: string, limitCount: number = 50): P
     // Sort by newest first
     query = query.orderBy("createdAt", "desc");
 
-    // This will now ALWAYS apply. If you ask for 100, it gives 100. 
-    // If you forget to ask, it defaults to 50 instead of infinity.
+    // Enforce limits
     if (limitCount > 0) {
       query = query.limit(limitCount);
     }
@@ -82,7 +90,7 @@ export async function getProducts(category?: string, limitCount: number = 50): P
   }
 }
 
-// 🔥 Already perfectly optimized (limits to 1 automatically)
+// 🔥 ALREADY OPTIMIZED: Safely fetches by Public ID first, falls back to Document ID
 export async function getProductByPublicId(publicIdOrId: string): Promise<Product | null> {
   try {
     const snapshot = await adminDb
