@@ -15,46 +15,27 @@ export default function ProductActions({ product, children }: { product: Product
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  // WHATSAPP POPUP STATE
   const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(false);
   const [loadingWhatsApp, setLoadingWhatsApp] = useState(false);
-
   const [showMore, setShowMore] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  // STICKY MOBILE BAR STATE
   const [showStickyBar, setShowStickyBar] = useState(false);
 
   const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
-
-  // ==========================================
-  // 🔥 DEAL LOGIC & SECURITY CHECK
-  // ==========================================
-  const pAny = product as any;
-  const now = Date.now();
-  const saleEndDate = pAny.saleEndDate ? new Date(pAny.saleEndDate).getTime() : 0;
   
-  // Only true if the deal flag is on AND the timer hasn't hit zero
-  const isSale = pAny.isSale === true && saleEndDate > now;
-  
-  const originalPrice = Number(pAny.originalPrice) || 0;
+  // Note: product.price is already the strictly correct sale price passed down from page.tsx
   const currentPrice = Number(product.price) || 0;
   const isNegotiable = currentPrice === 0;
 
-  const discountPercent = isSale && originalPrice > currentPrice 
-    ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) 
-    : 0;
-
-  // Track scrolling for the mobile sticky bar
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 400) {
-        setShowStickyBar(true);
-      } else {
-        setShowStickyBar(false);
+      // Reveal the sticky mobile checkout bar after scrolling down 400px
+      if (window.scrollY > 400) { 
+        setShowStickyBar(true); 
+      } else { 
+        setShowStickyBar(false); 
       }
     };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -68,7 +49,7 @@ export default function ProductActions({ product, children }: { product: Product
     addToCart({
       id: product.id,
       title: product.name || "Unknown Item", 
-      price: currentPrice, // 🔥 Ensures cart uses the exact current/sale price
+      price: currentPrice, 
       image: product.images?.[0] || "",
       quantity: quantity,
       sellerId: product.sellerId || "SYSTEM", 
@@ -80,7 +61,6 @@ export default function ProductActions({ product, children }: { product: Product
 
   const handleBotInquiry = async () => {
     setLoadingWhatsApp(true);
-
     try {
       const getCookie = (name: string) => {
         if (typeof document === "undefined") return null;
@@ -105,7 +85,6 @@ export default function ProductActions({ product, children }: { product: Product
       });
 
       let referenceCode = product.id; 
-
       if (res.ok) {
         const data = await res.json();
         referenceCode = data.leadId; 
@@ -116,9 +95,7 @@ export default function ProductActions({ product, children }: { product: Product
       const encodedMessage = encodeURIComponent(rawMessage);
 
       window.open(`https://wa.me/${botPhoneNumber}?text=${encodedMessage}`, "_blank");
-
     } catch (error) {
-      console.error("Failed to generate lead:", error);
       const rawMessage = `Hi! I want to ask about: *${product.name}*\n\nProduct ID: [${product.id}]`;
       window.open(`https://wa.me/${botPhoneNumber}?text=${encodeURIComponent(rawMessage)}`, "_blank");
     } finally {
@@ -157,58 +134,17 @@ export default function ProductActions({ product, children }: { product: Product
   return (
     <>
       {/* ========================================== */}
-      {/* 🔥 THE PRICING UI BLOCK                    */}
+      {/* 1. QUANTITY & ADD TO CART                  */}
       {/* ========================================== */}
-      <div className="mb-6 p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center justify-between gap-4">  
-        <div className="flex flex-col">
-          {isSale && originalPrice > 0 && (
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-              Regular Price: <span className="line-through">UGX {originalPrice.toLocaleString()}</span>
-            </span>
-          )}
-          <span className={`font-black tracking-tight leading-none ${isNegotiable ? 'text-2xl sm:text-3xl text-[#FF6A00]' : 'text-3xl sm:text-4xl text-slate-900'}`}>  
-            {isNegotiable ? "Price Negotiable" : `UGX ${currentPrice.toLocaleString()}`}
-          </span>  
-        </div>
-
-        {isSale && discountPercent > 0 && (
-          <div className="bg-red-600 text-white px-3 py-2 rounded-lg flex flex-col items-center justify-center shadow-md">
-            <span className="text-xs font-black leading-none uppercase">Save</span>
-            <span className="text-lg font-black leading-none mt-0.5">-{discountPercent}%</span>
-          </div>
-        )}
-      </div>
-
-      {/* ========================================== */}
-      {/* MAIN DESKTOP / TOP MOBILE BUTTONS          */}
-      {/* ========================================== */}
-      <div className="mt-2 flex flex-col gap-4">
-
-        {/* 1. QUANTITY & ADD TO CART (Hidden if Negotiable) */}
+      <div className="flex flex-col gap-3">
         {!isNegotiable ? (
-          <div className="flex items-center gap-3 mt-1">
+          <div className="flex items-center gap-3">
             <div className="flex items-center border border-slate-300 rounded-md overflow-hidden h-12 bg-white shadow-sm">
-              <button 
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="px-4 h-full text-lg font-bold text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors"
-              >
-                -
-              </button>
-              <span className="px-4 font-semibold text-lg border-x border-slate-300 h-full flex items-center justify-center min-w-[45px] text-slate-800 bg-slate-50">
-                {quantity}
-              </span>
-              <button 
-                onClick={() => setQuantity(quantity + 1)}
-                className="px-4 h-full text-lg font-bold text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors"
-              >
-                +
-              </button>
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 h-full text-lg font-bold text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors">-</button>
+              <span className="px-4 font-semibold text-lg border-x border-slate-300 h-full flex items-center justify-center min-w-[45px] text-slate-800 bg-slate-50">{quantity}</span>
+              <button onClick={() => setQuantity(quantity + 1)} className="px-4 h-full text-lg font-bold text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors">+</button>
             </div>
-
-            <button 
-              onClick={handleAddToCart}
-              className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold h-12 rounded-md text-sm uppercase tracking-wider shadow-sm transition-all active:scale-[0.98]"
-            >
+            <button onClick={handleAddToCart} className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold h-12 rounded-md text-sm uppercase tracking-wider shadow-sm transition-all active:scale-[0.98]">
               Add to Cart
             </button>
           </div>
@@ -221,32 +157,27 @@ export default function ProductActions({ product, children }: { product: Product
           </div>
         )}
 
-        {/* 2. ASK OR ORDER ON WHATSAPP (Opens Popup) */}
-        <button 
-          onClick={() => setShowWhatsAppPopup(true)}
-          className={`w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-md shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] ${isNegotiable ? 'animate-pulse' : ''}`}
-        >
+        {/* ========================================== */}
+        {/* 2. ASK OR ORDER ON WHATSAPP                */}
+        {/* ========================================== */}
+        <button onClick={() => setShowWhatsAppPopup(true)} className={`w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-md shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] ${isNegotiable ? 'animate-pulse' : ''}`}>
           <FaWhatsapp className="text-xl" /> 
           {isNegotiable ? "Negotiate on WhatsApp" : "Order Using WhatsApp"}
         </button>
 
-        {/* 3. MORE OPTIONS & ADMIN CONTROLS */}
+        {/* ========================================== */}
+        {/* 3. MORE OPTIONS & UTILITIES                */}
+        {/* ========================================== */}
         <div className="mt-1">
-          <button 
-            onClick={() => setShowMore(!showMore)}
-            className="text-xs font-bold text-slate-500 flex items-center gap-1 py-2 px-1 hover:text-slate-700 transition-colors"
-          >
+          <button onClick={() => setShowMore(!showMore)} className="text-xs font-bold text-slate-500 flex items-center gap-1 py-2 px-1 hover:text-slate-700 transition-colors">
             {showMore ? "− Hide options" : "+ More options"}
           </button>
-
           {showMore && (
             <div className="mt-2 bg-slate-50 rounded-lg p-3 flex flex-col gap-2 border border-slate-100">
               <button onClick={handleCopyLink} disabled={loading} className="w-full bg-white text-slate-700 border border-slate-200 py-2.5 rounded-lg font-bold text-xs flex justify-center gap-2 shadow-sm hover:bg-slate-100 transition-colors">
                 {copied ? "✅ Link Copied!" : "🔗 Copy Link"}
               </button>
-
               {children}
-
               {user?.role === "admin" && (
                 <button onClick={handleAdminDelete} disabled={loading} className="w-full bg-red-50 text-red-600 border border-red-200 py-2.5 rounded-lg font-bold text-xs flex justify-center mt-1 hover:bg-red-100 transition-colors">
                   🗑️ Admin Delete
@@ -260,43 +191,29 @@ export default function ProductActions({ product, children }: { product: Product
       {/* ========================================== */}
       {/* 📱 MOBILE STICKY BOTTOM CHECKOUT BAR       */}
       {/* ========================================== */}
-      <div 
-        className={`fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-[#151515] border-t border-slate-200 dark:border-slate-800 p-3 lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-transform duration-300 ease-in-out flex items-center gap-3 ${showStickyBar ? 'translate-y-0' : 'translate-y-[150%]'}`}
-      >
+      <div className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 p-3 lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-transform duration-300 ease-in-out flex items-center gap-3 ${showStickyBar ? 'translate-y-0' : 'translate-y-[150%]'}`}>
         <div className="flex flex-col flex-grow min-w-0 px-1">
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">
-            {product.name}
-          </span>
-          <span className={`text-sm font-black truncate ${isNegotiable ? 'text-[#FF6A00]' : 'text-slate-900 dark:text-white'}`}>
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">{product.name}</span>
+          {/* Matches the new dark gray text-slate-800 branding */}
+          <span className={`text-sm font-black truncate ${isNegotiable ? 'text-[#FF6A00]' : 'text-slate-800'}`}>
             {isNegotiable ? "Negotiable" : `UGX ${currentPrice.toLocaleString()}`}
           </span>
         </div>
-
-        <button 
-          onClick={() => setShowWhatsAppPopup(true)}
-          className="bg-[#25D366] text-white px-5 py-3 rounded-md font-bold text-xs shadow-sm whitespace-nowrap flex items-center gap-2 active:scale-95 transition-transform"
-        >
+        <button onClick={() => setShowWhatsAppPopup(true)} className="bg-[#25D366] text-white px-5 py-3 rounded-md font-bold text-xs shadow-sm whitespace-nowrap flex items-center gap-2 active:scale-95 transition-transform">
           <FaWhatsapp className="text-sm" />
           {isNegotiable ? "Negotiate" : "Order Now"}
         </button>
       </div>
 
       {/* ========================================== */}
-      {/* 🛑 THE WHATSAPP INTERCEPTION POPUP         */}
+      {/* 🛑 WHATSAPP INTERCEPTION POPUP             */}
       {/* ========================================== */}
       {showWhatsAppPopup && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-[#151515] w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200 dark:border-slate-800">
-
+          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200">
             <div className="p-6 md:p-8">
-              <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5 mx-auto border border-green-100">
-                <FaWhatsapp className="text-3xl text-[#25D366]" />
-              </div>
-
-              <h3 className="text-xl font-black text-slate-900 text-center mb-2 tracking-tight">
-                Complete Your Order
-              </h3>
-
+              <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5 mx-auto border border-green-100"><FaWhatsapp className="text-3xl text-[#25D366]" /></div>
+              <h3 className="text-xl font-black text-slate-900 text-center mb-2 tracking-tight">Complete Your Order</h3>
               <p className="text-[13px] text-slate-500 text-center mb-6 leading-relaxed">
                 When WhatsApp opens, tap <strong className="text-slate-800">SEND</strong> (looks like 
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#25D366] border border-green-600 align-sub ml-1 shadow-inner">
@@ -304,50 +221,20 @@ export default function ProductActions({ product, children }: { product: Product
                 </span>
                 on mobile) to send the pre-filled message and confirm your order instantly.
               </p>
-
               <div className="bg-slate-50 rounded-xl p-4 mb-8 border border-slate-100">
                 <ul className="flex flex-col gap-3">
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700">
-                    <span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
-                    Fast confirmation
-                  </li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700">
-                    <span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
-                    Quick delivery
-                  </li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700">
-                    <span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
-                    Trusted support
-                  </li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> Fast confirmation</li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> Quick delivery</li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700"><span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> Trusted support</li>
                 </ul>
               </div>
-
               <div className="flex flex-col gap-3">
-                <button
-                  onClick={handleBotInquiry}
-                  disabled={loadingWhatsApp}
-                  className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] disabled:opacity-70 active:scale-[0.98]"
-                >
-                  {loadingWhatsApp ? (
-                    <span className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Connecting...
-                    </span>
-                  ) : (
-                    <>Continue to WhatsApp</>
-                  )}
+                <button onClick={handleBotInquiry} disabled={loadingWhatsApp} className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] disabled:opacity-70 active:scale-[0.98]">
+                  {loadingWhatsApp ? <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Connecting...</span> : <>Continue to WhatsApp</>}
                 </button>
-
-                <button
-                  onClick={() => setShowWhatsAppPopup(false)}
-                  disabled={loadingWhatsApp}
-                  className="w-full py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors"
-                >
-                  Cancel
-                </button>
+                <button onClick={() => setShowWhatsAppPopup(false)} disabled={loadingWhatsApp} className="w-full py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">Cancel</button>
               </div>
             </div>
-
           </div>
         </div>
       )}
