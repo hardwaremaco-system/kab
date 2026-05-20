@@ -19,20 +19,18 @@ export default function ProductCard({ product }: { product: any }) {
   const isSold = product.status === "sold";
 
   const titleStr = product.title || product.name || 'Product';
-  const isShortTitle = titleStr.length <= 32;
-  const displayTitle = (!isSold && isShortTitle) 
-    ? `${titleStr} (Free delivery available)` 
-    : titleStr;
+  // Note: We skip appending "(Free delivery available)" here because it takes up too much room on a single line
+  const displayTitle = titleStr;
 
   // ==========================================
   // 2. PRICING & CAMPAIGN DEALS LOGIC
   // ==========================================
   const currentPrice = Number(product.price) || 0;
   const originalPrice = Number(product.originalPrice) || 0;
-  
+
   const isNegotiable = currentPrice === 0;
   const isSale = product.isSale === true && !isNegotiable && originalPrice > currentPrice;
-  
+
   const discountPercent = isSale 
     ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) 
     : 0;
@@ -40,20 +38,17 @@ export default function ProductCard({ product }: { product: any }) {
   // ==========================================
   // 3. SAFE STOCK BAR LOGIC
   // ==========================================
-  // Check if we actually have stock data (prevents localStorage/Recently Viewed bugs)
   const hasStockData = product.stock !== undefined && product.stock !== null && product.stock !== "";
-  
+
   const rawStock = hasStockData ? Number(product.stock) : 0;
   const safeStock = isNaN(rawStock) ? 0 : Math.max(0, rawStock);
-  
-  // Visual scale: 10 represents a "full" bar for UI purposes
+
   const maxStock = 10;
   const stockWidth = Math.min(100, (safeStock / maxStock) * 100);
 
-  // Local Market Psychology: Adjusted color thresholds
-  let stockColorClass = "bg-green-500"; // 4 or more
-  if (safeStock <= 3) stockColorClass = "bg-amber-500"; // 2 to 3
-  if (safeStock === 1) stockColorClass = "bg-red-500"; // Exactly 1
+  let stockColorClass = "bg-green-500"; 
+  if (safeStock <= 3) stockColorClass = "bg-amber-500"; 
+  if (safeStock === 1) stockColorClass = "bg-red-500"; 
 
   return (
     <div 
@@ -76,7 +71,8 @@ export default function ProductCard({ product }: { product: any }) {
         {/* ======================= */}
         {/* TOP: IMAGE & BADGES     */}
         {/* ======================= */}
-        <div className="relative aspect-square w-full bg-slate-50 dark:bg-[#0a0a0a] overflow-hidden border-b border-slate-100 dark:border-slate-800/60">
+        {/* 🔥 FIX: Changed aspect-square (1:1) to aspect-[4/5] (tall rectangle) to maximize image size */}
+        <div className="relative aspect-[4/5] w-full bg-slate-50 dark:bg-[#0a0a0a] overflow-hidden border-b border-slate-100 dark:border-slate-800/60">
           {optimizedImage ? (
             <Image 
               src={optimizedImage} 
@@ -108,7 +104,7 @@ export default function ProductCard({ product }: { product: any }) {
             </div>
           )}
 
-          {/* 🔥 Discount Badge (Top Right) */}
+          {/* Discount Badge (Top Right) */}
           {!isSold && isSale && discountPercent > 0 && (
             <div className="absolute top-2 right-2 bg-red-50 text-red-600 border border-red-200 text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded shadow-sm z-10">
               -{discountPercent}%
@@ -119,46 +115,45 @@ export default function ProductCard({ product }: { product: any }) {
         {/* ======================= */}
         {/* BOTTOM: TEXT & DETAILS  */}
         {/* ======================= */}
-        <div className="flex flex-col flex-grow p-3 sm:p-4">
+        {/* 🔥 FIX: Tightened padding (p-2.5) to reduce white space */}
+        <div className="flex flex-col flex-grow p-2.5 sm:p-3">
 
           {/* Category / Meta */}
-          <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1 truncate">
+          <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5 truncate">
             {product.category?.replace('-', ' ') || 'Electronics'}
           </span>
 
-          {/* Title with line-clamp */}
-          <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-tight mb-3 group-hover:text-[#FF6A00] transition-colors">
+          {/* 🔥 FIX: Changed line-clamp-2 to truncate (single line) and reduced bottom margin */}
+          <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate leading-tight mb-2 group-hover:text-[#FF6A00] transition-colors">
             {displayTitle}
           </h3>
 
-          {/* Wrapper to push bottom items to the bottom of the card */}
-          <div className="mt-auto flex flex-col gap-3">
-            
-            {/* CONDITIONAL STOCK BAR: Only renders if real stock data exists */}
+          <div className="mt-auto flex flex-col gap-2">
+
+            {/* CONDITIONAL STOCK BAR */}
             {!isSold && hasStockData && (
-              <div className="flex flex-col gap-1.5 w-full">
-                <div className="w-full h-[5px] bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div className="flex flex-col gap-1 w-full">
+                <div className="w-full h-[4px] bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div 
                     className={`h-full rounded-full transition-all duration-700 ease-out ${stockColorClass}`} 
                     style={{ width: `${stockWidth}%` }}
                   />
                 </div>
-                <span className="text-[9.5px] font-bold text-slate-500 dark:text-slate-400 tracking-wide">
+                <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 tracking-wide">
                   {safeStock > 0 ? `Only ${safeStock} item${safeStock !== 1 ? 's' : ''} left` : 'Out of stock'}
                 </span>
               </div>
             )}
 
             {/* Price Line */}
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between">
-              
-              {/* Stacked Prices */}
+            {/* 🔥 FIX: Tightened padding top on price divider */}
+            <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between">
+
               <div className="flex flex-col justify-center">
                 <span className={`text-sm sm:text-base font-black leading-none ${isSold ? 'text-slate-400 line-through' : isNegotiable ? 'text-[#FF6A00]' : 'text-slate-900 dark:text-white group-hover:text-[#FF6A00]'} transition-colors`}>
                   {isNegotiable ? "Negotiable" : `UGX ${currentPrice.toLocaleString()}`}
                 </span>
-                
-                {/* Crossed-out original price (only shows if on sale) */}
+
                 {isSale && (
                   <span className="text-[10px] font-bold text-slate-400 line-through mt-0.5">
                     UGX {originalPrice.toLocaleString()}
@@ -166,14 +161,13 @@ export default function ProductCard({ product }: { product: any }) {
                 )}
               </div>
 
-              {/* View Button Icon */}
               {!isSold && (
                 <div className="w-6 h-6 shrink-0 rounded-full bg-orange-50 dark:bg-orange-500/10 text-[#FF6A00] flex items-center justify-center opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                 </div>
               )}
             </div>
-            
+
           </div>
         </div>
       </Link>
