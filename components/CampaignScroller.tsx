@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ProductCard from "./ProductCard";
-import { ArrowRight } from "lucide-react"; // Zap removed
+import { ArrowRight } from "lucide-react";
 
 interface CampaignScrollerProps {
   title: string;
@@ -38,8 +38,8 @@ export default function CampaignScroller({ title, endTime, products, campaignSlu
   if (!products || products.length === 0) return null;
 
   return (
-    {/* 🔴 Slim container, no rounded corners */}
     <div className="w-full bg-white dark:bg-[#151515] overflow-hidden border border-slate-200 dark:border-slate-800 mb-6">
+      {/* 🔴 Slim container, no rounded corners */}
 
       {/* 🔴 THE CAMPAIGN HEADER - Light gray, slim padding */}
       <div className="bg-slate-100 dark:bg-slate-900 px-3 py-2 sm:px-4 sm:py-2.5 flex justify-between items-start border-b border-slate-200 dark:border-slate-800">
