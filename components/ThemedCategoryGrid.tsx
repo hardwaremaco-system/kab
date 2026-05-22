@@ -3,7 +3,6 @@
 import Link from "next/link";
 
 export default function ThemedCategoryGrid() {
-  // Re-added your specific background colors for each individual square
   const categories = [
     {
       name: "Phones & TVs",
@@ -44,16 +43,15 @@ export default function ThemedCategoryGrid() {
   ];
 
   return (
-    // The overall section has no background, letting your root page color show through
     <section className="w-full select-none max-w-[1400px] mx-auto bg-transparent mb-8">
       
       {/* Centered Heading */}
-      <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white text-center mb-6 tracking-tight">
+      <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white text-center mb-4 sm:mb-6 tracking-tight">
         Curated for You!
       </h2>
 
-      {/* Grid: 2 columns on mobile, 3 on desktop */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full">
+      {/* 🔥 RESPONSIVE GRID: 3 columns on mobile, 6 columns (one line) on desktop */}
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-2 sm:gap-4 md:gap-6 w-full">
         
         {categories.map((cat, index) => (
           <Link 
@@ -61,21 +59,17 @@ export default function ThemedCategoryGrid() {
             href={cat.href} 
             className="group flex flex-col items-center outline-none"
           >
-            {/* IMAGE CONTAINER (The Square): 
-              This uses your specific `cat.bg` color. 
-              Added a subtle border that highlights to your brand orange on hover.
-            */}
-            <div className={`w-full aspect-square rounded-2xl ${cat.bg} border-2 border-transparent group-hover:border-[#FF6A00] flex items-center justify-center p-4 sm:p-6 mb-3 relative overflow-hidden transition-all duration-300 shadow-sm group-hover:shadow-md`}>
+            {/* IMAGE CONTAINER */}
+            <div className={`w-full aspect-square rounded-xl sm:rounded-2xl ${cat.bg} border border-transparent group-hover:border-[#FF6A00] flex items-center justify-center p-2 sm:p-4 mb-2 relative overflow-hidden transition-all duration-300 shadow-sm group-hover:shadow-md`}>
               <img 
                 src={cat.image} 
                 alt={cat.name} 
-                // object-contain ensures your transparent PNGs fit perfectly inside the colored square
                 className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-lg" 
               />
             </div>
             
-            {/* TEXT: Sitting directly below the colored square */}
-            <span className="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#FF6A00] transition-colors text-center">
+            {/* TEXT */}
+            <span className="text-[10px] sm:text-sm md:text-base font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#FF6A00] transition-colors text-center leading-tight">
               {cat.name}
             </span>
           </Link>
