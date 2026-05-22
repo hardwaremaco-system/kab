@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ProductCard from "./ProductCard";
-import { Zap, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react"; // Zap removed
 
 interface CampaignScrollerProps {
   title: string;
-  endTime: string; // ISO string e.g., "2026-05-20T00:00:00Z"
+  endTime: string; 
   products: any[];
-  campaignSlug: string; // e.g., "flash-sales"
+  campaignSlug: string; 
 }
 
 export default function CampaignScroller({ title, endTime, products, campaignSlug }: CampaignScrollerProps) {
@@ -38,53 +38,40 @@ export default function CampaignScroller({ title, endTime, products, campaignSlu
   if (!products || products.length === 0) return null;
 
   return (
-    <div className="w-full bg-white dark:bg-[#151515] rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 mb-6">
-      
-      {/* 🔴 THE CAMPAIGN HEADER */}
-      <div className="bg-gradient-to-r from-[#FF6A00] to-[#e65f00] px-4 py-3 sm:px-6 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    {/* 🔴 Slim container, no rounded corners */}
+    <div className="w-full bg-white dark:bg-[#151515] overflow-hidden border border-slate-200 dark:border-slate-800 mb-6">
+
+      {/* 🔴 THE CAMPAIGN HEADER - Light gray, slim padding */}
+      <div className="bg-slate-100 dark:bg-slate-900 px-3 py-2 sm:px-4 sm:py-2.5 flex justify-between items-start border-b border-slate-200 dark:border-slate-800">
         
-        <div className="flex items-center gap-2 text-white">
-          <Zap className="w-5 h-5 sm:w-6 sm:h-6 fill-white animate-pulse" />
-          <h2 className="text-lg sm:text-xl font-black uppercase tracking-widest">
+        <div className="flex flex-col">
+          {/* Orange Title */}
+          <h2 className="text-sm sm:text-base font-black uppercase tracking-widest text-[#FF6A00] leading-none">
             {title}
           </h2>
-        </div>
-
-        <div className="flex items-center justify-between sm:justify-end gap-6">
-          {/* Ticking Clock */}
+          
+          {/* Red Timer - Placed directly below, smaller font size */}
           {isMounted && (
-            <div className="flex items-center gap-1.5 text-white text-sm sm:text-base font-bold">
-              <span className="text-xs font-medium mr-1 uppercase tracking-wider opacity-90">Time Left:</span>
-              <div className="bg-black/20 px-2 py-1 rounded backdrop-blur-sm min-w-[32px] text-center">
-                {String(timeLeft.hours).padStart(2, '0')}h
-              </div>
-              <span>:</span>
-              <div className="bg-black/20 px-2 py-1 rounded backdrop-blur-sm min-w-[32px] text-center">
-                {String(timeLeft.minutes).padStart(2, '0')}m
-              </div>
-              <span>:</span>
-              <div className="bg-black/20 px-2 py-1 rounded backdrop-blur-sm min-w-[32px] text-center">
-                {String(timeLeft.seconds).padStart(2, '0')}s
-              </div>
+            <div className="text-[10px] sm:text-xs text-red-600 dark:text-red-500 font-bold tracking-widest mt-1 uppercase">
+              Ends In: {String(timeLeft.hours).padStart(2, '0')}h : {String(timeLeft.minutes).padStart(2, '0')}m : {String(timeLeft.seconds).padStart(2, '0')}s
             </div>
           )}
-
-          {/* See All Link */}
-          <Link 
-            href={`/deals?campaign=${campaignSlug}`} 
-            className="flex items-center gap-1 text-white text-xs font-bold uppercase tracking-widest hover:text-black transition-colors shrink-0"
-          >
-            See All <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
+
+        {/* See All Link */}
+        <Link 
+          href={`/deals?campaign=${campaignSlug}`} 
+          className="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest hover:text-[#FF6A00] transition-colors mt-0.5"
+        >
+          See All <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
+        </Link>
       </div>
 
       {/* 🛍️ THE PRODUCTS */}
-      <div className="p-3 sm:p-5 bg-slate-50 dark:bg-[#111]">
-        <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 snap-x snap-mandatory no-scrollbar">
+      <div className="p-2 sm:p-3 bg-white dark:bg-[#151515]">
+        <div className="flex overflow-x-auto gap-2 sm:gap-3 pb-2 snap-x snap-mandatory no-scrollbar">
           {products.map((product) => (
-            <div key={product.id} className="flex-none w-[160px] sm:w-[200px] snap-start">
-              {/* Reusing your exact ProductCard */}
+            <div key={product.id} className="flex-none w-[140px] sm:w-[180px] snap-start">
               <ProductCard product={product} />
             </div>
           ))}
