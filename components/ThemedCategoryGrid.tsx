@@ -47,7 +47,7 @@ export default function ThemedCategoryGrid() {
       
       {/* Centered Heading */}
       <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white text-center mb-4 sm:mb-6 tracking-tight">
-        Curated for You!
+        Browse By Category!
       </h2>
 
       {/* 🔥 RESPONSIVE GRID: 3 columns on mobile, 6 columns (one line) on desktop */}
