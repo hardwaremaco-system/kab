@@ -7,6 +7,7 @@ import { optimizeImage } from "@/lib/utils";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import ProductSection from "@/components/ProductSection";
+import LeftSidebar from "@/components/LeftSidebar"; // 🔥 Imported LeftSidebar
 import algoliasearch from "algoliasearch/lite";
 
 const searchClient = algoliasearch(
@@ -21,7 +22,7 @@ function SearchResults() {
 
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // 🔥 NEW: JUMIA GRADE TYPO TRACKING
   const [correctedQuery, setCorrectedQuery] = useState<string | null>(null);
 
@@ -102,100 +103,120 @@ function SearchResults() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-start pt-32 bg-slate-50 dark:bg-[#0a0a0a] min-h-screen">
-        <svg className="animate-spin w-16 h-16 text-[#D97706] drop-shadow-md mb-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="7" className="opacity-90" strokeDasharray="200" strokeDashoffset="50" />
-        </svg>
-        <p className="font-bold text-slate-500 animate-pulse">Searching Kabale Online for "{query}"...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0a0a]">
-      <div className="w-full max-w-[1200px] mx-auto py-8 px-3 sm:px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0a0a] pb-10 pt-2 sm:pt-4 font-sans selection:bg-[#FF6A00] selection:text-white">
+      <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4">
+        
+        <div className="flex flex-col md:flex-row items-start gap-4 w-full">
 
-        {/* HEADER SECTION */}
-        <div className="mb-8 max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">
-            Search Results
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400 font-medium text-sm md:text-base">
-            Found {products.length} {products.length === 1 ? "result" : "results"} for <span className="text-[#D97706] font-bold">"{query}"</span>
-          </p>
-          
-          {/* 🔥 JUMIA GRADE: "DID YOU MEAN" UI */}
-          {correctedQuery && products.length > 0 && (
-            <div className="mt-3 inline-flex items-center gap-2 bg-amber-50 dark:bg-[#D97706]/10 border border-amber-200 dark:border-[#D97706]/30 px-4 py-1.5 rounded-full shadow-sm">
-              <span className="text-lg">💡</span>
-              <p className="text-sm text-slate-700 dark:text-slate-300">
-                Did you mean <span className="font-bold text-[#D97706] italic">"{correctedQuery}"</span>?
-              </p>
-            </div>
-          )}
-        </div>
+          {/* 🔥 THE INVISIBLE SCROLLBAR SIDEBAR */}
+          <div className="hidden md:flex flex-col gap-4 w-[220px] lg:w-[240px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto overscroll-contain z-10 pb-6 pr-1 md:pr-2 
+            [&::-webkit-scrollbar]:w-1.5 
+            [&::-webkit-scrollbar-track]:bg-transparent 
+            [&::-webkit-scrollbar-thumb]:bg-slate-200 
+            dark:[&::-webkit-scrollbar-thumb]:bg-slate-800 
+            [&::-webkit-scrollbar-thumb]:rounded-full 
+            hover:[&::-webkit-scrollbar-thumb]:bg-slate-300 
+            dark:hover:[&::-webkit-scrollbar-thumb]:bg-slate-700"
+          >
+            <LeftSidebar />
+          </div>
 
-        {products.length === 0 ? (
-          // NO RESULTS INTENT-CATCHER UI (Unchanged)
-          <div className="bg-white dark:bg-[#111] rounded-3xl p-6 sm:p-12 text-center border border-slate-200 dark:border-slate-800 shadow-sm max-w-2xl mx-auto">
-            <span className="text-6xl mb-4 block">🕵️‍♂️</span>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">We couldn't find "{query}"</h2>
-            <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto">
-              But don't give up yet! New items are posted by locals every single day.
-            </p>
-
-            {alertSuccess ? (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 rounded-2xl p-6 mb-8">
-                <span className="text-4xl block mb-2">✅</span>
-                <h3 className="font-bold text-lg mb-1">Alert Setup Complete!</h3>
-                <p className="text-sm">We'll message you at <strong>{contactInfo}</strong> the exact moment someone posts this item in Kabale.</p>
+          {/* 🔥 MAIN FEED */}
+          <div className="flex-grow min-w-0 flex flex-col w-full px-3 sm:px-0 py-4 sm:py-8">
+            
+            {loading ? (
+              <div className="flex flex-col items-center justify-start pt-24 h-full">
+                <svg className="animate-spin w-16 h-16 text-[#D97706] drop-shadow-md mb-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="7" className="opacity-90" strokeDasharray="200" strokeDashoffset="50" />
+                </svg>
+                <p className="font-bold text-slate-500 animate-pulse">Searching Kabale Online for "{query}"...</p>
               </div>
             ) : (
-              <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 sm:p-8 mb-8 text-left shadow-inner">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">🔔</span>
-                  <h3 className="font-bold text-slate-900 dark:text-white text-lg">Want us to notify you?</h3>
+              <>
+                {/* HEADER SECTION */}
+                <div className="mb-8 max-w-3xl mx-auto text-center w-full">
+                  <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">
+                    Search Results
+                  </h1>
+                  <p className="text-slate-600 dark:text-slate-400 font-medium text-sm md:text-base">
+                    Found {products.length} {products.length === 1 ? "result" : "results"} for <span className="text-[#D97706] font-bold">"{query}"</span>
+                  </p>
+
+                  {/* JUMIA GRADE: "DID YOU MEAN" UI */}
+                  {correctedQuery && products.length > 0 && (
+                    <div className="mt-3 inline-flex items-center gap-2 bg-amber-50 dark:bg-[#D97706]/10 border border-amber-200 dark:border-[#D97706]/30 px-4 py-1.5 rounded-full shadow-sm">
+                      <span className="text-lg">💡</span>
+                      <p className="text-sm text-slate-700 dark:text-slate-300">
+                        Did you mean <span className="font-bold text-[#D97706] italic">"{correctedQuery}"</span>?
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">
-                  Drop your WhatsApp number or email below. The second a seller lists "{query}", you'll be the first to know.
-                </p>
 
-                <form onSubmit={handleCreateAlert} className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. 07... or email"
-                    className="flex-grow px-4 py-3.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#D97706] outline-none shadow-sm"
-                    value={contactInfo}
-                    onChange={(e) => setContactInfo(e.target.value)}
-                    disabled={isSubmittingAlert}
-                  />
-                  <button
-                    type="submit"
-                    disabled={isSubmittingAlert}
-                    className="bg-[#D97706] text-white px-8 py-3.5 rounded-xl font-bold hover:bg-amber-600 transition-colors shadow-md disabled:opacity-70 whitespace-nowrap flex justify-center items-center"
-                  >
-                    {isSubmittingAlert ? (
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {products.length === 0 ? (
+                  // NO RESULTS INTENT-CATCHER UI
+                  <div className="bg-white dark:bg-[#111] rounded-3xl p-6 sm:p-12 text-center border border-slate-200 dark:border-slate-800 shadow-sm max-w-2xl mx-auto w-full">
+                    <span className="text-6xl mb-4 block">🕵️‍♂️</span>
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">We couldn't find "{query}"</h2>
+                    <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto">
+                      But don't give up yet! New items are posted by locals every single day.
+                    </p>
+
+                    {alertSuccess ? (
+                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 rounded-2xl p-6 mb-8">
+                        <span className="text-4xl block mb-2">✅</span>
+                        <h3 className="font-bold text-lg mb-1">Alert Setup Complete!</h3>
+                        <p className="text-sm">We'll message you at <strong>{contactInfo}</strong> the exact moment someone posts this item in Kabale.</p>
+                      </div>
                     ) : (
-                      "Notify Me"
-                    )}
-                  </button>
-                </form>
-              </div>
-            )}
+                      <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 sm:p-8 mb-8 text-left shadow-inner">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-2xl">🔔</span>
+                          <h3 className="font-bold text-slate-900 dark:text-white text-lg">Want us to notify you?</h3>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">
+                          Drop your WhatsApp number or email below. The second a seller lists "{query}", you'll be the first to know.
+                        </p>
 
-            <Link href="/" className="inline-block text-slate-500 dark:text-slate-400 font-bold hover:text-[#D97706] dark:hover:text-[#D97706] transition-colors">
-              ← Continue browsing categories
-            </Link>
+                        <form onSubmit={handleCreateAlert} className="flex flex-col sm:flex-row gap-3">
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g. 07... or email"
+                            className="flex-grow px-4 py-3.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#D97706] outline-none shadow-sm"
+                            value={contactInfo}
+                            onChange={(e) => setContactInfo(e.target.value)}
+                            disabled={isSubmittingAlert}
+                          />
+                          <button
+                            type="submit"
+                            disabled={isSubmittingAlert}
+                            className="bg-[#D97706] text-white px-8 py-3.5 rounded-xl font-bold hover:bg-amber-600 transition-colors shadow-md disabled:opacity-70 whitespace-nowrap flex justify-center items-center"
+                          >
+                            {isSubmittingAlert ? (
+                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                              "Notify Me"
+                            )}
+                          </button>
+                        </form>
+                      </div>
+                    )}
+
+                    <Link href="/" className="inline-block text-slate-500 dark:text-slate-400 font-bold hover:text-[#D97706] dark:hover:text-[#D97706] transition-colors">
+                      ← Continue browsing categories
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="pb-12 w-full">
+                    <ProductSection products={products} />
+                  </div>
+                )}
+              </>
+            )}
           </div>
-        ) : (
-          <div className="pb-12 w-full">
-            <ProductSection products={products} />
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
