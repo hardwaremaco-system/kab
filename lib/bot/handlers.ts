@@ -78,12 +78,16 @@ export async function checkIsBotFlow(senderPhone: string, message: any): Promise
       "Browse Catalog",
       [{
         title: "Marketplace Menu",
-        rows: [
-          { id: "cat_electronics_0", title: "📱 Electronics & Tech" },
-          { id: "cat_fashion_0", title: "👕 Fashion & Wear" },
-          { id: "cat_student_item_0", title: "🎒 Student Essentials" }, 
+                rows: [
+          { id: "cat_watches_0", title: "⌚ Watches" },
+          { id: "cat_phones-tvs_0", title: "📱 Phones & TVs" },
+          { id: "cat_sound-systems_0", title: "🔊 Sound Systems" },
+          { id: "cat_accessories_0", title: "🎧 Accessories" },
+          { id: "cat_appliances_0", title: "🔌 Appliances" },
+          { id: "cat_other_0", title: "📦 Other Products" },
           { id: "cmd_search", title: "🔍 Search (Type it out!)", description: "Just tell me what you need" }
         ]
+
       }]
     );
     return true;
@@ -173,7 +177,8 @@ async function handleCategoryBrowsing(phone: string, category: string, page: num
       });
     }
 
-    const formattedCategory = category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    // This replaces both underscores AND hyphens with spaces
+const formattedCategory = category.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
     await sendWhatsAppListMenu(
       phone,
