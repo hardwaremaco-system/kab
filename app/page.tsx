@@ -120,7 +120,6 @@ export default async function Home() {
             <div className="flex-grow min-w-0 flex flex-col w-full">
 
               <div className="w-full flex flex-col shadow-sm mb-4 sm:mb-6">
-                <ValuePropBanner />
                 <div className="w-full z-0">
                   <HeroCarousel products={heroProducts} />
                 </div>
