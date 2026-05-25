@@ -15,7 +15,7 @@ export default function ProductFeed({ initialProducts }: { initialProducts: any[
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<any[]>(initialProducts);
   const [loading, setLoading] = useState(false);
-  
+
   // If the server gave us exactly the page size, assume there is more to load
   const [hasMore, setHasMore] = useState(initialProducts.length === PAGE_SIZE);
 
@@ -106,8 +106,9 @@ export default function ProductFeed({ initialProducts }: { initialProducts: any[
   }, [products, maxPrice, sortType]);
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4 pb-8">
-      
+    // Increased max-w to 1600px to comfortably accommodate the 6-column grid on wide screens
+    <div className="w-full max-w-[1600px] mx-auto px-0 sm:px-4 pb-8">
+
       {displayedProducts.length > 0 ? (
         <ProductSection 
           title={`Latest Additions (${displayedProducts.length} items)`} 
@@ -124,7 +125,7 @@ export default function ProductFeed({ initialProducts }: { initialProducts: any[
               ? "Try clearing your filters to see more results." 
               : "Check back soon! New items are posted here daily."}
           </p>
-          
+
           {(maxPrice || sortType) && (
             <Link 
               href="/products" 
