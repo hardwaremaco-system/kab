@@ -3,12 +3,12 @@ export const revalidate = 7200;
 import { getCachedDeals } from "@/lib/firebase/fetchers";
 import HeroCarousel from "@/components/HeroCarousel"; // Your original carousel
 
-// 🔥 Pulling your 5 new test files directly from the src/ folder
-import PromoHero from "@/src/PromoHero"; 
-import DiscountBanner from "@/src/DiscountBanner"; 
-import CategoryBlock from "@/src/CategoryBlock";
-import DealsScroller from "@/src/DealsScroller";
-import { futureCategories, trendingCategories } from "@/src/categories"; 
+// 🔥 Using the EXACT file names and paths I gave you, inside the src folder:
+import PromoHero from "@/src/components/banners/PromoHero"; 
+import DiscountBanner from "@/src/components/banners/DiscountBanner"; 
+import CategoryBlock from "@/src/components/CategoryBlock";
+import DealsScroller from "@/src/components/DealsScroller";
+import { futureCategories, trendingCategories } from "@/src/lib/static/categories"; 
 
 export default async function Home() {
   const todaysDeals = await getCachedDeals();
@@ -30,7 +30,7 @@ export default async function Home() {
           <CategoryBlock items={futureCategories} />
         </section>
 
-        {/* 3. MINI TRUST BANNER (Hardcoded so it doesn't break your build) */}
+        {/* 3. MINI TRUST BANNER (Hardcoded temporarily to prevent build crash) */}
         <section className="px-4">
           <div className="w-full bg-gray-50 rounded-xl p-6 text-center border border-gray-100">
             <h3 className="font-bold text-lg mb-1">Shopping made easy</h3>
@@ -43,7 +43,7 @@ export default async function Home() {
           <PromoHero />
         </section>
 
-        {/* 5. TODAY'S DEALS (The only heavy database query) */}
+        {/* 5. TODAY'S DEALS */}
         <section className="px-4">
           <div className="mb-4">
             <h2 className="text-[1.3rem] font-bold text-gray-900">Today's Deals</h2>
