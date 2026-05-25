@@ -1,19 +1,14 @@
 export const revalidate = 7200; 
 
 import { getCachedDeals } from "@/lib/firebase/fetchers";
+import HeroCarousel from "@/components/HeroCarousel"; // Your original carousel
 
-// Banners & Promos
-import HeroCarousel from "@/components/HeroCarousel";
-import TrustBanner from "@/components/TrustBanner"; 
-import PromoHero from "@/components/PromoHero"; // 🔥 Path flattened
-import DiscountBanner from "@/components/DiscountBanner"; // 🔥 Path flattened
-
-// Grids & Scrollers
-import CategoryBlock from "@/components/CategoryBlock";
-import DealsScroller from "@/components/DealsScroller";
-
-// Static Data for Categories 
-import { futureCategories, trendingCategories } from "@/lib/categories"; // 🔥 Path flattened
+// 🔥 Pulling your 5 new test files directly from the src/ folder
+import PromoHero from "@/src/PromoHero"; 
+import DiscountBanner from "@/src/DiscountBanner"; 
+import CategoryBlock from "@/src/CategoryBlock";
+import DealsScroller from "@/src/DealsScroller";
+import { futureCategories, trendingCategories } from "@/src/categories"; 
 
 export default async function Home() {
   const todaysDeals = await getCachedDeals();
@@ -22,13 +17,12 @@ export default async function Home() {
     <main className="min-h-screen bg-white pb-10 font-sans">
       <div className="w-full max-w-[1400px] mx-auto flex flex-col gap-8 md:gap-10 pt-2">
 
-        {/* 1. TOP HERO: "Whatever you're into..." */}
+        {/* 1. TOP HERO */}
         <section className="px-0 md:px-4">
-          {/* 🔥 Fixed: Passing products so the carousel has data */}
           <HeroCarousel products={todaysDeals} />
         </section>
 
-        {/* 2. CATEGORY ROW 1: "The future in your hands" */}
+        {/* 2. CATEGORY ROW 1 */}
         <section className="px-4">
           <h2 className="text-[1.3rem] font-bold text-gray-900 mb-4">
             The future in your hands
@@ -36,27 +30,29 @@ export default async function Home() {
           <CategoryBlock items={futureCategories} />
         </section>
 
-        {/* 3. MINI TRUST BANNER: "Shopping made easy" */}
+        {/* 3. MINI TRUST BANNER (Hardcoded so it doesn't break your build) */}
         <section className="px-4">
-          <TrustBanner />
+          <div className="w-full bg-gray-50 rounded-xl p-6 text-center border border-gray-100">
+            <h3 className="font-bold text-lg mb-1">Shopping made easy</h3>
+            <p className="text-gray-500 text-sm">Enjoy reliability, secure deliveries and hassle-free returns.</p>
+          </div>
         </section>
 
-        {/* 4. PROMO HERO 2: "Shop the world. Ship for free." */}
+        {/* 4. PROMO HERO 2 */}
         <section className="px-0 md:px-4">
           <PromoHero />
         </section>
 
-        {/* 5. THE ONLY REAL PRODUCTS: "Today's Deals" */}
+        {/* 5. TODAY'S DEALS (The only heavy database query) */}
         <section className="px-4">
           <div className="mb-4">
             <h2 className="text-[1.3rem] font-bold text-gray-900">Today's Deals</h2>
             <p className="text-sm text-gray-500">All with free shipping</p>
           </div>
-
           <DealsScroller products={todaysDeals} />
         </section>
 
-        {/* 6. CATEGORY ROW 2: "Trending on Kabale Online" */}
+        {/* 6. CATEGORY ROW 2 */}
         <section className="px-4">
           <h2 className="text-[1.3rem] font-bold text-gray-900 mb-4">
             Trending on Kabale Online
@@ -64,7 +60,7 @@ export default async function Home() {
           <CategoryBlock items={trendingCategories} />
         </section>
 
-        {/* 7. BOTTOM PROMO: "Unlock 20% across your picks" */}
+        {/* 7. BOTTOM PROMO */}
         <section className="px-0 md:px-4 mb-8">
           <DiscountBanner />
         </section>
