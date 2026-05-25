@@ -4,20 +4,18 @@ import { getCachedDeals } from "@/lib/firebase/fetchers";
 
 // Banners & Promos
 import HeroCarousel from "@/components/HeroCarousel";
-import TrustBanner from "@/components/banners/TrustBanner"; // "Shopping made easy"
-import PromoHero from "@/components/banners/PromoHero"; // "Shop the world"
-import DiscountBanner from "@/components/banners/DiscountBanner"; // "Unlock 20%"
+import TrustBanner from "@/components/TrustBanner"; 
+import PromoHero from "@/components/PromoHero"; // 🔥 Path flattened
+import DiscountBanner from "@/components/DiscountBanner"; // 🔥 Path flattened
 
 // Grids & Scrollers
 import CategoryBlock from "@/components/CategoryBlock";
 import DealsScroller from "@/components/DealsScroller";
 
-// Static Data for Categories (Zero Database Reads!)
-import { futureCategories, trendingCategories } from "@/lib/static/categories";
+// Static Data for Categories 
+import { futureCategories, trendingCategories } from "@/lib/categories"; // 🔥 Path flattened
 
 export default async function Home() {
-  // 🔥 THE SECRET WEAPON: We only fetch ONE array of real products now.
-  // No more trendingProducts, officialProducts, latestProducts, etc.
   const todaysDeals = await getCachedDeals();
 
   return (
@@ -26,11 +24,11 @@ export default async function Home() {
 
         {/* 1. TOP HERO: "Whatever you're into..." */}
         <section className="px-0 md:px-4">
-          <HeroCarousel />
+          {/* 🔥 Fixed: Passing products so the carousel has data */}
+          <HeroCarousel products={todaysDeals} />
         </section>
 
         {/* 2. CATEGORY ROW 1: "The future in your hands" */}
-        {/* Uses a swiper on mobile, snaps into a Bento layout on desktop */}
         <section className="px-4">
           <h2 className="text-[1.3rem] font-bold text-gray-900 mb-4">
             The future in your hands
@@ -54,13 +52,11 @@ export default async function Home() {
             <h2 className="text-[1.3rem] font-bold text-gray-900">Today's Deals</h2>
             <p className="text-sm text-gray-500">All with free shipping</p>
           </div>
-          
-          {/* Bigger cards, one-line titles in Light Gray, bold Gray prices */}
+
           <DealsScroller products={todaysDeals} />
         </section>
 
         {/* 6. CATEGORY ROW 2: "Trending on Kabale Online" */}
-        {/* Again: Just category images routing to /category/[slug], NOT database products */}
         <section className="px-4">
           <h2 className="text-[1.3rem] font-bold text-gray-900 mb-4">
             Trending on Kabale Online
