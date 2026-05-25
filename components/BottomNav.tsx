@@ -81,66 +81,62 @@ export default function BottomNav() {
     { label: "Other Products", href: "/category/other-products", Icon: Package }
   ];
 
-  // 🔥 THE FIX: The early return goes HERE, after all hooks have successfully run!
   if (pathname?.startsWith("/admin") || pathname?.startsWith("/product/")) {
     return null;
   }
 
   return (
     <>
-      {/* BOTTOM NAVIGATION BAR */}
+      {/* FLOATING PILL BOTTOM NAVIGATION BAR */}
       <div 
-        className={`fixed bottom-0 left-0 w-full bg-white dark:bg-[#0a0a0a] border-t border-slate-200 dark:border-slate-800 z-50 transition-transform duration-300 xl:hidden ${
-          isVisible && !isMenuOpen ? "translate-y-0" : "translate-y-full"
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 w-max bg-[#f4f4f5] dark:bg-[#1a1a1a] p-2 rounded-full z-50 transition-transform duration-300 xl:hidden shadow-lg border border-white/50 dark:border-white/10 ${
+          isVisible && !isMenuOpen ? "translate-y-0" : "translate-y-[200%]"
         }`}
       >
-        <div className="flex justify-around items-center h-16 px-2 pb-safe">
+        <div className="flex items-center gap-2">
           {navItems.map(({ label, href, isTrigger, Icon }) => {
             const isActive = !isTrigger && (pathname === href || (href !== "/" && pathname?.startsWith(href || "")));
 
             const content = (
-              <div className="flex flex-col items-center justify-center h-full relative w-full gap-1">
+              <div 
+                className={`flex items-center gap-2 transition-all duration-300 ease-in-out ${
+                  isActive 
+                    ? "bg-white dark:bg-black px-5 py-3 rounded-full shadow-sm" 
+                    : "px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 rounded-full"
+                }`}
+              >
                 {/* SVG Icon */}
-                <div className="relative">
+                <div className="relative flex items-center justify-center">
                   <Icon 
-                    size={22} 
+                    size={24} 
                     strokeWidth={isActive ? 2.5 : 2} 
                     className={`transition-colors duration-300 ${
-                      isActive ? "text-[#FF6A00]" : "text-slate-500 dark:text-slate-400"
+                      isActive ? "text-black dark:text-white" : "text-gray-500 dark:text-gray-400"
                     }`} 
                   />
 
                   {/* Cart Badge */}
                   {label === "Cart" && cartCount > 0 && (
-                    <span className="absolute -top-2 -right-3 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-[#0a0a0a] shadow-sm leading-none">
+                    <span className="absolute -top-1.5 -right-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#f4f4f5] dark:border-[#1a1a1a] shadow-sm leading-none z-10">
                       {cartCount}
                     </span>
                   )}
                 </div>
 
-                {/* Text Label */}
-                <span 
-                  className={`text-[10px] uppercase tracking-wider transition-all duration-300 ${
-                    isActive ? "font-black text-[#FF6A00]" : "font-bold text-slate-500 dark:text-slate-400"
-                  }`}
-                >
-                  {label}
-                </span>
-
-                {/* Animated Underline Indicator */}
-                <div 
-                  className={`absolute bottom-0 h-[3px] bg-[#FF6A00] rounded-t-full transition-all duration-300 ease-out ${
-                    isActive ? "w-8 opacity-100" : "w-0 opacity-0"
-                  }`}
-                />
+                {/* Text Label - Visually matches the image by only showing when active */}
+                {isActive && (
+                  <span className="text-sm font-semibold text-black dark:text-white whitespace-nowrap">
+                    {label}
+                  </span>
+                )}
               </div>
             );
 
-            const className = "flex flex-col items-center justify-center w-full h-full pt-1 pb-2 group";
+            const itemClassName = "focus:outline-none tap-highlight-transparent";
 
             if (isTrigger) {
               return (
-                <button key={label} onClick={() => setIsCategoryModalOpen(true)} className={className}>
+                <button key={label} onClick={() => setIsCategoryModalOpen(true)} className={itemClassName}>
                   {content}
                 </button>
               );
@@ -148,14 +144,14 @@ export default function BottomNav() {
 
             if (label === "Admin") {
               return (
-                <a key={label} href={href} className={className}>
+                <a key={label} href={href} className={itemClassName}>
                   {content}
                 </a>
               );
             }
 
             return (
-              <Link key={label} href={href || "#"} className={className}>
+              <Link key={label} href={href || "#"} className={itemClassName}>
                 {content}
               </Link>
             );
@@ -163,7 +159,7 @@ export default function BottomNav() {
         </div>
       </div>
 
-      {/* CATEGORIES SLIDE-UP MODAL */}
+      {/* CATEGORIES SLIDE-UP MODAL (Remains unchanged) */}
       {isCategoryModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity">
           <div className="bg-[#1a1a1a] w-full sm:w-[400px] rounded-t-3xl sm:rounded-3xl p-6 text-white animate-slide-up border border-slate-800 shadow-2xl">
