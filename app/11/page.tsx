@@ -1,9 +1,10 @@
 export const revalidate = 7200; 
 
-import { getCachedDeals } from "@/lib/firebase/fetchers";
-import HeroCarousel from "@/components/HeroCarousel"; // Your original carousel
+// 🔥 Reverted back to your actual existing fetcher function
+import { getCachedHomepageData } from "@/lib/firebase/fetchers";
+import HeroCarousel from "@/components/HeroCarousel"; 
 
-// 🔥 Using the EXACT file names and paths I gave you, inside the src folder:
+// Using the exact file names and paths inside the src folder:
 import PromoHero from "@/src/components/banners/PromoHero"; 
 import DiscountBanner from "@/src/components/banners/DiscountBanner"; 
 import CategoryBlock from "@/src/components/CategoryBlock";
@@ -11,7 +12,11 @@ import DealsScroller from "@/src/components/DealsScroller";
 import { futureCategories, trendingCategories } from "@/src/lib/static/categories"; 
 
 export default async function Home() {
-  const todaysDeals = await getCachedDeals();
+  // 🔥 Fetch your real data using your existing function
+  const data = await getCachedHomepageData();
+  
+  // Grab an array of products to use for the layout testing
+  const todaysDeals = data.trendingProducts || data.heroProducts || [];
 
   return (
     <main className="min-h-screen bg-white pb-10 font-sans">
