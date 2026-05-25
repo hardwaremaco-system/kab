@@ -50,13 +50,13 @@ export default function ProductSection({
       {/* VERTICAL GRID AREA */}
       <div className="p-3 sm:p-4">
         {/* The grid layout manages the columns automatically based on screen size */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
           {products.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
       </div>
-      
+
     </section>
   );
 }
