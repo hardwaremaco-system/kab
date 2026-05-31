@@ -30,6 +30,9 @@ export default function Navbar() {
   const { user, loading, signIn, signOut } = useAuth();
   const { cartCount } = useCart(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // 🔥 NEW: State to track scroll direction for the mobile smart header
+  const [isScrolledDown, setIsScrolledDown] = useState(false);
 
   // Determine base path for dynamic Smart Browse filtering
   const browseBase = pathname === '/' ? '/products' : pathname;
@@ -53,6 +56,38 @@ export default function Navbar() {
     };
   }, [isMobileMenuOpen]);
 
+  // 🔥 NEW: Scroll listener to collapse/expand mobile header
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const updateScrollDir = () => {
+      const scrollY = window.scrollY;
+      
+      // Add a slight threshold so it doesn't jitter on tiny thumb movements
+      if (Math.abs(scrollY - lastScrollY) < 10) {
+        ticking = false;
+        return;
+      }
+
+      // If scrolling down and past the first 100px, collapse it.
+      // If scrolling up, or at the very top, expand it.
+      setIsScrolledDown(scrollY > lastScrollY && scrollY > 100);
+      lastScrollY = scrollY > 0 ? scrollY : 0;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollDir);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   if (pathname?.startsWith("/admin")) return null; 
 
   const isActive = (path: string) => pathname === path;
@@ -62,7 +97,6 @@ export default function Navbar() {
     <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
   );
 
-  // 🔥 THE NEW ELECTRONICS FRONTEND BUCKETS + VERIFIED PREMIUM
   const categoryLinks = [
     { label: "Kabale's Verified Premium", href: "/officialStore", Icon: Store },
     { label: "Watches", href: "/category/watches", Icon: Watch },
@@ -73,6 +107,20 @@ export default function Navbar() {
     { label: "Other Products", href: "/category/other-products", Icon: Package }
   ];
 
+  // Reusable Cart Icon to prevent duplication between desktop/mobile/scrolled states
+  const CartIcon = ({ badgeSize = "text-[9px]" }) => (
+    <Link href="/cart" className="relative p-1 text-slate-700 hover:text-[#FF6A00] transition-colors flex-shrink-0">
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+      {cartCount > 0 && (
+        <span className={`absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-red-600 text-white ${badgeSize} font-bold px-1.5 py-0.5 rounded-full border-2 border-white`}>
+          {cartCount}
+        </span>
+      )}
+    </Link>
+  );
+
   return (
     <>
       {/* ============================================== */}
@@ -80,7 +128,7 @@ export default function Navbar() {
       {/* ============================================== */}
       <nav className="fixed w-full top-0 bg-white border-b-[3px] border-[#FF6A00] z-40 transition-all shadow-sm">
 
-        {/* === DESKTOP VIEW === */}
+        {/* === DESKTOP VIEW (Unchanged - Keeps full layout) === */}
         <div className="hidden lg:flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 justify-between items-center h-16 gap-6">
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="text-2xl font-black text-slate-900 tracking-tight">
@@ -93,10 +141,8 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-6">
-            {/* Quick access link */}
             <Link href="/category/phones-tvs" className={`text-sm font-bold uppercase tracking-wide transition-colors ${isActive('/category/phones-tvs') ? 'text-[#FF6A00]' : 'text-slate-600 hover:text-[#FF6A00]'}`}>Phones & TVs</Link>
 
-            {/* VIEW MORE DROPDOWN */}
             <div className="relative group">
               <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors text-slate-700 hover:text-[#FF6A00] hover:bg-slate-50 cursor-pointer">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -126,15 +172,7 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* DESKTOP CART ICON */}
-            <Link href="/cart" className="relative p-1 text-slate-700 hover:text-[#FF6A00] transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-              {cartCount > 0 && (
-                <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/4 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+            <CartIcon badgeSize="text-[10px]" />
 
             <Link href="/sell" className="flex items-center gap-2 bg-[#FF6A00] text-white px-5 py-2.5 rounded-md text-sm font-bold uppercase tracking-wide hover:bg-[#e65c00] transition-colors shadow-sm">
               Sell Now
@@ -169,8 +207,13 @@ export default function Navbar() {
         </div>
 
         {/* === MOBILE VIEW === */}
-        <div className="lg:hidden flex flex-col w-full">
-          <div className="flex items-center justify-between h-14 px-4">
+        <div className="lg:hidden flex flex-col w-full bg-white transition-all duration-300">
+          
+          {/* TOP ROW: Collapses on Scroll Down */}
+          <div 
+            className={`flex items-center justify-between px-4 transition-all duration-300 overflow-hidden transform origin-top 
+            ${isScrolledDown ? "h-0 opacity-0 m-0" : "h-14 opacity-100"}`}
+          >
             <div className="flex items-center gap-3">
               <button onClick={() => setIsMobileMenuOpen(true)} className="text-slate-900 focus:outline-none" aria-label="Open menu">
                 <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -181,14 +224,7 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4 text-slate-800">
-              <Link href="/cart" className="relative p-1 text-slate-700 hover:text-[#FF6A00] transition-colors">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
+              <CartIcon />
 
               {user ? (
                 <Link href="/profile" aria-label="Profile">
@@ -212,14 +248,25 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="px-3 pb-3 w-full">
-             <SearchBar />
+          {/* BOTTOM ROW: Search Bar + (Cart Icon when Scrolled) */}
+          <div className={`px-3 w-full flex items-center gap-2 transition-all duration-300 ${isScrolledDown ? "py-2.5 shadow-sm" : "pb-3 pt-0"}`}>
+            <div className="flex-1 w-full transition-all duration-300">
+              <SearchBar />
+            </div>
+            
+            {/* Secondary Cart Icon: Only slides into view when the top row collapses */}
+            <div 
+              className={`flex items-center justify-center transition-all duration-300 overflow-hidden 
+              ${isScrolledDown ? "w-10 opacity-100 scale-100 ml-1" : "w-0 opacity-0 scale-50 m-0"}`}
+            >
+               <CartIcon />
+            </div>
           </div>
         </div>
       </nav>
 
       {/* ============================================== */}
-      {/* MOBILE MENU DRAWER                           */}
+      {/* MOBILE MENU DRAWER (Unchanged)                 */}
       {/* ============================================== */}
       <div 
         className={`fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] xl:hidden transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
