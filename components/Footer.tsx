@@ -141,9 +141,9 @@ export default function Footer() {
         {/* Main Links */}
         <ul className="flex flex-col space-y-[1.125rem] text-[17px] font-medium tracking-wide mb-8">
           <li><Link href="/">Home</Link></li>
-          <li><Link href="/profile">Sign in / Register</Link></li>
+          <li><Link href="/profile">Go to your Account</Link></li>
           <li><Link href="/sell">Sell an item</Link></li>
-          <li><Link href="/guide">Help & Contact</Link></li>
+          <li><Link href="/cart">View your Cart</Link></li>
           <li><Link href="/ai">AI Shopping Guide</Link></li>
         </ul>
 
@@ -153,13 +153,13 @@ export default function Footer() {
         {/* Legal Links & Copyright */}
         <div className="flex flex-col items-center">
           <div className="flex flex-wrap justify-center text-[15px] text-[#4f90f7] mb-4">
-            <Link href="/sitemap" className="underline hover:text-blue-400">Site map</Link>
+            <Link href="/refunds" className="underline hover:text-blue-400">Refund Policy</Link>
             <span className="text-white mx-1">,</span>
             <Link href="/terms" className="underline hover:text-blue-400">User Agreement</Link>
             <span className="text-white mx-1">,</span>
             <Link href="/policies" className="underline hover:text-blue-400">Privacy</Link>
             <span className="text-white mx-1">,</span>
-            <Link href="/cookies" className="underline hover:text-blue-400">Cookies</Link>
+            <Link href="/faq" className="underline hover:text-blue-400">FAQ</Link>
           </div>
           <p className="text-[15px] text-gray-200 tracking-wide">
             © 2025-{new Date().getFullYear()} Kabale Online.
