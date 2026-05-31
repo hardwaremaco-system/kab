@@ -1,18 +1,71 @@
+// 🔥 CRITICAL: Tells Next.js to refresh this page every 60 seconds to pull new deals!
 export const revalidate = 7200; 
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import WhatsAppPopup from "@/components/WhatsAppPopup";
 import LeftSidebar from "@/components/LeftSidebar"; 
 
-// 🔥 THE COMPONENTS WE BUILT
+// Firebase imports for the active deals query
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+
+// 🔥 THE COMPONENTS WE BUILT & NEEDED IMPORTS
 import ThemedCategoryGrid from "@/components/ThemedCategoryGrid";
 import ShopNow from "@/components/shopnow"; 
 import DiscoveryBanner from "@/components/DiscoveryBanner";
+import CampaignScroller from "@/components/CampaignScroller";
 import SaveOnAppliances from "@/components/SaveOnAppliances";
 import TrendingCategories from "@/components/TrendingCategories";
-import Link from "next/link";
 
-export default function Home() {
+// 🔥 THE SMART TITLE DICTIONARY
+const campaignDisplayNames: Record<string, string> = {
+  "flash-sales": "Flash Sales",
+  "weekend-deals": "Weekend Deals",
+  "clearance": "Clearance Sale",
+  "student-deals": "Student Deals",
+  "mega-sale": "Mega Sale"
+};
+
+export default async function Home() {
+  
+  // ==========================================
+  // 🔥 FETCH AND GROUP DYNAMIC CAMPAIGNS
+  // ==========================================
+  const campaigns: Record<string, { products: any[], earliestEndDate: string }> = {};
+
+  try {
+    const dealsQ = query(
+      collection(db, "products"), 
+      where("isSale", "==", true), 
+      limit(20) 
+    );
+    const dealsSnap = await getDocs(dealsQ);
+
+    dealsSnap.docs.forEach(doc => {
+      const dealData = doc.data();
+
+      // Ensure the deal hasn't expired
+      if (new Date(dealData.saleEndDate).getTime() > Date.now()) {
+        const cType = dealData.campaignType || "flash-sales";
+
+        // If this campaign type doesn't exist in our object yet, create it
+        if (!campaigns[cType]) {
+          campaigns[cType] = { products: [], earliestEndDate: dealData.saleEndDate };
+        }
+
+        // Push the product into its specific campaign
+        campaigns[cType].products.push({ id: doc.id, ...dealData });
+
+        // Update the master clock for this specific campaign
+        if (new Date(dealData.saleEndDate) < new Date(campaigns[cType].earliestEndDate)) {
+          campaigns[cType].earliestEndDate = dealData.saleEndDate;
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Failed to fetch deals for homepage:", error);
+  }
+
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-white dark:bg-slate-900 pb-10 pt-2 sm:pt-4 font-sans selection:bg-[#FF6A00] selection:text-white">
@@ -35,7 +88,7 @@ export default function Home() {
             {/* MAIN FEED - MATCHING THE SCREENSHOT EXACTLY */}
             <div className="flex-grow min-w-0 flex flex-col w-full overflow-hidden">
               
-              {/* 1. TOP GRID: "The future in your hands" (Using your original component) */}
+              {/* 1. TOP GRID: "The future in your hands" */}
               <div className="w-full pt-4 sm:pt-6 px-4">
                 <ThemedCategoryGrid />
               </div>
@@ -50,31 +103,23 @@ export default function Home() {
                 <DiscoveryBanner />
               </div>
 
-              {/* 4. TODAY'S DEALS SCROLLER (Static Placeholder for layout) */}
-              <div className="w-full py-8 px-4 sm:px-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-                  Today's Deals
-                </h2>
-                <p className="text-sm text-slate-500 mb-4">All with free shipping</p>
-                
-                {/* Horizontal Scroller Placeholder */}
-                <div className="flex overflow-x-auto gap-4 pb-4 snap-x hide-scrollbar">
-                  {[1, 2, 3, 4].map((item) => (
-                    <div key={item} className="snap-start shrink-0 w-[140px] sm:w-[180px] flex flex-col gap-2">
-                      <div className="w-full aspect-square bg-[#F1F1F1] dark:bg-slate-800 rounded-xl relative group">
-                        <span className="absolute top-2 right-2 bg-white rounded-full p-1.5 shadow-sm z-10 cursor-pointer">
-                          🤍
-                        </span>
-                        <div className="w-full h-full flex items-center justify-center text-4xl">🛒</div>
-                      </div>
-                      <div className="text-sm font-medium line-clamp-2 leading-tight">Amazing Product {item}</div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold">$34.99</span>
-                        <span className="text-xs text-slate-400 line-through">$49.99</span>
-                      </div>
+              {/* 4. TODAY'S DEALS / CAMPAIGN SCROLLERS */}
+              <div className="w-full py-4 px-4 sm:px-6">
+                {Object.entries(campaigns).map(([slug, campaignData]) => {
+                  // Look up the nice name, fallback to formatting the slug if not found
+                  const displayTitle = campaignDisplayNames[slug] || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                  return (
+                    <div className="w-full mb-6 sm:mb-8" key={slug}>
+                      <CampaignScroller 
+                        title={displayTitle} 
+                        endTime={campaignData.earliestEndDate} 
+                        products={campaignData.products} 
+                        campaignSlug={slug} 
+                      />
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
 
               {/* 5. LIGHT GRAY COLLAGE: "Save on Appliances" */}
