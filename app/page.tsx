@@ -17,6 +17,7 @@ import AboutKabaleOnline from "@/components/AboutKabaleOnline";
 import ThemedCategoryGrid from "@/components/ThemedCategoryGrid";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import LeftSidebar from "@/components/LeftSidebar"; 
+import DiscoveryBanner from "@/components/DiscoveryBanner";
 
 // BANNERS & SCROLLERS
 import ValuePropBanner from "@/components/banners/ValuePropBanner";
@@ -147,6 +148,11 @@ export default async function Home() {
                     viewAllLink="/deals"
                   />
                 )}
+
+              {/* 3. MUSTARD BANNER: "Whatever you're into, it's here" */}
+              <div className="w-full">
+                <DiscoveryBanner />
+              </div>
 
                 {trendingProducts.length > 0 && (
                   <ProductSection 
