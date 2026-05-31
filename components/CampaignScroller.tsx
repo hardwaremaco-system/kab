@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ProductCard from "./ProductCard";
-import { ArrowRight } from "lucide-react";
 
 interface CampaignScrollerProps {
   title: string;
@@ -37,46 +36,47 @@ export default function CampaignScroller({ title, endTime, products, campaignSlu
 
   if (!products || products.length === 0) return null;
 
-  return (
-    <div className="w-full bg-white dark:bg-[#151515] overflow-hidden border border-slate-200 dark:border-slate-800 mb-6">
-      {/* 🔴 Slim container, no rounded corners */}
+  // Convert title to sentence case (e.g. "Flash Sales" -> "Flash sales")
+  const sentenceCaseTitle = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
 
-      {/* 🔴 THE CAMPAIGN HEADER - Light gray, slim padding */}
-      <div className="bg-slate-100 dark:bg-slate-900 px-3 py-2 sm:px-4 sm:py-2.5 flex justify-between items-start border-b border-slate-200 dark:border-slate-800">
-        
+  return (
+    <section className="w-full bg-white dark:bg-[#151515] rounded-md shadow-sm border border-slate-200 dark:border-slate-800 mb-4 overflow-hidden select-none">
+      
+      {/* HEADER AREA - Identical to ProductSection / ContinueBrowsing */}
+      <div className="flex justify-between items-center p-3 sm:p-4 border-b border-slate-100 dark:border-slate-800">
         <div className="flex flex-col">
-          {/* Orange Title */}
-          <h2 className="text-sm sm:text-base font-black uppercase tracking-widest text-[#FF6A00] leading-none">
-            {title}
+          <h2 style={{ color: '#1A1A1A' }} className="text-base sm:text-lg md:text-xl font-bold dark:text-white tracking-tight">
+            {sentenceCaseTitle}
           </h2>
-          
-          {/* Red Timer - Placed directly below, smaller font size */}
           {isMounted && (
-            <div className="text-[10px] sm:text-xs text-red-600 dark:text-red-500 font-bold tracking-widest mt-1 uppercase">
-              Ends In: {String(timeLeft.hours).padStart(2, '0')}h : {String(timeLeft.minutes).padStart(2, '0')}m : {String(timeLeft.seconds).padStart(2, '0')}s
-            </div>
+            <p style={{ color: '#6B6B6B' }} className="text-[10px] sm:text-xs font-medium mt-0.5 dark:text-slate-400">
+              <span className="text-red-600 dark:text-red-500 font-bold">
+                Ends in: {String(timeLeft.hours).padStart(2, '0')}h : {String(timeLeft.minutes).padStart(2, '0')}m : {String(timeLeft.seconds).padStart(2, '0')}s
+              </span>
+            </p>
           )}
         </div>
 
-        {/* See All Link */}
-        <Link 
-          href={`/deals?campaign=${campaignSlug}`} 
-          className="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest hover:text-[#FF6A00] transition-colors mt-0.5"
-        >
-          See All <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
+        {/* VIEW ALL LINK */}
+        <Link href={`/deals?campaign=${campaignSlug}`} className="text-sm font-semibold text-[#FF6A00] hover:underline flex items-center gap-1 whitespace-nowrap outline-none">
+          See All
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+          </svg>
         </Link>
       </div>
 
-      {/* 🛍️ THE PRODUCTS */}
-      <div className="p-2 sm:p-3 bg-white dark:bg-[#151515]">
-        <div className="flex overflow-x-auto gap-2 sm:gap-3 pb-2 snap-x snap-mandatory no-scrollbar">
+      {/* HORIZONTAL SCROLL AREA */}
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex overflow-x-auto gap-4 sm:gap-6 lg:gap-8 pb-2 snap-x snap-mandatory hide-scrollbar">
           {products.map((product) => (
-            <div key={product.id} className="flex-none w-[140px] sm:w-[180px] snap-start">
+            <div key={product.id} className="flex-none w-[140px] sm:w-[180px] lg:w-[200px] snap-start">
               <ProductCard product={product} />
             </div>
           ))}
         </div>
       </div>
-    </div>
+      
+    </section>
   );
 }
