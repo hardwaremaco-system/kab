@@ -28,14 +28,15 @@ export default function Footer() {
   const whatsappLink = `https://wa.me/256759997376?text=${whatsappMessage}`;
 
   return (
-    <footer className="bg-[#182335] text-white rounded-t-[2.5rem] mt-auto pb-16 pt-12 md:pt-20 px-6 font-sans">
-      <div className="max-w-6xl mx-auto">
+    <footer className="bg-[#182335] text-white md:rounded-t-[2.5rem] mt-auto pb-10 pt-8 md:pb-16 md:pt-20 font-sans">
+      
+      {/* ================================================= */}
+      {/* DESKTOP VIEW (Hidden on Mobile)                   */}
+      {/* ================================================= */}
+      <div className="hidden md:block max-w-6xl mx-auto px-6">
         
-        {/* ================================================= */}
-        {/* TOP SECTION: LOGO, TITLE, & WHATSAPP CTA          */}
-        {/* ================================================= */}
+        {/* TOP SECTION: LOGO, TITLE, & WHATSAPP CTA */}
         <div className="flex flex-col items-center justify-center text-center mb-16">
-          
           {/* Custom KABALE Rectangle Logo */}
           <div className="border-2 border-white px-4 py-1 mb-6 flex items-center justify-center rounded-sm">
             <span className="font-bold tracking-[0.2em] text-lg uppercase">Kabale</span>
@@ -48,7 +49,7 @@ export default function Footer() {
             Everything You Need, Delivered.
           </p>
 
-          {/* WhatsApp CTA (Replaces Newsletter) */}
+          {/* WhatsApp CTA */}
           <div className="flex flex-col items-center w-full max-w-sm bg-[#26354D] p-5 rounded-2xl border border-slate-700">
             <p className="text-sm text-gray-300 mb-3">
               Send us a message to shop via WhatsApp
@@ -65,11 +66,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* ================================================= */}
-        {/* BOTTOM SECTION: 4 COLUMNS GRID                    */}
-        {/* ================================================= */}
+        {/* BOTTOM SECTION: 4 COLUMNS GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
-          
           {/* Column 1: Contact */}
           <div>
             <h3 className="text-white font-bold text-base mb-5">Contact</h3>
@@ -78,8 +76,8 @@ export default function Footer() {
               <p>075 999 7376</p>
               <p>support@kabaleonline.com</p>
             </div>
-            
-            {/* Social Icons (White square style from image) */}
+
+            {/* Social Icons */}
             <div className="flex gap-2">
               <a href="https://www.fb.com/l/6lp1kJRRR" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-white text-[#182335] rounded flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="Facebook">
                 <FaFacebookF size={16} />
@@ -109,7 +107,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Shop Categories (Updated to new electronics pivot) */}
+          {/* Column 3: Shop Categories */}
           <div>
             <h3 className="text-white font-bold text-base mb-5">Categories</h3>
             <ul className="space-y-2 text-sm">
@@ -133,9 +131,42 @@ export default function Footer() {
               <li><Link href="/policies" className={getLinkStyle('/policies')}>Privacy Policy</Link></li>
             </ul>
           </div>
-
         </div>
       </div>
+
+      {/* ================================================= */}
+      {/* MOBILE VIEW (Similar to uploaded image)           */}
+      {/* ================================================= */}
+      <div className="block md:hidden px-5">
+        {/* Main Links */}
+        <ul className="flex flex-col space-y-[1.125rem] text-[17px] font-medium tracking-wide mb-8">
+          <li><Link href="/">Home</Link></li>
+          <li><Link href="/profile">Sign in / Register</Link></li>
+          <li><Link href="/sell">Sell an item</Link></li>
+          <li><Link href="/guide">Help & Contact</Link></li>
+          <li><Link href="/ai">AI Shopping Guide</Link></li>
+        </ul>
+
+        {/* Divider */}
+        <hr className="border-gray-500 mb-6" />
+
+        {/* Legal Links & Copyright */}
+        <div className="flex flex-col items-center">
+          <div className="flex flex-wrap justify-center text-[15px] text-[#4f90f7] mb-4">
+            <Link href="/sitemap" className="underline hover:text-blue-400">Site map</Link>
+            <span className="text-white mx-1">,</span>
+            <Link href="/terms" className="underline hover:text-blue-400">User Agreement</Link>
+            <span className="text-white mx-1">,</span>
+            <Link href="/policies" className="underline hover:text-blue-400">Privacy</Link>
+            <span className="text-white mx-1">,</span>
+            <Link href="/cookies" className="underline hover:text-blue-400">Cookies</Link>
+          </div>
+          <p className="text-[15px] text-gray-200 tracking-wide">
+            © 2025-{new Date().getFullYear()} Kabale Online.
+          </p>
+        </div>
+      </div>
+
     </footer>
   );
 }
