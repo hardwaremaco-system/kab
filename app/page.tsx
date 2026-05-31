@@ -19,18 +19,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import LeftSidebar from "@/components/LeftSidebar"; 
 
 // BANNERS & SCROLLERS
-import TimepieceBanner from "@/components/banners/TimepieceBanner";
 import ValuePropBanner from "@/components/banners/ValuePropBanner";
 import CampaignScroller from "@/components/CampaignScroller";
-
-const shuffleArray = (array: any[]) => {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-};
 
 // 🔥 THE SMART TITLE DICTIONARY
 const campaignDisplayNames: Record<string, string> = {
@@ -47,14 +37,9 @@ export default async function Home() {
   const heroProducts = data.heroProducts || [];
   const trendingProducts = data.trendingProducts || [];
   const officialProducts = data.officialProducts || [];
-  const latestProducts = data.latestProducts || [];
-
+  
   // Admin-curated collections
-  const featuredCollection = data.featuredCollection || [];
   const save4kProducts = data.save4kProducts || [];
-  const handPickedProducts = shuffleArray(data.handPickedProducts || []);
-
-  const otherProducts = data.otherProducts || [];
 
   // ==========================================
   // 🔥 FETCH AND GROUP DYNAMIC CAMPAIGNS
@@ -72,7 +57,7 @@ export default async function Home() {
 
     dealsSnap.docs.forEach(doc => {
       const dealData = doc.data();
-      
+
       // Ensure the deal hasn't expired
       if (new Date(dealData.saleEndDate).getTime() > Date.now()) {
         const cType = dealData.campaignType || "flash-sales";
@@ -134,7 +119,7 @@ export default async function Home() {
               {Object.entries(campaigns).map(([slug, campaignData]) => {
                 // Look up the nice name, fallback to formatting the slug if not found
                 const displayTitle = campaignDisplayNames[slug] || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                
+
                 return (
                   <div className="w-full mb-4 sm:mb-6" key={slug}>
                     <CampaignScroller 
@@ -154,15 +139,6 @@ export default async function Home() {
                   fallbackProducts={trendingProducts} 
                 />
 
-                {featuredCollection.length > 0 && (
-                  <ProductSection 
-                    title="Featured collection" 
-                    subtitle="Premium picks of the week"
-                    products={featuredCollection} 
-                    viewAllLink="/category/featured"
-                  />
-                )}
-
                 {save4kProducts.length > 0 && (
                   <ProductSection 
                     title="Save up to 4k" 
@@ -172,32 +148,12 @@ export default async function Home() {
                   />
                 )}
 
-                {handPickedProducts.length > 0 && (
-                  <ProductSection 
-                    title="Hand picked for you" 
-                    subtitle="Curated electronics tailored for performance"
-                    products={handPickedProducts} 
-                    viewAllLink="/products"
-                  />
-                )}
-
-                <TimepieceBanner />
-
                 {trendingProducts.length > 0 && (
                   <ProductSection 
                     title="Trending Now" 
                     subtitle="What everyone is looking at right now"
                     products={trendingProducts} 
                     viewAllLink="/products?sort=trending"
-                  />
-                )}
-                
-                {latestProducts.length > 0 && (
-                  <ProductSection 
-                    title="Recently added" 
-                    subtitle="Fresh electronics straight out of the box"
-                    products={latestProducts.slice(0, 12)} 
-                    viewAllLink="/products"
                   />
                 )}
 
@@ -207,15 +163,6 @@ export default async function Home() {
                     subtitle="100% genuine guaranteed products"
                     products={officialProducts} 
                     viewAllLink="/officialStore" 
-                  />
-                )}
-
-                {otherProducts.length > 0 && (
-                  <ProductSection 
-                    title="Other Products" 
-                    subtitle="Explore beyond electronics"
-                    products={otherProducts} 
-                    viewAllLink="/category/other-products" 
                   />
                 )}
 
