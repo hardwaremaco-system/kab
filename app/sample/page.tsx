@@ -17,6 +17,9 @@ import CampaignScroller from "@/components/CampaignScroller";
 import SaveOnWatches from "@/components/SaveOnWatches";
 import TrendingCategories from "@/components/TrendingCategories";
 
+// 🔥 ADDED DATA FETCHER
+import { getCachedHomepageData } from "@/lib/firebase/fetchers";
+
 // 🔥 THE SMART TITLE DICTIONARY
 const campaignDisplayNames: Record<string, string> = {
   "flash-sales": "Flash Sales",
@@ -27,7 +30,13 @@ const campaignDisplayNames: Record<string, string> = {
 };
 
 export default async function Home() {
-  
+
+  // ==========================================
+  // 🔥 FETCH SAVED PRODUCTS FOR THE WATCHES COLLAGE
+  // ==========================================
+  const data = await getCachedHomepageData();
+  const save4kProducts = data.save4kProducts || [];
+
   // ==========================================
   // 🔥 FETCH AND GROUP DYNAMIC CAMPAIGNS
   // ==========================================
@@ -70,7 +79,7 @@ export default async function Home() {
     <ThemeProvider>
       <div className="min-h-screen bg-white dark:bg-slate-900 pb-10 pt-2 sm:pt-4 font-sans selection:bg-[#FF6A00] selection:text-white">
         <WhatsAppPopup />
-        
+
         <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4">
           <div className="flex flex-col md:flex-row items-start gap-4 w-full">
 
@@ -87,7 +96,7 @@ export default async function Home() {
 
             {/* MAIN FEED - MATCHING THE SCREENSHOT EXACTLY */}
             <div className="flex-grow min-w-0 flex flex-col w-full overflow-hidden">
-              
+
               {/* 1. TOP GRID: "The future in your hands" */}
               <div className="w-full pt-4 sm:pt-6 px-4">
                 <ThemedCategoryGrid />
@@ -122,7 +131,7 @@ export default async function Home() {
                 })}
               </div>
 
-                            {/* 5. DYNAMIC COLLAGE: "Save on Watches" */}
+              {/* 5. DYNAMIC COLLAGE: "Save on Watches" */}
               {save4kProducts.length > 0 && (
                 <div className="w-full">
                   <SaveOnWatches products={save4kProducts} />
