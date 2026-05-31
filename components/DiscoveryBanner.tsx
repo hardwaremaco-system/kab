@@ -12,7 +12,7 @@ export default function DiscoveryBanner() {
           </h2>
 
           <p className="text-[#422608] text-base sm:text-lg mb-5 leading-snug font-medium">
-            Turn a wrench, get a tech upgrade, and find everything you love.
+            Look no further, get a tech upgrade, and find everything you love.
           </p>
 
           <Link 
