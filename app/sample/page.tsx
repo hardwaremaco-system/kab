@@ -14,7 +14,7 @@ import ThemedCategoryGrid from "@/components/ThemedCategoryGrid";
 import ShopNow from "@/components/shopnow"; 
 import DiscoveryBanner from "@/components/DiscoveryBanner";
 import CampaignScroller from "@/components/CampaignScroller";
-import SaveOnAppliances from "@/components/SaveOnAppliances";
+import SaveOnWatches from "@/components/SaveOnWatches";
 import TrendingCategories from "@/components/TrendingCategories";
 
 // 🔥 THE SMART TITLE DICTIONARY
@@ -122,10 +122,12 @@ export default async function Home() {
                 })}
               </div>
 
-              {/* 5. LIGHT GRAY COLLAGE: "Save on Appliances" */}
-              <div className="w-full">
-                <SaveOnAppliances />
-              </div>
+                            {/* 5. DYNAMIC COLLAGE: "Save on Watches" */}
+              {save4kProducts.length > 0 && (
+                <div className="w-full">
+                  <SaveOnWatches products={save4kProducts} />
+                </div>
+              )}
 
               {/* 6. BOTTOM GRID: "Trending on Kabale Online" */}
               <div className="w-full py-8 px-4">
