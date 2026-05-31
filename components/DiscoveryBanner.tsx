@@ -37,11 +37,12 @@ export default function DiscoveryBanner() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </div>
-            <div className="flex justify-center items-center w-full h-full pb-2">
+            {/* Expanded image container and larger image */}
+            <div className="flex justify-center items-center w-full h-full">
               <img 
                 src="/images/categories/accessories.png" 
                 alt="Accessories" 
-                className="w-16 h-16 sm:w-24 sm:h-24 object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300" 
+                className="w-24 h-24 sm:w-36 sm:h-36 object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300" 
               />
             </div>
           </Link>
@@ -57,11 +58,12 @@ export default function DiscoveryBanner() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </div>
-            <div className="flex justify-center items-center w-full h-full pb-2">
+            {/* Expanded image container and larger image */}
+            <div className="flex justify-center items-center w-full h-full">
               <img 
                 src="/images/categories/sound-systems.png" 
                 alt="Sound Systems" 
-                className="w-16 h-16 sm:w-24 sm:h-24 object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300" 
+                className="w-24 h-24 sm:w-36 sm:h-36 object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300" 
               />
             </div>
           </Link>
