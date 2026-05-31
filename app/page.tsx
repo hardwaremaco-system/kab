@@ -2,7 +2,6 @@
 export const revalidate = 7200; 
 
 import ContinueBrowsing from "@/components/ContinueBrowsing";
-import Link from "next/link";
 import { getCachedHomepageData } from "@/lib/firebase/fetchers";
 
 // Firebase imports for the active deals query
@@ -17,10 +16,8 @@ import AboutKabaleOnline from "@/components/AboutKabaleOnline";
 import ThemedCategoryGrid from "@/components/ThemedCategoryGrid";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import LeftSidebar from "@/components/LeftSidebar"; 
-import DiscoveryBanner from "@/components/DiscoveryBanner";
 
 // BANNERS & SCROLLERS
-import ValuePropBanner from "@/components/banners/ValuePropBanner";
 import CampaignScroller from "@/components/CampaignScroller";
 
 // 🔥 THE SMART TITLE DICTIONARY
@@ -148,11 +145,6 @@ export default async function Home() {
                     viewAllLink="/deals"
                   />
                 )}
-
-              {/* 3. MUSTARD BANNER: "Whatever you're into, it's here" */}
-              <div className="w-full">
-                <DiscoveryBanner />
-              </div>
 
                 {trendingProducts.length > 0 && (
                   <ProductSection 
