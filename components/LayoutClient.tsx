@@ -5,7 +5,6 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { CartProvider } from "@/context/CartContext"; 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import BottomNav from "@/components/BottomNav";
 import GlobalLoader from "@/components/GlobalLoader";
 
 // 🚀 IMPORT SILENT REFERRAL TRACKER
@@ -56,8 +55,6 @@ export default function LayoutClient({
           {/* FOOTER */}
           <Footer />
 
-          {/* MOBILE BOTTOM NAV */}
-          <BottomNav />
         </CartProvider>
       </AuthProvider>
     </>
