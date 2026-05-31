@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import ProductCard from "./ProductCard";
+// 🔥 IMPORT THE NEW SIMPLE CARD INSTEAD OF THE DEFAULT ONE
+import SimpleProductCard from "./SimpleProductCard";
 
 interface CampaignScrollerProps {
   title: string;
@@ -41,7 +42,7 @@ export default function CampaignScroller({ title, endTime, products, campaignSlu
 
   return (
     <section className="w-full bg-white dark:bg-[#151515] rounded-md shadow-sm border border-slate-200 dark:border-slate-800 mb-4 overflow-hidden select-none">
-      
+
       {/* HEADER AREA - Identical to ProductSection / ContinueBrowsing */}
       <div className="flex justify-between items-center p-3 sm:p-4 border-b border-slate-100 dark:border-slate-800">
         <div className="flex flex-col">
@@ -71,12 +72,13 @@ export default function CampaignScroller({ title, endTime, products, campaignSlu
         <div className="flex overflow-x-auto gap-4 sm:gap-6 lg:gap-8 pb-2 snap-x snap-mandatory hide-scrollbar">
           {products.map((product) => (
             <div key={product.id} className="flex-none w-[140px] sm:w-[180px] lg:w-[200px] snap-start">
-              <ProductCard product={product} />
+              {/* 🔥 USE THE NEW SIMPLE CARD HERE */}
+              <SimpleProductCard product={product} />
             </div>
           ))}
         </div>
       </div>
-      
+
     </section>
   );
 }
