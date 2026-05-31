@@ -32,10 +32,11 @@ const campaignDisplayNames: Record<string, string> = {
 export default async function Home() {
 
   // ==========================================
-  // 🔥 FETCH SAVED PRODUCTS FOR THE WATCHES COLLAGE
+  // 🔥 FETCH SAVED PRODUCTS FOR THE WATCHES COLLAGE & TRENDING
   // ==========================================
   const data = await getCachedHomepageData();
   const save4kProducts = data.save4kProducts || [];
+  const handPickedProducts = data.handPickedProducts || []; // <-- Added this line for TrendingCategories
 
   // ==========================================
   // 🔥 FETCH AND GROUP DYNAMIC CAMPAIGNS
@@ -139,9 +140,12 @@ export default async function Home() {
               )}
 
               {/* 6. BOTTOM GRID: "Trending on Kabale Online" */}
-              <div className="w-full py-8 px-4">
-                <TrendingCategories />
-              </div>
+              {/* <-- Updated this to properly pass the data we fetched above! --> */}
+              {handPickedProducts.length > 0 && (
+                <div className="w-full py-8 px-4">
+                  <TrendingCategories products={handPickedProducts} />
+                </div>
+              )}
 
             </div>
           </div>
