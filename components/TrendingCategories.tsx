@@ -28,15 +28,16 @@ export default function TrendingCategories({ products }: { products: any[] }) {
               href={`/product/${product.publicId || product.id}`} 
               className="group flex flex-col items-start outline-none"
             >
-              {/* Light gray rounded square for the image */}
-              <div className="w-full aspect-square rounded-2xl bg-[#F6F6F6] dark:bg-slate-800 flex items-center justify-center mb-2 sm:mb-3 transition-transform duration-300 group-hover:bg-gray-200 dark:group-hover:bg-slate-700 relative overflow-hidden">
+              {/* Product photo tile: background colors & padding removed, image covers the space */}
+              <div className="w-full aspect-square rounded-xl bg-white dark:bg-[#121212] flex items-center justify-center mb-2 sm:mb-3 transition-transform duration-300 relative overflow-hidden shadow-sm">
                 {optimizedImage ? (
                   <Image 
                     src={optimizedImage} 
                     alt={titleStr}
                     fill
                     sizes="(max-width: 768px) 33vw, 16vw"
-                    className="object-contain p-3 sm:p-5 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"
+                    // Changed to object-cover and removed all padding to make it its own background
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                 ) : (
                   <span className="text-xs text-slate-400">No Image</span>
