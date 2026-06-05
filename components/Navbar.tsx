@@ -30,12 +30,26 @@ export default function Navbar() {
   const { user, loading, signIn, signOut } = useAuth();
   const { cartCount } = useCart(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   // 🔥 NEW: State to track scroll direction for the mobile smart header
   const [isScrolledDown, setIsScrolledDown] = useState(false);
 
   // Determine base path for dynamic Smart Browse filtering
   const browseBase = pathname === '/' ? '/products' : pathname;
+
+  // ==============================================
+  // COOKIE LOGIC INTEGRATION
+  // ==============================================
+  const isAdmin = user?.role === "admin";
+
+  useEffect(() => {
+    if (isAdmin) {
+      document.cookie = "kabale_admin_session=true; path=/; max-age=86400; secure; samesite=strict";
+    } else {
+      document.cookie = "kabale_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+  }, [isAdmin]);
+  // ==============================================
 
   // Lock body scroll AND broadcast state to hide other UI elements
   useEffect(() => {
@@ -63,7 +77,7 @@ export default function Navbar() {
 
     const updateScrollDir = () => {
       const scrollY = window.scrollY;
-      
+
       // Add a slight threshold so it doesn't jitter on tiny thumb movements
       if (Math.abs(scrollY - lastScrollY) < 10) {
         ticking = false;
@@ -208,7 +222,7 @@ export default function Navbar() {
 
         {/* === MOBILE VIEW === */}
         <div className="lg:hidden flex flex-col w-full bg-white transition-all duration-300">
-          
+
           {/* TOP ROW: Collapses on Scroll Down */}
           <div 
             className={`flex items-center justify-between px-4 transition-all duration-300 overflow-hidden transform origin-top 
@@ -253,7 +267,7 @@ export default function Navbar() {
             <div className="flex-1 w-full transition-all duration-300">
               <SearchBar />
             </div>
-            
+
             {/* Secondary Cart Icon: Only slides into view when the top row collapses */}
             <div 
               className={`flex items-center justify-center transition-all duration-300 overflow-hidden 
