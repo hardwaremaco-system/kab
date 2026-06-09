@@ -14,6 +14,9 @@ import ReferralTracker from "@/components/ReferralTracker";
 import { GoogleTagManager } from '@next/third-parties/google';
 import { GTM_ID } from "@/lib/analytics";
 
+// 🔥 IMPORT THE HELP DRAWER
+import HelpDrawer from "@/components/HelpDrawer";
+
 export default function LayoutClient({
   children,
 }: {
@@ -54,6 +57,9 @@ export default function LayoutClient({
 
           {/* FOOTER */}
           <Footer />
+
+          {/* 🔥 THE FLOATING HELP DRAWER */}
+          <HelpDrawer />
 
         </CartProvider>
       </AuthProvider>
