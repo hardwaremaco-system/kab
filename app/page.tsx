@@ -129,14 +129,7 @@ export default async function Home() {
                   fallbackProducts={basePoolProducts} 
                 />
 
-                {latestProducts.length > 0 && (
-                  <ProductSection 
-                    title="Recently Added" 
-                    subtitle="Fresh electronics straight out of the box"
-                    products={latestProducts} 
-                    viewAllLink="/products"
-                  />
-                )}
+                
 
                 {officialProducts.length > 0 && (
                   <ProductSection 
@@ -146,6 +139,16 @@ export default async function Home() {
                     viewAllLink="/officialStore" 
                   />
                 )}
+
+{latestProducts.length > 0 && (
+                  <ProductSection 
+                    title="Recently Added" 
+                    subtitle="Fresh products straight out of the box"
+                    products={latestProducts} 
+                    viewAllLink="/products"
+                  />
+                )}
+
 
                 <AboutKabaleOnline />
 
