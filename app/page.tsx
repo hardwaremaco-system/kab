@@ -12,6 +12,8 @@ import { db } from "@/lib/firebase/config";
 import HeroCarousel from "@/components/HeroCarousel";
 import WhatsAppPopup from "@/components/WhatsAppPopup";
 import ProductSection from "@/components/ProductSection";
+import ShoppingMadeEasyBanner from "@/components/ShoppingMadeEasyBanner";
+
 import AboutKabaleOnline from "@/components/AboutKabaleOnline";
 import ThemedCategoryGrid from "@/components/ThemedCategoryGrid";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -128,6 +130,10 @@ export default async function Home() {
                   subtitle="Pick up exactly where you left off"
                   fallbackProducts={basePoolProducts} 
                 />
+{/* 🔥 DROP IT RIGHT HERE */}
+<div className="w-full mb-4 sm:mb-6">
+  <ShoppingMadeEasyBanner />
+</div>
 
                 
 
