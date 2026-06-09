@@ -33,16 +33,13 @@ export default async function Home() {
   const data = await getCachedHomepageData();
 
   const heroProducts = data.heroProducts || [];
-  const trendingProducts = data.trendingProducts || [];
   const officialProducts = data.officialProducts || [];
-  
-  // Admin-curated collections
-  const save4kProducts = data.save4kProducts || [];
+  const latestProducts = data.latestProducts || [];
+  const basePoolProducts = data.basePool || []; // Fallback buffer for browsing continuity
 
   // ==========================================
   // 🔥 FETCH AND GROUP DYNAMIC CAMPAIGNS
   // ==========================================
-  // This object will group deals by their campaign type
   const campaigns: Record<string, { products: any[], earliestEndDate: string }> = {};
 
   try {
@@ -56,19 +53,15 @@ export default async function Home() {
     dealsSnap.docs.forEach(doc => {
       const dealData = doc.data();
 
-      // Ensure the deal hasn't expired
       if (new Date(dealData.saleEndDate).getTime() > Date.now()) {
         const cType = dealData.campaignType || "flash-sales";
 
-        // If this campaign type doesn't exist in our object yet, create it
         if (!campaigns[cType]) {
           campaigns[cType] = { products: [], earliestEndDate: dealData.saleEndDate };
         }
 
-        // Push the product into its specific campaign
         campaigns[cType].products.push({ id: doc.id, ...dealData });
 
-        // Update the master clock for this specific campaign
         if (new Date(dealData.saleEndDate) < new Date(campaigns[cType].earliestEndDate)) {
           campaigns[cType].earliestEndDate = dealData.saleEndDate;
         }
@@ -115,7 +108,6 @@ export default async function Home() {
               {/* 🔥 RENDER EVERY ACTIVE CAMPAIGN DYNAMICALLY*/}
               {/* ========================================== */}
               {Object.entries(campaigns).map(([slug, campaignData]) => {
-                // Look up the nice name, fallback to formatting the slug if not found
                 const displayTitle = campaignDisplayNames[slug] || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
                 return (
@@ -134,24 +126,15 @@ export default async function Home() {
                 <ContinueBrowsing 
                   title="Continue Browsing"
                   subtitle="Pick up exactly where you left off"
-                  fallbackProducts={trendingProducts} 
+                  fallbackProducts={basePoolProducts} 
                 />
 
-                {save4kProducts.length > 0 && (
+                {latestProducts.length > 0 && (
                   <ProductSection 
-                    title="Save up to 4k" 
-                    subtitle="Massive discounts on top electronics"
-                    products={save4kProducts} 
-                    viewAllLink="/deals"
-                  />
-                )}
-
-                {trendingProducts.length > 0 && (
-                  <ProductSection 
-                    title="Trending Now" 
-                    subtitle="What everyone is looking at right now"
-                    products={trendingProducts} 
-                    viewAllLink="/products?sort=trending"
+                    title="Recently Added" 
+                    subtitle="Fresh electronics straight out of the box"
+                    products={latestProducts} 
+                    viewAllLink="/products"
                   />
                 )}
 
