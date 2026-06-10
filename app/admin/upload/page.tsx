@@ -29,7 +29,7 @@ function AdminUploadContent() {
 
   const [formData, setFormData] = useState({
     title: "",
-    category: "phones-tvs", // 🔥 Updated default
+    category: "phones-tvs", // Default
     price: "",
     quantity: "1",
     condition: "new",
@@ -55,7 +55,7 @@ function AdminUploadContent() {
             setExistingImages(data.images || []);
             setFormData({
               title: data.name || data.title || "",
-              category: data.category || "phones-tvs", // 🔥 Updated default
+              category: data.category || "phones-tvs",
               price: data.price ? data.price.toString() : "",
               quantity: data.stock !== undefined ? data.stock.toString() : "1",
               condition: data.condition || "new",
@@ -268,7 +268,7 @@ function AdminUploadContent() {
         if (!editPublicId) {
           setFormData(prev => ({
             title: "",
-            category: "phones-tvs", // 🔥 Updated default
+            category: "phones-tvs", // Default
             price: "",
             quantity: "1",
             condition: "new",
@@ -340,16 +340,34 @@ function AdminUploadContent() {
               <label style={{ color: '#1A1A1A' }} className="block text-sm font-semibold mb-2">Category *</label>
               <select className="w-full rounded-xl border border-slate-300 px-4 py-3 bg-white focus:ring-2 focus:ring-[#FF6A00] outline-none transition-shadow"
                 value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                {/* 🔥 NEW ELECTRONICS CATEGORIES */}
-                <option value="watches">Watches</option>
-                <option value="phones-tvs">Phones & TVs</option>
-                <option value="sound-systems">Sound Systems</option>
-                <option value="accessories">Accessories</option>
-                <option value="appliances">Appliances</option>
-                <option value="other">Other Products</option>
                 
+                {/* 🔥 GROUP 1: BUY AGAIN & AGAIN */}
+                <optgroup label="Buy Again & Again">
+                  <option value="supermarket">Supermarket (Groceries, Soap, etc.)</option>
+                  <option value="fashion">Fashion & Shoes</option>
+                  <option value="beauty">Health & Beauty</option>
+                </optgroup>
+
+                {/* 🔥 GROUP 2: STEP-UP ELECTRONICS */}
+                <optgroup label="Step-Up Electronics">
+                  <option value="phones-tvs">Phones & TVs</option>
+                  <option value="sound-systems">Sound Systems</option>
+                  <option value="appliances">Appliances</option>
+                  <option value="accessories">Accessories</option>
+                  <option value="watches">Watches</option>
+                </optgroup>
+
+                {/* 🔥 GROUP 3: OTHERS */}
+                <optgroup label="More">
+                  <option value="other">Other Products</option>
+                </optgroup>
+
                 {/* Legacy categories for fallback if editing old items */}
-                {isService && <option value="services">Services (Legacy)</option>}
+                {isService && (
+                  <optgroup label="Legacy">
+                    <option value="services">Services (Legacy)</option>
+                  </optgroup>
+                )}
               </select>
             </div>
 
