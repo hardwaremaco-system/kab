@@ -12,13 +12,15 @@ export default function CartPage() {
 
   const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(false);
   const [loadingWhatsApp, setLoadingWhatsApp] = useState(false);
+  
+  // Real Upsell State
   const [upsellItems, setUpsellItems] = useState<any[]>([]);
   const [loadingUpsells, setLoadingUpsells] = useState(true);
 
   const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
 
   // ==========================================
-  // 1. FETCH REAL UPSELL ITEMS
+  // 📥 FETCH REAL UPSELL ITEMS
   // ==========================================
   useEffect(() => {
     async function fetchUpsells() {
@@ -26,8 +28,11 @@ export default function CartPage() {
         const res = await fetch("/api/products/upsells");
         if (res.ok) {
           const data = await res.json();
+          // Filter out items that are already in the user's cart
           const cartIds = new Set(cart.map(item => item.id));
-          setUpsellItems(data.items.filter((item: any) => !cartIds.has(item.id)));
+          const filteredUpsells = data.items.filter((item: any) => !cartIds.has(item.id));
+          
+          setUpsellItems(filteredUpsells);
         }
       } catch (error) {
         console.error("Failed to load upsells", error);
@@ -39,7 +44,7 @@ export default function CartPage() {
   }, [cart]);
 
   // ==========================================
-  // 2. LOGIC: GAMIFICATION & DISCOUNTS
+  // 🧠 THE DELIVERY PROGRESS LOGIC
   // ==========================================
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -48,24 +53,24 @@ export default function CartPage() {
     if (cartTotal >= 20000) {
       return { deliveryFee: 0, progress: 100, message: "Your order qualifies for FREE delivery!", isFreeDelivery: true };
     }
-    // Rule 2: Item count scaling (1=2000, 2=1000, 3=500, 4+=FREE)
+    // Rule 2: Item count scaling (1=2000, 2=1500, 3=1000, 4+=FREE)
     if (totalItems >= 4) {
       return { deliveryFee: 0, progress: 100, message: "🎉 FREE DELIVERY UNLOCKED!", isFreeDelivery: true };
     }
     if (totalItems === 3) {
-      return { deliveryFee: 500, progress: 75, message: "Add 1 more item to unlock FREE delivery.", isFreeDelivery: false };
+      return { deliveryFee: 1000, progress: 75, message: "Add 1 more item to unlock FREE delivery.", isFreeDelivery: false };
     }
     if (totalItems === 2) {
-      return { deliveryFee: 1000, progress: 50, message: "Add 1 more item and save another UGX 500 on delivery.", isFreeDelivery: false };
+      return { deliveryFee: 1500, progress: 50, message: "Add 1 more item and save UGX 500 on delivery.", isFreeDelivery: false };
     }
-    // Default: 1 item
-    return { deliveryFee: 2000, progress: 25, message: "Add 1 more item and save UGX 1,000 on delivery.", isFreeDelivery: false };
+    // Default: 1 item (or empty)
+    return { deliveryFee: 2000, progress: 25, message: "Add 1 more item and save UGX 500 on delivery.", isFreeDelivery: false };
   }, [cartTotal, totalItems]);
 
   const finalTotal = cartTotal + deliveryFee;
 
   // ==========================================
-  // 3. WHATSAPP CHECKOUT
+  // WHATSAPP CHECKOUT LOGIC
   // ==========================================
   const handleCheckoutClick = () => {
     if (cart.length === 0) return;
@@ -130,9 +135,9 @@ export default function CartPage() {
       title: item.title,
       price: item.price,
       quantity: 1,
-      image: item.image,
-      sellerId: item.sellerId,
-      sellerPhone: item.sellerPhone
+      image: item.image, 
+      sellerId: item.sellerId, 
+      sellerPhone: item.sellerPhone 
     });
   };
 
@@ -142,7 +147,9 @@ export default function CartPage() {
         <div className="text-6xl mb-4">🛒</div>
         <h1 className="text-2xl font-bold text-slate-800 mb-2">Your cart is empty</h1>
         <p className="text-slate-500 mb-6 text-center">Looks like you haven't added anything yet.</p>
-        <Link href="/" className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 px-8 rounded-lg transition-colors">Start Shopping</Link>
+        <Link href="/" className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 px-8 rounded-lg transition-colors">
+          Start Shopping
+        </Link>
       </div>
     );
   }
@@ -157,7 +164,7 @@ export default function CartPage() {
       </div>
 
       {/* ========================================== */}
-      {/* 🚀 THE GAMIFICATION BAR */}
+      {/* 🚀 THE BULLETPROOF GAMIFICATION BAR */}
       {/* ========================================== */}
       <div className={`mb-6 md:mb-8 p-4 rounded-2xl border transition-all w-full max-w-full overflow-hidden box-border ${isFreeDelivery ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'}`}>
         
