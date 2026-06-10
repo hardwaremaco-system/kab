@@ -4,64 +4,66 @@ import Link from "next/link";
 
 export default function ThemedCategoryGrid() {
   // 🛒 SECTION 1: HIGH-FREQUENCY REPEAT PURCHASES
+  // Unified to a soft, warm Kabale Orange tint
   const dailyCategories = [
     {
       name: "Supermarket",
       href: "/category/supermarket",
       image: "/images/categories/supermarket.png", 
-      bg: "bg-[#FFEBCC]", 
+      bg: "bg-[#FFF0E6] dark:bg-[#2A1708]", 
     },
     {
       name: "Fashion",
       href: "/category/fashion",
       image: "/images/categories/fashion.png",
-      bg: "bg-[#D1F2EB]", 
+      bg: "bg-[#FFF0E6] dark:bg-[#2A1708]", 
     },
     {
       name: "Beauty & Health",
       href: "/category/beauty",
       image: "/images/categories/beauty.png",
-      bg: "bg-[#FDEBD0]", 
+      bg: "bg-[#FFF0E6] dark:bg-[#2A1708]", 
     }
   ];
 
   // ⚡ SECTION 2: CORE ELECTRONICS
+  // Unified to a sleek, premium tech gray
   const electronicCategories = [
     {
       name: "Phones & TVs",
       href: "/category/phones-tvs",
       image: "/images/categories/phones-tvs.png", 
-      bg: "bg-[#E2E6E9]",
+      bg: "bg-[#F1F5F9] dark:bg-[#1E293B]",
     },
     {
       name: "Sound Systems",
       href: "/category/sound-systems",
       image: "/images/categories/sound-systems.png",
-      bg: "bg-[#EAD4C7]",
+      bg: "bg-[#F1F5F9] dark:bg-[#1E293B]",
     },
     {
       name: "Appliances",
       href: "/category/appliances",
       image: "/images/categories/appliances.png",
-      bg: "bg-[#9AAAC4]",
+      bg: "bg-[#F1F5F9] dark:bg-[#1E293B]",
     },
     {
       name: "Accessories",
       href: "/category/accessories",
       image: "/images/categories/accessories.png",
-      bg: "bg-[#518DFA]",
+      bg: "bg-[#F1F5F9] dark:bg-[#1E293B]",
     },
     {
       name: "Watches",
       href: "/category/watches",
       image: "/images/categories/watches.png",
-      bg: "bg-[#F5C7D9]",
+      bg: "bg-[#F1F5F9] dark:bg-[#1E293B]",
     },
     {
       name: "View All",
       href: "/products",
       image: "/images/categories/other-products.png",
-      bg: "bg-[#FFFEC3]",
+      bg: "bg-[#F1F5F9] dark:bg-[#1E293B]",
     }
   ];
 
