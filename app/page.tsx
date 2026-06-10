@@ -99,7 +99,7 @@ export default async function Home() {
 
               <div className="w-full flex flex-col shadow-sm mb-4 sm:mb-6">
                 <div className="w-full z-0">
-                  <HeroCarousel products={heroProducts} />
+                  <HeroCarousel />
                 </div>
                 <div className="w-full bg-white dark:bg-[#151515] sm:rounded-b-xl border-x border-b border-slate-200 dark:border-slate-800 p-4 pt-5 sm:pt-6">
                   <ThemedCategoryGrid />
