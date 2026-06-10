@@ -1,99 +1,78 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useCart } from "@/context/CartContext";
-import { useAuth } from "@/components/AuthProvider";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FaTrash, FaArrowLeft, FaShieldAlt } from "react-icons/fa";
+import { FaTrash, FaArrowLeft, FaWhatsapp } from "react-icons/fa";
 
 export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
-  const { user } = useAuth();
   const router = useRouter();
 
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(false);
+  const [loadingWhatsApp, setLoadingWhatsApp] = useState(false);
 
-  // Form States
-  const [buyerName, setBuyerName] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
+  const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
 
-  // Auto-fill name if logged in
-  useEffect(() => {
-    if (user?.displayName) setBuyerName(user.displayName);
-  }, [user]);
-
-  // ==========================================
-  // UNIFIED CART CHECKOUT (100% Full Payment)
-  // ==========================================
   const handleCheckoutClick = () => {
     if (cart.length === 0) return;
-    setShowModal(true);
+    setShowWhatsAppPopup(true);
   };
 
-  const executeCartCheckout = async () => {
-    if (!buyerName.trim()) return alert("Please provide your name.");
+  const handleBotInquiry = async () => {
+    setLoadingWhatsApp(true);
+    try {
+      const getCookie = (name: string) => {
+        if (typeof document === "undefined") return null;
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return null;
+      };
+      const referralCode = getCookie("kabale_ref");
 
-    const cleanPhone = contactPhone.replace(/\D/g, ""); 
-    if (cleanPhone.length < 10) {
-      return alert("Please enter a valid MTN/Airtel number.");
-    }
-
-    setLoading(true);
-
-    // 🚀 READ THE REFERRAL COOKIE FROM THE BROWSER
-    const getCookie = (name: string) => {
-      if (typeof document === "undefined") return null; // Safety check for SSR
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(';').shift();
-      return null;
-    };
-    const referralCode = getCookie("kabale_ref");
-
-    // 🚀 UNIFIED MASTER PAYLOAD (Mapping the cart array + Referral Data)
-    const masterOrderPayload = {
-      buyerName: buyerName.trim(),
-      contactPhone: cleanPhone,
-      userId: user ? user.id : "GUEST",
-      referralCodeUsed: referralCode || null, // 🔥 INJECTED HERE
-      cartItems: cart.map(item => ({
+      // Map cart to match the updated API payload expectations
+      const payloadCartItems = cart.map(item => ({
         productId: item.id,
         name: item.title,
         price: item.price,
         quantity: item.quantity,
         sellerId: (item as any).sellerId || "SYSTEM", 
-        sellerPhone: (item as any).sellerPhone || "", 
-        image: item.image || ""
-      }))
-    };
+        sellerPhone: (item as any).sellerPhone || ""
+      }));
 
-    try {  
-      // 🚀 Send the whole cart straight to the LivePay engine
-      const res = await fetch("/api/payments/initiate", {
+      const res = await fetch("/api/orders/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(masterOrderPayload),
+        body: JSON.stringify({ 
+          cartItems: payloadCartItems,
+          referralCodeUsed: referralCode || null 
+        }),
       });
 
-      const data = await res.json();
-
+      let referenceCode = "CART-ORDER"; 
       if (res.ok) {
-        // Clear local cart since the order is now safely in the DB
-        clearCart(); 
-        setShowModal(false);
-        // Redirect to the real-time LivePay waiting screen
-        router.push(`/checkout/waiting?orderId=${data.orderId}`);
-      } else {
-        alert(data.error || "Payment initiation failed. Please try again.");
-        setLoading(false);
+        const data = await res.json();
+        referenceCode = data.leadId; 
+        
+        // Optional: Clear the cart locally once the lead is safely generated
+        // clearCart(); 
       }
-    } catch (error) {  
-      console.error(error);  
-      alert("Something went wrong with the connection.");  
-      setLoading(false);
-    } 
+
+      // Format the WhatsApp message text
+      const itemsList = cart.map(item => `${item.quantity}x ${item.title}`).join("\n");
+      const rawMessage = `Hi! I want to order the following items on Kabale Online:\n\n${itemsList}\n\n*Total: UGX ${cartTotal.toLocaleString()}*\n\nRef: [${referenceCode}]`;
+      const encodedMessage = encodeURIComponent(rawMessage);
+
+      window.open(`https://wa.me/${botPhoneNumber}?text=${encodedMessage}`, "_blank");
+    } catch (error) {
+      const rawMessage = `Hi! I want to order my cart items.\n\nTotal: UGX ${cartTotal.toLocaleString()}`;
+      window.open(`https://wa.me/${botPhoneNumber}?text=${encodeURIComponent(rawMessage)}`, "_blank");
+    } finally {
+      setLoadingWhatsApp(false);
+      setShowWhatsAppPopup(false); 
+    }
   };
 
   if (cart.length === 0) {
@@ -102,7 +81,7 @@ export default function CartPage() {
         <div className="text-6xl mb-4">🛒</div>
         <h1 className="text-2xl font-bold text-slate-800 mb-2">Your cart is empty</h1>
         <p className="text-slate-500 mb-6">Looks like you haven't added anything yet.</p>
-        <Link href="/" className="bg-[#D97706] hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+        <Link href="/" className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 px-8 rounded-lg transition-colors">
           Start Shopping
         </Link>
       </div>
@@ -113,7 +92,7 @@ export default function CartPage() {
     <div className="max-w-4xl mx-auto p-4 md:p-8 bg-white min-h-screen relative">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Shopping Cart</h1>
-        <Link href="/" className="text-sm font-bold text-slate-500 hover:text-[#D97706] flex items-center gap-2">
+        <Link href="/" className="text-sm font-bold text-slate-500 hover:text-[#25D366] flex items-center gap-2">
           <FaArrowLeft /> Continue Shopping
         </Link>
       </div>
@@ -134,7 +113,7 @@ export default function CartPage() {
               <div className="flex-1 flex flex-col justify-between">
                 <div>
                   <h3 className="font-bold text-slate-800 leading-tight pr-8">{item.title}</h3>
-                  <p className="text-[#D97706] font-extrabold mt-1">UGX {item.price.toLocaleString()}</p>
+                  <p className="text-slate-800 font-extrabold mt-1">UGX {item.price.toLocaleString()}</p>
                 </div>
 
                 <div className="flex items-center gap-4 mt-2">
@@ -172,97 +151,68 @@ export default function CartPage() {
 
           <div className="flex justify-between mb-6 text-lg">
             <span className="font-bold text-slate-900">Total</span>
-            <span className="font-black text-[#D97706]">UGX {cartTotal.toLocaleString()}</span>
+            <span className="font-black text-slate-900">UGX {cartTotal.toLocaleString()}</span>
           </div>
 
           <button 
             onClick={handleCheckoutClick}
-            className="w-full bg-[#D97706] hover:bg-amber-600 text-white font-bold py-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px]"
+            className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px]"
           >
-            Checkout (Mobile Money)
+            <FaWhatsapp className="text-xl" /> 
+            Checkout via WhatsApp
           </button>
-
-          {/* 🔒 SECURE PAYMENT BADGE */}
-          <div className="mt-4 flex items-center justify-center gap-2 text-xs font-bold text-slate-500 bg-slate-100 py-2.5 rounded-md border border-slate-200">
-            <FaShieldAlt className="text-green-600 text-sm" />
-            Secure payment powered by Kabale Online
-          </div>
         </div>
       </div>
 
       {/* ========================================== */}
-      {/* CHECKOUT MODAL */}
+      {/* 🛑 WHATSAPP INTERCEPTION POPUP             */}
       {/* ========================================== */}
-      {showModal && (  
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">  
-          <div className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative overflow-hidden">  
-
-            <div className="absolute top-0 left-0 w-full h-2 bg-[#D97706]"></div>  
-            <h2 className="text-2xl font-black text-slate-900 mb-2">Complete Order</h2>  
-
-            {/* 🧮 SUMMARY BOX */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-5 mt-4">  
-              <p className="font-bold text-sm text-slate-600 leading-tight mb-2">
-                Paying for {cart.length} item{cart.length > 1 ? "s" : ""}
-              </p>  
-              <div className="flex justify-between items-center pt-2 border-t border-slate-200">  
-                <span className="text-sm font-bold text-slate-500">Amount to Pay:</span>  
-                <span className="font-black text-[#D97706] text-xl">UGX {cartTotal.toLocaleString()}</span>  
-              </div>  
-            </div>  
-
-            <div className="space-y-4 mb-6">
-              {/* Name */}
-              <div>  
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">Your Name</label>  
-                <input 
-                  required 
-                  type="text" 
-                  placeholder="e.g. John Doe" 
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-[#D97706]" 
-                  value={buyerName} 
-                  onChange={e => setBuyerName(e.target.value)} 
-                />  
-              </div>  
-
-              {/* Phone */}
-              <div>  
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">
-                  MTN/Airtel Mobile Money Number
-                </label>  
-                <input 
-                  required 
-                  type="tel" 
-                  placeholder="e.g. 077... or 075..." 
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-[#D97706]" 
-                  value={contactPhone} 
-                  onChange={e => setContactPhone(e.target.value)} 
-                />  
+      {showWhatsAppPopup && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
+          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200">
+            <div className="p-6 md:p-8">
+              <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5 mx-auto border border-green-100">
+                <FaWhatsapp className="text-3xl text-[#25D366]" />
               </div>
-            </div>  
+              <h3 className="text-xl font-black text-slate-900 text-center mb-2 tracking-tight">Complete Your Order</h3>
+              <p className="text-[13px] text-slate-500 text-center mb-6 leading-relaxed">
+                When WhatsApp opens, tap <strong className="text-slate-800">SEND</strong> (looks like 
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#25D366] border border-green-600 align-sub ml-1 shadow-inner">
+                  <svg className="w-3 h-3 text-black ml-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                </span>
+                on mobile) to send your cart details and confirm instantly.
+              </p>
+              
+              {/* 🧮 SUMMARY BOX */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">  
+                <p className="font-bold text-sm text-slate-600 leading-tight mb-2">
+                  Paying for {cart.length} item{cart.length > 1 ? "s" : ""}
+                </p>  
+                <div className="flex justify-between items-center pt-2 border-t border-slate-200">  
+                  <span className="text-sm font-bold text-slate-500">Order Total:</span>  
+                  <span className="font-black text-slate-900 text-lg">UGX {cartTotal.toLocaleString()}</span>  
+                </div>  
+              </div>  
 
-            {/* Actions */}
-            <div className="flex gap-3">  
-              <button 
-                onClick={() => setShowModal(false)} 
-                disabled={loading} 
-                className="flex-1 bg-white border-2 border-slate-200 text-slate-700 py-3.5 rounded-xl font-bold hover:bg-slate-50 transition-colors"
-              >
-                Cancel
-              </button>  
-              <button 
-                onClick={executeCartCheckout} 
-                disabled={loading || !contactPhone.trim() || !buyerName.trim()} 
-                className="flex-[2] bg-[#D97706] text-white py-3.5 rounded-xl font-bold hover:bg-amber-600 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
-              >  
-                {loading ? "Processing..." : "Pay Now"}  
-              </button>  
-            </div>  
-
-          </div>  
-        </div>  
-      )}  
-
+              <div className="flex flex-col gap-3">
+                <button onClick={handleBotInquiry} disabled={loadingWhatsApp} className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] disabled:opacity-70 active:scale-[0.98]">
+                  {loadingWhatsApp ? (
+                    <span className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Connecting...
+                    </span>
+                  ) : (
+                    <>Continue to WhatsApp</>
+                  )}
+                </button>
+                <button onClick={() => setShowWhatsAppPopup(false)} disabled={loadingWhatsApp} className="w-full py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
