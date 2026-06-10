@@ -1,127 +1,66 @@
 "use client";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import Image from "next/image";
-import Link from "next/link";
+import { FaWhatsapp, FaTruck, FaMoneyBillWave } from "react-icons/fa";
 
-export default function HeroCarousel({ products }: { products: any[] }) {
-  if (!products || products.length === 0) return null;
-
-  // Premium themes with pre-defined Tailwind classes
-  const slideThemes = [
-    { bg: "bg-slate-900" },
-    { bg: "bg-indigo-950" },
-    { bg: "bg-zinc-900" },
-    { bg: "bg-stone-950" },
-  ];
-
+export default function HeroSection() {
   return (
-    // 🔥 Removed mb-4 so it sits flush with the components below it
-    <div className="w-full bg-transparent select-none z-0">
-      <Swiper
-        modules={[Autoplay, Pagination]}
-        speed={800}
-        autoplay={{ delay: 5000, disableOnInteraction: false }}
-        loop={products.length > 1}
-        pagination={{ 
-          clickable: true, 
-          // 🔥 Updated to #FF6A00
-          bulletActiveClass: 'swiper-pagination-bullet-active bg-[#FF6A00] w-6 rounded-full',
-          bulletClass: 'swiper-pagination-bullet bg-white/30 hover:bg-white/60 w-2 h-2 inline-block rounded-full mx-1 cursor-pointer transition-all duration-300'
-        }}
-        slidesPerView={1}
-        spaceBetween={0}
-        // 🔥 Removed rounded-md so the corners don't leak white space
-        className="w-full overflow-hidden"
-      >
-        {products.map((product, index) => {
-          const theme = slideThemes[index % slideThemes.length];
-          const title = product.name || product.title || "Exclusive Deal";
-          const price = Number(product.price).toLocaleString();
-          const image = product.images?.[0] ? product.images[0] : "";
+    <div className="w-full bg-white border-b border-slate-100 overflow-hidden relative">
+      {/* Subtle modern background accent */}
+      <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-slate-50 to-white z-0"></div>
 
-          return (
-            <SwiperSlide key={product.id}>
-              <Link href={`/product/${product.publicId || product.id}`} className="block w-full outline-none group">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10 flex flex-col items-center text-center">
+        
+        {/* Minimalist Top Badge */}
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/60 text-slate-600 text-[11px] font-bold uppercase tracking-widest mb-8">
+          <span className="w-2 h-2 rounded-full bg-[#D97706] animate-pulse"></span>
+          Kabale's Local Marketplace
+        </div>
+        
+        {/* High-Impact Headline */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-black text-slate-900 leading-[1.1] mb-8 tracking-tighter">
+          Save time shopping,<br />
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#D97706] to-amber-500">
+            and we deliver what you need.
+          </span>
+        </h1>
+        
+        {/* Elegant Subheadline */}
+        <p className="text-lg sm:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto mb-16">
+          <strong className="text-slate-800 font-bold">Pay only after receiving your order.</strong><br />
+          Products sourced from trusted local shops.
+        </p>
+        
+        {/* Modern Trust Indicators */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16">
+          
+          <div className="flex flex-col items-center gap-3 group cursor-default">
+            <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center text-[#D97706] mb-1 transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+              <FaTruck className="text-2xl" />
+            </div>
+            <span className="text-sm font-bold text-slate-800">Fast Local Delivery</span>
+          </div>
+          
+          <div className="hidden sm:block w-px h-12 bg-slate-200"></div>
 
-                {/* Fixed Heights for all screens */}
-                <div className={`relative w-full h-[220px] sm:h-[280px] md:h-[350px] lg:h-[400px] xl:h-[420px] ${theme.bg} overflow-hidden flex`}>
+          <div className="flex flex-col items-center gap-3 group cursor-default">
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-500 mb-1 transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+              <FaMoneyBillWave className="text-2xl" />
+            </div>
+            <span className="text-sm font-bold text-slate-800">Pay on Delivery</span>
+          </div>
 
-                  {/* LEFT CONTENT: Strictly contained to 50% (55% on mobile) */}
-                  <div className="w-[55%] md:w-[50%] h-full flex flex-col justify-center pl-4 sm:pl-8 md:pl-12 pr-2 sm:pr-6 relative z-20 text-white shrink-0">
+          <div className="hidden sm:block w-px h-12 bg-slate-200"></div>
 
-                    {/* Hot Deal Label */}
-                    <div className="mb-2 sm:mb-3 transform transition-transform duration-500 group-hover:translate-x-1">
-                      <span className="bg-[#FF6A00] text-white text-[9px] sm:text-[10px] md:text-xs font-black uppercase tracking-widest px-2 sm:px-3 py-1 rounded-sm shadow-md inline-block">
-                        Hot Deal
-                      </span>
-                    </div>
+          <div className="flex flex-col items-center gap-3 group cursor-default">
+            <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-[#25D366] mb-1 transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+              <FaWhatsapp className="text-2xl" />
+            </div>
+            <span className="text-sm font-bold text-slate-800">WhatsApp Support</span>
+          </div>
 
-                    {/* Title - Adjusted to always allow 2 lines */}
-                    <h3 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black leading-tight sm:leading-none mb-4 sm:mb-6 line-clamp-2 drop-shadow-lg tracking-tight">
-                      {title}
-                    </h3>
+        </div>
 
-                    {/* Price Block */}
-                    <div className="flex flex-col transform transition-transform duration-500 group-hover:translate-x-1">
-                      <div className="flex items-baseline gap-1 text-[#FF6A00] drop-shadow-md">
-                        <span className="text-xs sm:text-sm md:text-lg font-bold uppercase tracking-widest">UGX</span>
-                        <span className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter">
-                          {price}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* RIGHT IMAGE: Strictly contained to the remaining 50% (45% on mobile) with no overlaps */}
-                  <div className="w-[45%] md:w-[50%] h-full relative z-10 overflow-hidden shrink-0 bg-white">
-                    <div className="relative w-full h-full transition-transform duration-[1500ms] ease-out group-hover:scale-105 group-hover:rotate-1 origin-center bg-white">
-                      {image && (
-                        <Image 
-                          src={image} 
-                          alt={title} 
-                          fill 
-                          className="object-cover object-center"
-                          sizes="(max-width: 768px) 45vw, 50vw"
-                          priority
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  {/* SHOP NOW BUTTON - Tucked into bottom right */}
-                  <div className="absolute bottom-0 right-0 z-30">
-                     <button className="bg-slate-900 text-white text-[10px] sm:text-xs md:text-sm font-black uppercase tracking-widest px-5 py-3 sm:px-8 sm:py-5 rounded-tl-2xl hover:bg-[#FF6A00] transition-all duration-300 shadow-2xl flex items-center gap-2 group-hover:pr-6 sm:group-hover:pr-10">
-                       Shop Now
-                       <svg className="w-3 h-3 md:w-4 md:h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
-                     </button>
-                  </div>
-
-                </div>
-              </Link>
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
-
-      <style jsx global>{`
-        .swiper-pagination {
-          bottom: 12px !important;
-          left: 4% !important;
-          text-align: left !important;
-          width: auto !important;
-          z-index: 25;
-        }
-        @media (min-width: 768px) {
-          .swiper-pagination {
-            bottom: 24px !important;
-            padding-left: 2rem;
-          }
-        }
-      `}</style>
+      </div>
     </div>
   );
 }
