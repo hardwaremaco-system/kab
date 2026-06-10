@@ -10,6 +10,7 @@ import { FaWhatsapp } from "react-icons/fa";
 export default function ProductActions({ product, children }: { product: Product, children?: React.ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
+  // 🚀 Added cart and cartTotal to power the gamification bar
   const { addToCart, cart, cartTotal } = useCart();
 
   const [quantity, setQuantity] = useState(1);
@@ -21,6 +22,7 @@ export default function ProductActions({ product, children }: { product: Product
   const [copied, setCopied] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
 
+  // 🚀 State for our custom "Added to Cart" toast
   const [showCartToast, setShowCartToast] = useState(false);
 
   const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
@@ -56,6 +58,7 @@ export default function ProductActions({ product, children }: { product: Product
       sellerPhone: product.sellerPhone || ""
     });
 
+    // 🚀 Trigger the custom toast instead of the browser alert
     setShowCartToast(true);
 
     // Auto-hide the toast after 4 seconds
@@ -68,11 +71,22 @@ export default function ProductActions({ product, children }: { product: Product
   // 🧠 MINI PROGRESS BAR LOGIC (SYNCED WITH CART)
   // ==========================================
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const progress = Math.min(totalItems * 25, 100);
-  const isFree = totalItems >= 4 || cartTotal >= 20000;
-  const toastMessage = isFree 
-    ? "🎉 You have FREE delivery!" 
-    : `Add ${Math.max(4 - totalItems, 0)} more item(s) to reach FREE delivery.`;
+  
+  let progress = 25;
+  let toastMessage = "Add 1 more item and save UGX 500 on delivery.";
+  let isFree = false;
+
+  if (cartTotal >= 20000 || totalItems >= 4) {
+    progress = 100;
+    toastMessage = "🎉 You have FREE delivery!";
+    isFree = true;
+  } else if (totalItems === 3) {
+    progress = 75;
+    toastMessage = "Add 1 more item to unlock FREE delivery.";
+  } else if (totalItems === 2) {
+    progress = 50;
+    toastMessage = "Add 1 more item and save UGX 500 on delivery.";
+  }
 
   const handleBotInquiry = async () => {
     setLoadingWhatsApp(true);
