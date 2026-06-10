@@ -41,7 +41,7 @@ export default function CartPage() {
       }
     }
     fetchUpsells();
-  }, [cart]); // Re-run filtering if cart changes
+  }, [cart]);
 
   // ==========================================
   // 🧠 THE DELIVERY PROGRESS LOGIC
@@ -126,18 +126,15 @@ export default function CartPage() {
     }
   };
 
-  // ==========================================
-  // QUICK ADD HANDLER (NOW WITH REAL SELLERS)
-  // ==========================================
   const handleQuickAdd = (item: any) => {
     addToCart({
       id: item.id,
       title: item.title,
       price: item.price,
       quantity: 1,
-      image: item.image, // Real image mapped from API
-      sellerId: item.sellerId, // REAL Seller ID
-      sellerPhone: item.sellerPhone // REAL Seller Phone
+      image: item.image, 
+      sellerId: item.sellerId, 
+      sellerPhone: item.sellerPhone 
     });
   };
 
@@ -146,7 +143,7 @@ export default function CartPage() {
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-4">
         <div className="text-6xl mb-4">🛒</div>
         <h1 className="text-2xl font-bold text-slate-800 mb-2">Your cart is empty</h1>
-        <p className="text-slate-500 mb-6">Looks like you haven't added anything yet.</p>
+        <p className="text-slate-500 mb-6 text-center">Looks like you haven't added anything yet.</p>
         <Link href="/" className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 px-8 rounded-lg transition-colors">
           Start Shopping
         </Link>
@@ -155,28 +152,30 @@ export default function CartPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 bg-white min-h-screen relative">
+    {/* 🚀 FIXED: Added overflow-x-hidden md:overflow-visible to prevent body scroll */}
+    <div className="max-w-4xl mx-auto p-4 md:p-8 bg-white min-h-screen relative overflow-x-hidden md:overflow-visible">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Shopping Cart</h1>
         <Link href="/" className="text-sm font-bold text-slate-500 hover:text-[#25D366] flex items-center gap-2">
-          <FaArrowLeft /> Continue Shopping
+          <FaArrowLeft className="hidden sm:block" /> Continue
         </Link>
       </div>
 
       {/* ========================================== */}
       {/* 🚀 THE GAMIFICATION BAR */}
       {/* ========================================== */}
-      <div className={`mb-8 p-5 rounded-2xl border transition-all ${isFreeDelivery ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'}`}>
+      {/* FIXED: Reduced mobile padding (p-4) to maximize screen space */}
+      <div className={`mb-8 p-4 md:p-5 rounded-2xl border transition-all ${isFreeDelivery ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'}`}>
         <div className="flex justify-between items-end mb-3">
-          <p className={`font-bold text-sm md:text-base ${isFreeDelivery ? 'text-green-700' : 'text-slate-700'}`}>
+          <p className={`font-bold text-[13px] md:text-base pr-2 leading-tight ${isFreeDelivery ? 'text-green-700' : 'text-slate-700'}`}>
             {isFreeDelivery ? "✨ " : "🚚 "}{message}
           </p>
-          <span className={`text-xs font-black ${isFreeDelivery ? 'text-green-600' : 'text-slate-500'}`}>
+          <span className={`text-[11px] md:text-xs font-black whitespace-nowrap ${isFreeDelivery ? 'text-green-600' : 'text-slate-500'}`}>
             {totalItems >= 4 || cartTotal >= 20000 ? "UNLOCKED" : `${totalItems}/4 ITEMS`}
           </span>
         </div>
         
-        <div className="h-3 w-full bg-slate-200 rounded-full overflow-hidden mb-5">
+        <div className="h-2.5 md:h-3 w-full bg-slate-200 rounded-full overflow-hidden mb-5">
           <div 
             className={`h-full transition-all duration-500 ease-out rounded-full ${isFreeDelivery ? 'bg-[#25D366]' : 'bg-[#D97706]'}`}
             style={{ width: `${progress}%` }}
@@ -185,21 +184,22 @@ export default function CartPage() {
 
         {/* Real Quick Add Upsell */}
         {!isFreeDelivery && (
-          <div className="pt-4 border-t border-slate-200/60">
-            <p className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">
+          <div className="pt-4 border-t border-slate-200/60 w-full">
+            <p className="text-[11px] md:text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">
               Quick add to save on delivery:
             </p>
             
             {loadingUpsells ? (
-              <div className="flex gap-3 overflow-x-auto pb-2">
+              <div className="flex gap-3 overflow-x-auto pb-2 w-full">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="flex-shrink-0 w-[200px] h-[58px] bg-slate-100 animate-pulse rounded-lg border border-slate-200"></div>
+                  <div key={i} className="flex-shrink-0 w-[200px] h-[60px] bg-slate-100 animate-pulse rounded-lg border border-slate-200"></div>
                 ))}
               </div>
             ) : upsellItems.length > 0 ? (
-              <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar">
+              {/* FIXED: Added w-full, snap-x for mobile touch, and max-w constraints inside items */}
+              <div className="flex gap-3 overflow-x-auto pb-2 w-full snap-x snap-mandatory hide-scrollbar">
                 {upsellItems.map((item) => (
-                  <div key={item.id} className="flex-shrink-0 bg-white border border-slate-200 rounded-lg p-2.5 flex items-center gap-3 w-[220px] shadow-sm hover:border-[#D97706] transition-colors">
+                  <div key={item.id} className="flex-shrink-0 bg-white border border-slate-200 rounded-lg p-2.5 flex items-center gap-3 w-[200px] md:w-[220px] max-w-[75vw] snap-start shadow-sm hover:border-[#D97706] transition-colors">
                     <div className="w-10 h-10 bg-slate-50 rounded-md overflow-hidden flex items-center justify-center shrink-0 border border-slate-100">
                       {item.image ? (
                         <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
@@ -208,11 +208,11 @@ export default function CartPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-slate-800 truncate" title={item.title}>{item.title}</p>
-                      <p className="text-[#D97706] font-black text-xs">UGX {item.price.toLocaleString()}</p>
+                      <p className="text-[11px] md:text-xs font-bold text-slate-800 truncate" title={item.title}>{item.title}</p>
+                      <p className="text-[#D97706] font-black text-[11px] md:text-xs mt-0.5">UGX {item.price.toLocaleString()}</p>
                     </div>
-                    <button onClick={() => handleQuickAdd(item)} className="w-8 h-8 rounded-full bg-slate-100 hover:bg-[#D97706] hover:text-white flex items-center justify-center transition-colors text-slate-600 shrink-0">
-                      <FaPlus className="text-xs" />
+                    <button onClick={() => handleQuickAdd(item)} className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 hover:bg-[#D97706] hover:text-white flex items-center justify-center transition-colors text-slate-600 shrink-0">
+                      <FaPlus className="text-[10px] md:text-xs" />
                     </button>
                   </div>
                 ))}
@@ -228,51 +228,52 @@ export default function CartPage() {
         {/* Cart Items List */}
         <div className="lg:col-span-2 flex flex-col gap-4">
           {cart.map((item) => (
-            <div key={item.id} className="flex gap-4 p-4 border border-slate-200 rounded-xl bg-slate-50 relative">
-              <div className="w-24 h-24 bg-white rounded-lg border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div key={item.id} className="flex gap-3 md:gap-4 p-3 md:p-4 border border-slate-200 rounded-xl bg-slate-50 relative">
+              <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-lg border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                 {item.image ? (
                   <img src={item.image} alt={item.title} className="max-h-full object-contain p-2" />
                 ) : (
-                  <span className="text-xs text-slate-400">No img</span>
+                  <span className="text-[10px] text-slate-400">No img</span>
                 )}
               </div>
 
-              <div className="flex-1 flex flex-col justify-between">
+              <div className="flex-1 flex flex-col justify-between min-w-0">
                 <div>
-                  <h3 className="font-bold text-slate-800 leading-tight pr-8">{item.title}</h3>
-                  <p className="text-slate-800 font-extrabold mt-1">UGX {item.price.toLocaleString()}</p>
+                  {/* FIXED: Added line-clamp-2 to stop long names from breaking layout */}
+                  <h3 className="font-bold text-sm md:text-base text-slate-800 leading-tight pr-6 line-clamp-2">{item.title}</h3>
+                  <p className="text-slate-800 font-extrabold mt-1 text-sm md:text-base">UGX {item.price.toLocaleString()}</p>
                 </div>
 
                 <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center border border-slate-300 rounded overflow-hidden bg-white h-8">
-                    <button onClick={() => updateQuantity(item.id, -1)} className="px-3 hover:bg-slate-100 font-bold text-slate-600">-</button>
-                    <span className="px-3 font-semibold text-sm border-x border-slate-300 h-full flex items-center justify-center min-w-[30px]">{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.id, 1)} className="px-3 hover:bg-slate-100 font-bold text-slate-600">+</button>
+                  <div className="flex items-center border border-slate-300 rounded overflow-hidden bg-white h-7 md:h-8">
+                    <button onClick={() => updateQuantity(item.id, -1)} className="px-2.5 md:px-3 hover:bg-slate-100 font-bold text-slate-600">-</button>
+                    <span className="px-2 md:px-3 font-semibold text-xs md:text-sm border-x border-slate-300 h-full flex items-center justify-center min-w-[28px] md:min-w-[30px]">{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.id, 1)} className="px-2.5 md:px-3 hover:bg-slate-100 font-bold text-slate-600">+</button>
                   </div>
                 </div>
               </div>
 
               <button 
                 onClick={() => removeFromCart(item.id)}
-                className="absolute top-4 right-4 text-slate-400 hover:text-red-500 p-2 transition-colors"
+                className="absolute top-2 right-2 md:top-4 md:right-4 text-slate-400 hover:text-red-500 p-2 transition-colors"
                 title="Remove item"
               >
-                <FaTrash />
+                <FaTrash className="text-sm" />
               </button>
             </div>
           ))}
         </div>
 
         {/* Order Summary */}
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 h-max sticky top-24">
-          <h2 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-200 pb-4">Order Summary</h2>
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-6 h-max sticky top-24">
+          <h2 className="text-base md:text-lg font-bold text-slate-800 mb-4 border-b border-slate-200 pb-3 md:pb-4">Order Summary</h2>
 
           <div className="flex justify-between mb-3 text-sm text-slate-600">
             <span>Subtotal ({totalItems} items)</span>
             <span className="font-semibold text-slate-800">UGX {cartTotal.toLocaleString()}</span>
           </div>
           
-          <div className="flex justify-between mb-4 text-sm border-b border-slate-200 pb-4">
+          <div className="flex justify-between mb-4 text-sm border-b border-slate-200 pb-3 md:pb-4">
             <span className="text-slate-600">Delivery Fee</span>
             {isFreeDelivery ? (
               <span className="font-black text-[#25D366]">FREE</span>
@@ -281,30 +282,27 @@ export default function CartPage() {
             )}
           </div>
 
-          <div className="flex justify-between mb-6 text-lg">
+          <div className="flex justify-between mb-6 text-base md:text-lg">
             <span className="font-bold text-slate-900">Total</span>
             <span className="font-black text-slate-900">UGX {finalTotal.toLocaleString()}</span>
           </div>
 
           <button 
             onClick={handleCheckoutClick}
-            className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px]"
+            className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 md:py-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[14px] md:text-[15px]"
           >
-            <FaWhatsapp className="text-xl" /> 
+            <FaWhatsapp className="text-lg md:text-xl" /> 
             Checkout via WhatsApp
           </button>
         </div>
       </div>
 
       {/* WHATSAPP POPUP */}
-      {/* ... (Your existing WhatsApp Popup Code goes here) ... */}
       {showWhatsAppPopup && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
           <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200">
             <div className="p-6 md:p-8">
-              <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5 mx-auto border border-green-100">
-                <FaWhatsapp className="text-3xl text-[#25D366]" />
-              </div>
+              <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5 mx-auto border border-green-100"><FaWhatsapp className="text-3xl text-[#25D366]" /></div>
               <h3 className="text-xl font-black text-slate-900 text-center mb-2 tracking-tight">Complete Your Order</h3>
               <p className="text-[13px] text-slate-500 text-center mb-6 leading-relaxed">
                 When WhatsApp opens, tap <strong className="text-slate-800">SEND</strong> (looks like 
@@ -326,18 +324,9 @@ export default function CartPage() {
 
               <div className="flex flex-col gap-3">
                 <button onClick={handleBotInquiry} disabled={loadingWhatsApp} className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] disabled:opacity-70 active:scale-[0.98]">
-                  {loadingWhatsApp ? (
-                    <span className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Connecting...
-                    </span>
-                  ) : (
-                    <>Continue to WhatsApp</>
-                  )}
+                  {loadingWhatsApp ? <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Connecting...</span> : <>Continue to WhatsApp</>}
                 </button>
-                <button onClick={() => setShowWhatsAppPopup(false)} disabled={loadingWhatsApp} className="w-full py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">
-                  Cancel
-                </button>
+                <button onClick={() => setShowWhatsAppPopup(false)} disabled={loadingWhatsApp} className="w-full py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">Cancel</button>
               </div>
             </div>
           </div>
