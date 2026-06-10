@@ -24,7 +24,7 @@ export default function SellPage() {
 
   const [formData, setFormData] = useState({
     title: "",
-    category: "phones-tvs", // 🔥 Updated default
+    category: "phones-tvs", // Default
     price: "",
     quantity: "1", 
     condition: "used",
@@ -345,18 +345,33 @@ export default function SellPage() {
               <input required type="number" placeholder="e.g. 50000" className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none bg-slate-50"
                 value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
             </div>
-            
+
             <div>
               <label className="block text-sm font-bold text-slate-900 mb-2">Category *</label>
               <select className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none bg-slate-50"
                 value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                {/* 🔥 NEW ELECTRONICS CATEGORIES */}
-                <option value="watches">Watches</option>
-                <option value="phones-tvs">Phones & TVs</option>
-                <option value="sound-systems">Sound Systems</option>
-                <option value="accessories">Accessories</option>
-                <option value="appliances">Appliances</option>
-                <option value="other">Other Products</option>
+                
+                {/* 🔥 GROUP 1: BUY AGAIN & AGAIN */}
+                <optgroup label="Buy Again & Again">
+                  <option value="supermarket">Supermarket (Groceries, Soap, etc.)</option>
+                  <option value="fashion">Fashion & Shoes</option>
+                  <option value="beauty">Health & Beauty</option>
+                </optgroup>
+
+                {/* 🔥 GROUP 2: STEP-UP ELECTRONICS */}
+                <optgroup label="Step-Up Electronics">
+                  <option value="phones-tvs">Phones & TVs</option>
+                  <option value="sound-systems">Sound Systems</option>
+                  <option value="appliances">Appliances</option>
+                  <option value="accessories">Accessories</option>
+                  <option value="watches">Watches</option>
+                </optgroup>
+
+                {/* 🔥 GROUP 3: OTHERS */}
+                <optgroup label="More">
+                  <option value="other">Other Products</option>
+                </optgroup>
+
               </select>
             </div>
           </div>
