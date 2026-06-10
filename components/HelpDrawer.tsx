@@ -3,10 +3,22 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaWhatsapp } from "react-icons/fa6";
-import { X, HelpCircle, PhoneCall, AlertTriangle, MessageSquare, ChevronRight } from "lucide-react";
+import { 
+  X, 
+  HelpCircle, 
+  PhoneCall, 
+  AlertTriangle, 
+  MessageSquare, 
+  ChevronRight,
+  ShoppingCart 
+} from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 export default function HelpDrawer() {
   const [isOpen, setIsOpen] = useState(false);
+  
+  // 🔥 Pull the cart counter from your global context
+  const { cartCount } = useCart(); 
 
   // Lock body scroll when the drawer is open
   useEffect(() => {
@@ -25,15 +37,30 @@ export default function HelpDrawer() {
   return (
     <>
       {/* ============================================== */}
-      {/* FLOATING ACTION BUTTON (FAB)                   */}
+      {/* DYNAMIC FLOATING ACTION BUTTON (FAB)           */}
       {/* ============================================== */}
-      <button
-        onClick={toggleDrawer}
-        className="fixed bottom-6 right-4 sm:right-6 bg-white border border-slate-200 text-slate-800 p-3.5 rounded-full shadow-lg z-40 hover:bg-slate-50 hover:text-[#FF6A00] hover:border-[#FF6A00] transition-all flex items-center justify-center"
-        aria-label="Help and Support"
-      >
-        <HelpCircle size={28} strokeWidth={2.5} />
-      </button>
+      {cartCount > 0 ? (
+        // STATE 1: ITEMS IN CART -> Shows floating orange cart button
+        <Link
+          href="/cart"
+          className="fixed bottom-6 right-4 sm:right-6 bg-[#FF6A00] border-2 border-white text-white p-3.5 rounded-full shadow-2xl z-40 hover:bg-orange-600 hover:scale-105 transition-all flex items-center justify-center"
+          aria-label="View Cart"
+        >
+          <ShoppingCart size={28} strokeWidth={2.5} />
+          <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[11px] font-black w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+            {cartCount}
+          </span>
+        </Link>
+      ) : (
+        // STATE 2: EMPTY CART -> Shows floating white help button
+        <button
+          onClick={toggleDrawer}
+          className="fixed bottom-6 right-4 sm:right-6 bg-white border border-slate-200 text-slate-800 p-3.5 rounded-full shadow-lg z-40 hover:bg-slate-50 hover:text-[#FF6A00] hover:border-[#FF6A00] transition-all flex items-center justify-center"
+          aria-label="Help and Support"
+        >
+          <HelpCircle size={28} strokeWidth={2.5} />
+        </button>
+      )}
 
       {/* ============================================== */}
       {/* DRAWER OVERLAY                                 */}
