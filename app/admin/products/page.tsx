@@ -117,7 +117,7 @@ export default function AdminProductsPage() {
     <div className="max-w-6xl mx-auto pb-20 md:pb-0">
       <div className="mb-8 border-b border-slate-200 pb-6">
         <h1 className="text-3xl font-extrabold text-slate-900">Product Management</h1>
-        <p className="text-slate-600 mt-2 font-medium">Review user uploads, fix categories, and clean up the database for the electronics pivot.</p>
+        <p className="text-slate-600 mt-2 font-medium">Review user uploads, fix categories, and clean up the database for the new inventory structure.</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
@@ -166,7 +166,7 @@ export default function AdminProductsPage() {
                       UGX {Number(product.price).toLocaleString()}
                     </td>
 
-                    {/* 🔥 Inline Category Dropdown - UPDATED FOR ELECTRONICS PIVOT 🔥 */}
+                    {/* 🔥 Inline Category Dropdown - UPDATED 🔥 */}
                     <td className="px-6 py-4">
                       <select 
                         disabled={updatingId === product.id}
@@ -175,14 +175,25 @@ export default function AdminProductsPage() {
                         className={`text-xs font-bold rounded-lg border px-2 py-1.5 outline-none transition-colors ${updatingId === product.id ? 'opacity-50' : 'border-slate-300 bg-white hover:border-[#FF6A00]'}`}
                       >
                         <option value="uncategorized" disabled>Select...</option>
-                        
-                        {/* THE NEW ELECTRONICS CATEGORIES */}
-                        <optgroup label="New Electronics Categories">
-                          <option value="watches">Watches</option>
+
+                        {/* 🔥 GROUP 1: BUY AGAIN & AGAIN */}
+                        <optgroup label="Buy Again & Again">
+                          <option value="supermarket">Supermarket (Groceries, Soap, etc.)</option>
+                          <option value="fashion">Fashion & Shoes</option>
+                          <option value="beauty">Health & Beauty</option>
+                        </optgroup>
+
+                        {/* 🔥 GROUP 2: STEP-UP ELECTRONICS */}
+                        <optgroup label="Step-Up Electronics">
                           <option value="phones-tvs">Phones & TVs</option>
                           <option value="sound-systems">Sound Systems</option>
-                          <option value="accessories">Accessories</option>
                           <option value="appliances">Appliances</option>
+                          <option value="accessories">Accessories</option>
+                          <option value="watches">Watches</option>
+                        </optgroup>
+
+                        {/* 🔥 GROUP 3: OTHERS */}
+                        <optgroup label="More">
                           <option value="other">Other Products</option>
                         </optgroup>
 
@@ -196,7 +207,6 @@ export default function AdminProductsPage() {
                           <option value="stationery">Old: Stationery</option>
                           <option value="services">Old: Services</option>
                           <option value="ladies_picks">Old: Ladies' Picks</option>
-                          <option value="beauty">Old: Beauty</option>
                           <option value="gifts">Old: Gifts</option>
                           <option value="agriculture">Old: Agriculture</option>
                         </optgroup>
