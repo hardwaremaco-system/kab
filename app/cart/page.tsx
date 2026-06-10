@@ -12,15 +12,13 @@ export default function CartPage() {
 
   const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(false);
   const [loadingWhatsApp, setLoadingWhatsApp] = useState(false);
-  
-  // Real Upsell State
   const [upsellItems, setUpsellItems] = useState<any[]>([]);
   const [loadingUpsells, setLoadingUpsells] = useState(true);
 
   const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
 
   // ==========================================
-  // 📥 FETCH REAL UPSELL ITEMS
+  // 1. FETCH REAL UPSELL ITEMS
   // ==========================================
   useEffect(() => {
     async function fetchUpsells() {
@@ -28,11 +26,8 @@ export default function CartPage() {
         const res = await fetch("/api/products/upsells");
         if (res.ok) {
           const data = await res.json();
-          // Filter out items that are already in the user's cart
           const cartIds = new Set(cart.map(item => item.id));
-          const filteredUpsells = data.items.filter((item: any) => !cartIds.has(item.id));
-          
-          setUpsellItems(filteredUpsells);
+          setUpsellItems(data.items.filter((item: any) => !cartIds.has(item.id)));
         }
       } catch (error) {
         console.error("Failed to load upsells", error);
@@ -44,25 +39,33 @@ export default function CartPage() {
   }, [cart]);
 
   // ==========================================
-  // 🧠 THE DELIVERY PROGRESS LOGIC
+  // 2. LOGIC: GAMIFICATION & DISCOUNTS
   // ==========================================
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Gamification: UGX 500 discount per item, capped at base delivery (2000)
-  const baseDelivery = 2000;
-  const deliveryDiscount = Math.min(totalItems * 500, baseDelivery);
-  const deliveryFee = Math.max(baseDelivery - deliveryDiscount, 0);
-  const isFreeDelivery = deliveryFee === 0;
-  
-  const progress = Math.min(totalItems * 25, 100);
-  const message = isFreeDelivery 
-    ? "🎉 FREE DELIVERY UNLOCKED!" 
-    : `Add ${Math.max(4 - totalItems, 0)} more item(s) to reach FREE delivery.`;
+  const { deliveryFee, progress, message, isFreeDelivery } = useMemo(() => {
+    // Rule 1: High value orders (UGX 20k+) get free delivery instantly
+    if (cartTotal >= 20000) {
+      return { deliveryFee: 0, progress: 100, message: "Your order qualifies for FREE delivery!", isFreeDelivery: true };
+    }
+    // Rule 2: Item count scaling (1=2000, 2=1000, 3=500, 4+=FREE)
+    if (totalItems >= 4) {
+      return { deliveryFee: 0, progress: 100, message: "🎉 FREE DELIVERY UNLOCKED!", isFreeDelivery: true };
+    }
+    if (totalItems === 3) {
+      return { deliveryFee: 500, progress: 75, message: "Add 1 more item to unlock FREE delivery.", isFreeDelivery: false };
+    }
+    if (totalItems === 2) {
+      return { deliveryFee: 1000, progress: 50, message: "Add 1 more item and save another UGX 500 on delivery.", isFreeDelivery: false };
+    }
+    // Default: 1 item
+    return { deliveryFee: 2000, progress: 25, message: "Add 1 more item and save UGX 1,000 on delivery.", isFreeDelivery: false };
+  }, [cartTotal, totalItems]);
 
   const finalTotal = cartTotal + deliveryFee;
 
   // ==========================================
-  // WHATSAPP CHECKOUT LOGIC
+  // 3. WHATSAPP CHECKOUT
   // ==========================================
   const handleCheckoutClick = () => {
     if (cart.length === 0) return;
@@ -127,9 +130,9 @@ export default function CartPage() {
       title: item.title,
       price: item.price,
       quantity: 1,
-      image: item.image, 
-      sellerId: item.sellerId, 
-      sellerPhone: item.sellerPhone 
+      image: item.image,
+      sellerId: item.sellerId,
+      sellerPhone: item.sellerPhone
     });
   };
 
@@ -139,15 +142,12 @@ export default function CartPage() {
         <div className="text-6xl mb-4">🛒</div>
         <h1 className="text-2xl font-bold text-slate-800 mb-2">Your cart is empty</h1>
         <p className="text-slate-500 mb-6 text-center">Looks like you haven't added anything yet.</p>
-        <Link href="/" className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 px-8 rounded-lg transition-colors">
-          Start Shopping
-        </Link>
+        <Link href="/" className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 px-8 rounded-lg transition-colors">Start Shopping</Link>
       </div>
     );
   }
 
   return (
-    {/* 🚀 STRICT CONTAINER LOCKDOWN */}
     <div className="w-full max-w-4xl mx-auto p-3 sm:p-4 md:p-8 bg-white min-h-screen relative overflow-x-hidden box-border">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Shopping Cart</h1>
@@ -157,7 +157,7 @@ export default function CartPage() {
       </div>
 
       {/* ========================================== */}
-      {/* 🚀 THE BULLETPROOF GAMIFICATION BAR */}
+      {/* 🚀 THE GAMIFICATION BAR */}
       {/* ========================================== */}
       <div className={`mb-6 md:mb-8 p-4 rounded-2xl border transition-all w-full max-w-full overflow-hidden box-border ${isFreeDelivery ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'}`}>
         
@@ -166,11 +166,10 @@ export default function CartPage() {
             {isFreeDelivery ? "✨ " : "🚚 "}{message}
           </p>
           <span className={`inline-block shrink-0 text-[10px] md:text-xs font-black px-2 py-1 bg-white/60 rounded-md whitespace-nowrap ${isFreeDelivery ? 'text-green-600' : 'text-slate-500'}`}>
-            {totalItems}/4 ITEMS
+            {totalItems >= 4 || cartTotal >= 20000 ? "UNLOCKED" : `${totalItems}/4 ITEMS`}
           </span>
         </div>
         
-        {/* Isolated Progress Bar */}
         <div className="relative h-2 md:h-2.5 w-full max-w-full bg-slate-200 rounded-full overflow-hidden mb-4 isolate">
           <div 
             className={`absolute top-0 left-0 h-full transition-all duration-500 ease-out rounded-full ${isFreeDelivery ? 'bg-[#25D366]' : 'bg-[#D97706]'}`}
@@ -192,7 +191,6 @@ export default function CartPage() {
                 ))}
               </div>
             ) : upsellItems.length > 0 ? (
-              {/* Force hardware accelerated horizontal scroll completely contained */}
               <div 
                 className="flex flex-nowrap gap-3 overflow-x-auto pb-2 w-full max-w-full snap-x snap-mandatory scroll-smooth hide-scrollbar"
                 style={{ WebkitOverflowScrolling: 'touch' }}
