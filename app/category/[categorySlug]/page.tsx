@@ -14,16 +14,37 @@ import {
   Headphones, 
   Plug, 
   Package, 
-  ChevronRight 
+  ChevronRight,
+  ShoppingBasket,
+  Shirt,
+  Sparkles
 } from "lucide-react"; 
 
 // 🔥 Caches this category page for 1 hour.
 export const revalidate = 3600;
 
 // ==========================================
-// NEW ELECTRONICS FRONTEND BUCKETS MAPPING
+// NEW FRONTEND BUCKETS MAPPING (Daily + Electronics)
 // ==========================================
 const frontendCategoryMap: Record<string, { title: string; description: string; backendCategories: string[]; bgImage: string }> = {
+  "supermarket": {
+    title: "Supermarket",
+    description: "Fresh food, soap, sugar, and daily everyday essentials.",
+    backendCategories: ["supermarket", "food", "groceries", "essentials"],
+    bgImage: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80"
+  },
+  "fashion": {
+    title: "Fashion & Shoes",
+    description: "Jerseys, t-shirts, sneakers, slippers, and stylish apparel.",
+    backendCategories: ["fashion", "shoes", "clothing", "apparel"],
+    bgImage: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200&q=80"
+  },
+  "beauty": {
+    title: "Health & Beauty",
+    description: "Cosmetics, skincare, hair products, and daily hygiene.",
+    backendCategories: ["beauty", "health", "cosmetics", "skincare", "health-beauty"],
+    bgImage: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1200&q=80"
+  },
   "watches": {
     title: "Premium Watches",
     description: "Classic timepieces, smartwatches, and luxury wristwear.",
@@ -57,7 +78,7 @@ const frontendCategoryMap: Record<string, { title: string; description: string; 
   "other-products": {
     title: "Other Products",
     description: "Explore a variety of other great products and lifestyle items.",
-    backendCategories: ["other", "other-products", "general", "beauty", "agriculture", "student_item"], 
+    backendCategories: ["other", "other-products", "general", "agriculture", "student_item"], 
     bgImage: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1200&q=80"
   }
 };
@@ -68,13 +89,12 @@ const frontendCategoryMap: Record<string, { title: string; description: string; 
 const legacyMapping: Record<string, string> = {
   "tech-appliances": "appliances",
   "electronics": "phones-tvs",
-  "beauty-fashion": "other-products",
-  "beauty": "other-products",
-  "ladies_picks": "other-products",
-  "ladies": "other-products",
-  "food-groceries": "other-products",
+  "food-groceries": "supermarket",
+  "groceries": "supermarket",
+  "beauty-fashion": "fashion",
+  "ladies_picks": "fashion",
+  "ladies": "beauty",
   "agriculture": "other-products",
-  "groceries": "other-products",
   "campus-life": "other-products",
   "student_essentials": "other-products",
   "student_item": "other-products", 
@@ -105,7 +125,7 @@ export async function generateMetadata({ params }: { params: { categorySlug: str
     title: `${title} | Kabale Online`,
     description: description,
     keywords: [
-      title, "Kabale Online", "Kabale Electronics", "buy electronics Kabale", slug.replace(/_/g, ' '), "buy online Kabale"
+      title, "Kabale Online", "Kabale Marketplace", "buy electronics Kabale", slug.replace(/_/g, ' '), "buy online Kabale"
     ],
     openGraph: {
       title: `${title} | Kabale Online`,
@@ -180,8 +200,11 @@ export default async function CategoryPage({
     } as any; 
   });
 
-  // 5. THE 6 NEW EXPLORE CATEGORIES
-  const exploreCategories = [
+  // 5. THE MASTER EXPLORE CATEGORIES ARRAY
+  const masterExploreCategories = [
+    { name: "Supermarket", link: "supermarket", desc: "Groceries & daily essentials", Icon: ShoppingBasket },
+    { name: "Fashion & Shoes", link: "fashion", desc: "Apparel, shoes & jerseys", Icon: Shirt },
+    { name: "Health & Beauty", link: "beauty", desc: "Skincare & cosmetics", Icon: Sparkles },
     { name: "Watches", link: "watches", desc: "Classic & smart timepieces", Icon: Watch },
     { name: "Phones & TVs", link: "phones-tvs", desc: "Latest screens & mobile tech", Icon: Smartphone },
     { name: "Sound Systems", link: "sound-systems", desc: "Premium audio & speakers", Icon: Speaker },
@@ -190,16 +213,16 @@ export default async function CategoryPage({
     { name: "Other Products", link: "other-products", desc: "Explore more great deals", Icon: Package }
   ];
 
-    // 🔥 FIX 1: Removed overflow-x-hidden so the sidebar can stick!
+  // Dynamically pull exactly 6 categories to maintain a perfect grid, excluding the current one
+  const exploreCategories = masterExploreCategories.filter(cat => cat.link !== slug).slice(0, 6);
+
   return (
     <div className="min-h-screen bg-transparent pb-12 pt-2 sm:pt-4 font-sans selection:bg-[#FF6A00] selection:text-white">
       <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4">
 
-        
-        {/* 🔥 FIX 2: Added items-start so columns track independently */}
         <div className="flex flex-col md:flex-row items-start gap-4 w-full">
 
-          {/* 🔥 FIX 3: Applied the invisible scrollbar and correct heights */}
+          {/* SIDEBAR */}
           <div className="hidden md:flex flex-col gap-4 w-[220px] lg:w-[240px] shrink-0 sticky top-[85px] h-[calc(100vh-85px)] overflow-y-auto overscroll-contain z-10 pb-6 pr-1 md:pr-2 
               [&::-webkit-scrollbar]:w-1.5 
               [&::-webkit-scrollbar-track]:bg-transparent 
@@ -217,7 +240,6 @@ export default async function CategoryPage({
 
             {/* PREMIUM CINEMATIC CATEGORY BANNER */}
             <div className="relative w-full rounded-none md:rounded-xl overflow-hidden shadow-md min-h-[220px] md:min-h-[260px] flex flex-col justify-center px-6 sm:px-10 py-12">
-              {/* Background Image */}
               <Image 
                 src={bgImageUrl} 
                 fill 
@@ -225,10 +247,8 @@ export default async function CategoryPage({
                 alt={displayTitle} 
                 priority 
               />
-              {/* Cinematic Dark Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/95 via-[#0a0a0a]/70 to-transparent"></div>
 
-              {/* Text Content */}
               <div className="relative z-10 max-w-2xl">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-3 text-white tracking-tight leading-tight">
                   {displayTitle}
@@ -267,37 +287,33 @@ export default async function CategoryPage({
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {exploreCategories.map(({ name, link, desc, Icon }) => {
-                  if (link === slug) return null; // Hide the active category
-
-                  return (
-                    <Link 
-                      key={name} 
-                      href={`/category/${link}`} 
-                      className="group flex flex-col p-4 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-800 rounded-lg hover:border-[#FF6A00] dark:hover:border-[#FF6A00] hover:shadow-md transition-all duration-200 w-full outline-none"
-                    >
-                      <div className="flex items-center gap-4 mb-3">
-                        <div className="w-12 h-12 bg-white dark:bg-[#1a1a1a] rounded-md flex items-center justify-center shrink-0 border border-slate-200 dark:border-slate-800 shadow-sm">
-                          <Icon className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-[#FF6A00] transition-colors" />
-                        </div>
-                        <div className="flex flex-col">
-                          <span style={{ color: '#1A1A1A' }} className="text-sm font-black dark:text-white group-hover:text-[#FF6A00] transition-colors leading-tight">
-                            {name}
-                          </span>
-                        </div>
+                {exploreCategories.map(({ name, link, desc, Icon }) => (
+                  <Link 
+                    key={name} 
+                    href={`/category/${link}`} 
+                    className="group flex flex-col p-4 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-800 rounded-lg hover:border-[#FF6A00] dark:hover:border-[#FF6A00] hover:shadow-md transition-all duration-200 w-full outline-none"
+                  >
+                    <div className="flex items-center gap-4 mb-3">
+                      <div className="w-12 h-12 bg-white dark:bg-[#1a1a1a] rounded-md flex items-center justify-center shrink-0 border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <Icon className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-[#FF6A00] transition-colors" />
                       </div>
-
-                      <p style={{ color: '#6B6B6B' }} className="text-[11px] font-medium mb-4 line-clamp-2 flex-grow dark:text-slate-400">
-                        {desc}
-                      </p>
-
-                      <div className="flex items-center justify-between text-[#FF6A00] border-t border-slate-200 dark:border-slate-800 pt-3 mt-auto">
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Browse</span>
-                        <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      <div className="flex flex-col">
+                        <span style={{ color: '#1A1A1A' }} className="text-sm font-black dark:text-white group-hover:text-[#FF6A00] transition-colors leading-tight">
+                          {name}
+                        </span>
                       </div>
-                    </Link>
-                  );
-                })}
+                    </div>
+
+                    <p style={{ color: '#6B6B6B' }} className="text-[11px] font-medium mb-4 line-clamp-2 flex-grow dark:text-slate-400">
+                      {desc}
+                    </p>
+
+                    <div className="flex items-center justify-between text-[#FF6A00] border-t border-slate-200 dark:border-slate-800 pt-3 mt-auto">
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Browse</span>
+                      <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
 
