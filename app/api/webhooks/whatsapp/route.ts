@@ -279,12 +279,12 @@ async function handleLeadConversion(fromPhone: string, contactName: string, text
       // Fetch ALL products simultaneously (This fulfills the Read-Before-Write rule)
       const productSnaps = await t.getAll(...productRefs);
 
-      // ==========================================
+            // ==========================================
       // 🔍 PHASE 2: VALIDATION 
       // ==========================================
       cartItems.forEach((item: any, index: number) => {
         const prodSnap = productSnaps[index];
-        const prodData = prodSnap.data();
+        const prodData: any = prodSnap.data(); // <-- ADDED ": any" HERE
 
         // Check if item exists and has enough stock
         if (!prodSnap.exists || (prodData?.stock || 0) < item.quantity) {
@@ -303,6 +303,7 @@ async function handleLeadConversion(fromPhone: string, contactName: string, text
         sellerOrdersMap[item.sellerPhone].items.push(item);
         sellerOrdersMap[item.sellerPhone].subtotal += (item.price * item.quantity);
       });
+
 
       // ==========================================
       // ✍️ PHASE 3: ALL WRITES
