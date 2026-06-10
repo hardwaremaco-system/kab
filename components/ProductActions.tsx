@@ -10,7 +10,8 @@ import { FaWhatsapp } from "react-icons/fa";
 export default function ProductActions({ product, children }: { product: Product, children?: React.ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
-  const { addToCart } = useCart();
+  // 🚀 Added cart and cartTotal to power the gamification bar
+  const { addToCart, cart, cartTotal } = useCart();
 
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -20,16 +21,17 @@ export default function ProductActions({ product, children }: { product: Product
   const [showMore, setShowMore] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
+  
+  // 🚀 State for our custom "Added to Cart" toast
+  const [showCartToast, setShowCartToast] = useState(false);
 
   const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
-  
-  // Note: product.price is already the strictly correct sale price passed down from page.tsx
+
   const currentPrice = Number(product.price) || 0;
   const isNegotiable = currentPrice === 0;
 
   useEffect(() => {
     const handleScroll = () => {
-      // Reveal the sticky mobile checkout bar after scrolling down 400px
       if (window.scrollY > 400) { 
         setShowStickyBar(true); 
       } else { 
@@ -56,8 +58,34 @@ export default function ProductActions({ product, children }: { product: Product
       sellerPhone: product.sellerPhone || ""
     });
 
-    alert("✅ Added to cart successfully!");
+    // 🚀 Trigger the custom toast instead of the browser alert
+    setShowCartToast(true);
+    
+    // Auto-hide the toast after 4 seconds
+    setTimeout(() => {
+      setShowCartToast(false);
+    }, 4000);
   };
+
+  // ==========================================
+  // 🧠 MINI PROGRESS BAR LOGIC
+  // ==========================================
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  let progress = 25;
+  let toastMessage = "Add 1 more item and save UGX 1,000 on delivery.";
+  let isFree = false;
+
+  if (cartTotal >= 20000 || totalItems >= 4) {
+    progress = 100;
+    toastMessage = "🎉 You have FREE delivery!";
+    isFree = true;
+  } else if (totalItems === 3) {
+    progress = 75;
+    toastMessage = "Add 1 more item to unlock FREE delivery.";
+  } else if (totalItems === 2) {
+    progress = 50;
+    toastMessage = "Add 1 more item and save another UGX 500.";
+  }
 
   const handleBotInquiry = async () => {
     setLoadingWhatsApp(true);
@@ -133,9 +161,6 @@ export default function ProductActions({ product, children }: { product: Product
 
   return (
     <>
-      {/* ========================================== */}
-      {/* 1. QUANTITY & ADD TO CART                  */}
-      {/* ========================================== */}
       <div className="flex flex-col gap-3">
         {!isNegotiable ? (
           <div className="flex items-center gap-3">
@@ -157,17 +182,11 @@ export default function ProductActions({ product, children }: { product: Product
           </div>
         )}
 
-        {/* ========================================== */}
-        {/* 2. ASK OR ORDER ON WHATSAPP                */}
-        {/* ========================================== */}
         <button onClick={() => setShowWhatsAppPopup(true)} className={`w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-md shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] ${isNegotiable ? 'animate-pulse' : ''}`}>
           <FaWhatsapp className="text-xl" /> 
           {isNegotiable ? "Negotiate on WhatsApp" : "Order Using WhatsApp"}
         </button>
 
-        {/* ========================================== */}
-        {/* 3. MORE OPTIONS & UTILITIES                */}
-        {/* ========================================== */}
         <div className="mt-1">
           <button onClick={() => setShowMore(!showMore)} className="text-xs font-bold text-slate-500 flex items-center gap-1 py-2 px-1 hover:text-slate-700 transition-colors">
             {showMore ? "− Hide options" : "+ More options"}
@@ -188,13 +207,9 @@ export default function ProductActions({ product, children }: { product: Product
         </div>
       </div>
 
-      {/* ========================================== */}
-      {/* 📱 MOBILE STICKY BOTTOM CHECKOUT BAR       */}
-      {/* ========================================== */}
       <div className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 p-3 lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-transform duration-300 ease-in-out flex items-center gap-3 ${showStickyBar ? 'translate-y-0' : 'translate-y-[150%]'}`}>
         <div className="flex flex-col flex-grow min-w-0 px-1">
           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">{product.name}</span>
-          {/* Matches the new dark gray text-slate-800 branding */}
           <span className={`text-sm font-black truncate ${isNegotiable ? 'text-[#FF6A00]' : 'text-slate-800'}`}>
             {isNegotiable ? "Negotiable" : `UGX ${currentPrice.toLocaleString()}`}
           </span>
@@ -206,8 +221,44 @@ export default function ProductActions({ product, children }: { product: Product
       </div>
 
       {/* ========================================== */}
-      {/* 🛑 WHATSAPP INTERCEPTION POPUP             */}
+      {/* 🚀 CUSTOM "ADDED TO CART" GAMIFIED TOAST */}
       {/* ========================================== */}
+      {showCartToast && (
+        <div className="fixed top-4 left-0 right-0 z-[9999] px-4 flex justify-center animate-in slide-in-from-top-5 duration-300">
+          <div className="bg-white rounded-xl shadow-2xl border border-slate-200 p-4 w-full max-w-sm">
+            
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-[#25D366] text-xs font-bold">✓</div>
+                <p className="font-bold text-slate-800 text-sm">Added to cart successfully</p>
+              </div>
+              <button onClick={() => setShowCartToast(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <div className="mt-3 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+              <p className={`text-xs font-bold mb-2 ${isFree ? 'text-[#25D366]' : 'text-slate-600'}`}>
+                {toastMessage}
+              </p>
+              <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full transition-all duration-500 ease-out ${isFree ? 'bg-[#25D366]' : 'bg-[#D97706]'}`} 
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => router.push('/cart')} 
+              className="w-full py-3 bg-slate-900 text-white rounded-lg text-sm font-bold shadow-sm hover:bg-slate-800 transition-colors"
+            >
+              View Cart & Checkout
+            </button>
+            
+          </div>
+        </div>
+      )}
+
+      {/* WHATSAPP INTERCEPTION POPUP */}
       {showWhatsAppPopup && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
           <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200">
