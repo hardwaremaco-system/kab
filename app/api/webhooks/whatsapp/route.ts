@@ -243,7 +243,7 @@ async function processWhatsAppMessage(message: any, contactName: string): Promis
 }
 
 // ==========================================
-// 🚀 THE LEAD CONVERTER FUNCTION
+// 🚀 THE LEAD CONVERTER FUNCTION (UPDATED)
 // ==========================================
 async function handleLeadConversion(fromPhone: string, contactName: string, text: string): Promise<boolean> {
   const match = text.match(/Ref:\s*\[(LEAD-\d+)\]/i);
@@ -256,29 +256,80 @@ async function handleLeadConversion(fromPhone: string, contactName: string, text
 
     await adminDb.runTransaction(async (t) => {
       const leadRef = adminDb.collection("orders").doc(leadId);
+      
+      // ==========================================
+      // 📚 PHASE 1: ALL READS FIRST
+      // ==========================================
       const leadSnap = await t.get(leadRef);
 
-      if (!leadSnap.exists || leadSnap.data()?.status !== "lead") throw new Error("Order already processed.");
+      if (!leadSnap.exists || leadSnap.data()?.status !== "lead") {
+        throw new Error("Order already processed.");
+      }
 
       orderData = leadSnap.data();
-      for (const item of (orderData.cartItems || [])) {
-        const prodRef = adminDb.collection("products").doc(item.productId);
-        const prodSnap = await t.get(prodRef);
-        
-        if (!prodSnap.exists || prodSnap.data()?.stock < item.quantity) throw new Error(`Sorry, ${item.name} is out of stock.`);
+      const cartItems = orderData.cartItems || [];
 
+      if (cartItems.length === 0) throw new Error("Cart is empty.");
+
+      // Prepare references for all products in the cart
+      const productRefs = cartItems.map((item: any) => 
+        adminDb.collection("products").doc(item.productId)
+      );
+
+      // Fetch ALL products simultaneously (This fulfills the Read-Before-Write rule)
+      const productSnaps = await t.getAll(...productRefs);
+
+      // ==========================================
+      // 🔍 PHASE 2: VALIDATION 
+      // ==========================================
+      cartItems.forEach((item: any, index: number) => {
+        const prodSnap = productSnaps[index];
+        const prodData = prodSnap.data();
+
+        // Check if item exists and has enough stock
+        if (!prodSnap.exists || (prodData?.stock || 0) < item.quantity) {
+          throw new Error(`Sorry, ${item.name} is out of stock.`);
+        }
+
+        // Group orders by seller for the notifications and dashboard splits
         if (!sellerOrdersMap[item.sellerPhone]) {
-          sellerOrdersMap[item.sellerPhone] = { sellerId: item.sellerId, sellerPhone: item.sellerPhone, items: [], subtotal: 0 };
+          sellerOrdersMap[item.sellerPhone] = { 
+            sellerId: item.sellerId, 
+            sellerPhone: item.sellerPhone, 
+            items: [], 
+            subtotal: 0 
+          };
         }
         sellerOrdersMap[item.sellerPhone].items.push(item);
         sellerOrdersMap[item.sellerPhone].subtotal += (item.price * item.quantity);
+      });
 
-        t.update(prodRef, { stock: admin.firestore.FieldValue.increment(-item.quantity), locked: true, updatedAt: Date.now() });
-      }
+      // ==========================================
+      // ✍️ PHASE 3: ALL WRITES
+      // ==========================================
+      
+      // 1. Update all product stock levels safely
+      cartItems.forEach((item: any, index: number) => {
+        t.update(productRefs[index], { 
+          stock: admin.firestore.FieldValue.increment(-item.quantity), 
+          locked: true, 
+          updatedAt: Date.now() 
+        });
+      });
 
-      t.update(leadRef, { buyerPhone: fromPhone, buyerName: contactName, status: "processing", sellerOrders: Object.values(sellerOrdersMap), updatedAt: Date.now() });
+      // 2. Finally, update the master lead document
+      t.update(leadRef, { 
+        buyerPhone: fromPhone, 
+        buyerName: contactName, 
+        status: "processing", 
+        sellerOrders: Object.values(sellerOrdersMap), 
+        updatedAt: Date.now() 
+      });
     });
 
+    // ==========================================
+    // 🔔 PHASE 4: NOTIFICATIONS
+    // ==========================================
     const itemsStr = orderData.cartItems.map((i: any) => `${i.quantity}x ${i.name}`).join(", ");
 
     // 🔥 EXPLICIT SUCCESS MESSAGE SENT IMMEDIATELY
