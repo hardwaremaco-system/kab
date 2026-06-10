@@ -10,7 +10,6 @@ import { FaWhatsapp } from "react-icons/fa";
 export default function ProductActions({ product, children }: { product: Product, children?: React.ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
-  // 🚀 Added cart and cartTotal to power the gamification bar
   const { addToCart, cart, cartTotal } = useCart();
 
   const [quantity, setQuantity] = useState(1);
@@ -21,8 +20,7 @@ export default function ProductActions({ product, children }: { product: Product
   const [showMore, setShowMore] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
-  
-  // 🚀 State for our custom "Added to Cart" toast
+
   const [showCartToast, setShowCartToast] = useState(false);
 
   const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
@@ -58,9 +56,8 @@ export default function ProductActions({ product, children }: { product: Product
       sellerPhone: product.sellerPhone || ""
     });
 
-    // 🚀 Trigger the custom toast instead of the browser alert
     setShowCartToast(true);
-    
+
     // Auto-hide the toast after 4 seconds
     setTimeout(() => {
       setShowCartToast(false);
@@ -68,24 +65,14 @@ export default function ProductActions({ product, children }: { product: Product
   };
 
   // ==========================================
-  // 🧠 MINI PROGRESS BAR LOGIC
+  // 🧠 MINI PROGRESS BAR LOGIC (SYNCED WITH CART)
   // ==========================================
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  let progress = 25;
-  let toastMessage = "Add 1 more item and save UGX 1,000 on delivery.";
-  let isFree = false;
-
-  if (cartTotal >= 20000 || totalItems >= 4) {
-    progress = 100;
-    toastMessage = "🎉 You have FREE delivery!";
-    isFree = true;
-  } else if (totalItems === 3) {
-    progress = 75;
-    toastMessage = "Add 1 more item to unlock FREE delivery.";
-  } else if (totalItems === 2) {
-    progress = 50;
-    toastMessage = "Add 1 more item and save another UGX 500.";
-  }
+  const progress = Math.min(totalItems * 25, 100);
+  const isFree = totalItems >= 4 || cartTotal >= 20000;
+  const toastMessage = isFree 
+    ? "🎉 You have FREE delivery!" 
+    : `Add ${Math.max(4 - totalItems, 0)} more item(s) to reach FREE delivery.`;
 
   const handleBotInquiry = async () => {
     setLoadingWhatsApp(true);
@@ -221,25 +208,27 @@ export default function ProductActions({ product, children }: { product: Product
       </div>
 
       {/* ========================================== */}
-      {/* 🚀 CUSTOM "ADDED TO CART" GAMIFIED TOAST */}
+      {/* 🚀 CENTERED GAMIFIED TOAST MODAL           */}
       {/* ========================================== */}
       {showCartToast && (
-        <div className="fixed top-4 left-0 right-0 z-[9999] px-4 flex justify-center animate-in slide-in-from-top-5 duration-300">
-          <div className="bg-white rounded-xl shadow-2xl border border-slate-200 p-4 w-full max-w-sm">
-            
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-[#25D366] text-xs font-bold">✓</div>
-                <p className="font-bold text-slate-800 text-sm">Added to cart successfully</p>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-5 md:p-6 w-full max-w-sm animate-in zoom-in-95 duration-200">
+
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-[#25D366] text-sm font-bold">✓</div>
+                <p className="font-black text-slate-900 text-lg">Added to Cart!</p>
               </div>
-              <button onClick={() => setShowCartToast(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setShowCartToast(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors">
+                ✕
+              </button>
             </div>
 
-            <div className="mt-3 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <p className={`text-xs font-bold mb-2 ${isFree ? 'text-[#25D366]' : 'text-slate-600'}`}>
+            <div className="mb-5 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <p className={`text-sm font-bold mb-3 ${isFree ? 'text-[#25D366]' : 'text-slate-700'}`}>
                 {toastMessage}
               </p>
-              <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+              <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
                 <div 
                   className={`h-full transition-all duration-500 ease-out ${isFree ? 'bg-[#25D366]' : 'bg-[#D97706]'}`} 
                   style={{ width: `${progress}%` }}
@@ -249,11 +238,11 @@ export default function ProductActions({ product, children }: { product: Product
 
             <button 
               onClick={() => router.push('/cart')} 
-              className="w-full py-3 bg-slate-900 text-white rounded-lg text-sm font-bold shadow-sm hover:bg-slate-800 transition-colors"
+              className="w-full py-3.5 bg-[#D97706] text-white rounded-xl text-[15px] font-bold shadow-md hover:bg-amber-600 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
             >
               View Cart & Checkout
             </button>
-            
+
           </div>
         </div>
       )}
