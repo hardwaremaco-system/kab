@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const docSnap = await adminDb.collection("item_requests").doc(params.requestId).get();
 
     if (!docSnap.exists) {
-      return { title: "Request Not Found | Kabale Online" }; // FIXED: Old brand name removed
+      return { title: "Request Not Found | Oweitu Shop" }; // FIXED: Old brand name removed
     }
 
     const data = docSnap.data();
