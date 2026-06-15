@@ -2,10 +2,11 @@
 
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { collection, query, where, orderBy, limit, startAfter, getDocs, doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+// 🔥 Changed to firestore/lite
+import { collection, query, where, orderBy, limit, startAfter, getDocs, doc, getDoc } from "firebase/firestore/lite";
+// 🔥 Changed to dbLite
+import { dbLite } from "@/lib/firebase/config";
 import Link from "next/link";
-// 🔥 IMPORT YOUR PRODUCT CARD HERE
 import ProductCard from "@/components/ProductCard"; 
 
 const PAGE_SIZE = 100;
@@ -62,7 +63,8 @@ export default function CategoryProductFeed({
 
     try {
       const lastProduct = products[products.length - 1];
-      const lastDocRef = doc(db, "products", lastProduct.id);
+      // 🔥 Changed to dbLite
+      const lastDocRef = doc(dbLite, "products", lastProduct.id);
       const lastDocSnap = await getDoc(lastDocRef);
 
       if (!lastDocSnap.exists()) {
@@ -71,7 +73,8 @@ export default function CategoryProductFeed({
         return;
       }
 
-      const productsRef = collection(db, "products");
+      // 🔥 Changed to dbLite
+      const productsRef = collection(dbLite, "products");
 
       const q = categoryName === "all"
         ? query(
