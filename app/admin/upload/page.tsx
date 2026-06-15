@@ -29,8 +29,12 @@ function AdminUploadContent() {
 
   const [formData, setFormData] = useState({
     title: "",
-    category: "phones-tvs", // Default
+    category: "phones-tvs", 
     price: "",
+    originalPrice: "", 
+    isSale: false,
+    campaignType: "flash-sales",
+    saleEndDate: "",
     quantity: "1",
     condition: "new",
     description: "",
@@ -38,7 +42,6 @@ function AdminUploadContent() {
     sellerPhone: "", 
   });
 
-  // Check if we are uploading a service (mostly for legacy edits now)
   const isService = formData.category === "services";
 
   // ============================================================================
@@ -57,6 +60,10 @@ function AdminUploadContent() {
               title: data.name || data.title || "",
               category: data.category || "phones-tvs",
               price: data.price ? data.price.toString() : "",
+              originalPrice: data.originalPrice ? data.originalPrice.toString() : "",
+              isSale: data.isSale || false,
+              campaignType: data.campaignType || "flash-sales",
+              saleEndDate: data.saleEndDate ? new Date(data.saleEndDate).toISOString().split('T')[0] : "",
               quantity: data.stock !== undefined ? data.stock.toString() : "1",
               condition: data.condition || "new",
               description: data.description || "",
@@ -75,7 +82,7 @@ function AdminUploadContent() {
   }, [editPublicId, user]);
 
   // ============================================================================
-  // AI GENERATION LOGIC
+  // AI GENERATION LOGIC (Now hits our internal API)
   // ============================================================================
   const handleGenerateAI = async () => {
     if (!formData.title) {
@@ -85,12 +92,13 @@ function AdminUploadContent() {
 
     setIsGeneratingAi(true);
     try {
-      const response = await fetch("https://bio-generator.ali3nplumb3r.workers.dev/", {
+      const response = await fetch("/api/admin/generate-description", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           productName: formData.title,
-          features: `Category: ${formData.category}, Condition: ${isService ? 'N/A' : formData.condition}`
+          category: formData.category,
+          condition: isService ? 'N/A' : formData.condition
         })
       });
 
@@ -107,15 +115,12 @@ function AdminUploadContent() {
       }
     } catch (error) {
       console.error("AI Error:", error);
-      alert("Failed to connect to the AI Generator.");
+      alert("Failed to connect to the internal AI Generator.");
     } finally {
       setIsGeneratingAi(false);
     }
   };
 
-  // ============================================================================
-  // SECURITY CHECK
-  // ============================================================================
   if (authLoading || initialFetchLoading) {
     return <div className="py-20 text-center font-bold text-[#6B6B6B] animate-pulse">Loading Admin Portal...</div>;
   }
@@ -130,9 +135,6 @@ function AdminUploadContent() {
     );
   }
 
-  // ============================================================================
-  // IMAGE HANDLING
-  // ============================================================================
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
@@ -173,9 +175,6 @@ function AdminUploadContent() {
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  // ============================================================================
-  // UPLOAD LOGIC
-  // ============================================================================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -189,6 +188,11 @@ function AdminUploadContent() {
       return;
     }
 
+    if (formData.isSale && !formData.saleEndDate) {
+      alert("Please select a Sale End Date for this promotion.");
+      return;
+    }
+
     setLoading(true);
     setSuccessMessage("");
 
@@ -199,7 +203,7 @@ function AdminUploadContent() {
         const signRes = await fetch("/api/cloudinary/sign", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ folder: "kabale_online" })
+          body: JSON.stringify({ folder: "oweitushop" }) 
         });
 
         const signData = await signRes.json();
@@ -211,7 +215,7 @@ function AdminUploadContent() {
           formDataCloudinary.append("api_key", apiKey!);
           formDataCloudinary.append("timestamp", signData.timestamp.toString());
           formDataCloudinary.append("signature", signData.signature);
-          formDataCloudinary.append("folder", "kabale_online");
+          formDataCloudinary.append("folder", "oweitushop");
 
           const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
             method: "POST",
@@ -239,15 +243,19 @@ function AdminUploadContent() {
         body: JSON.stringify({
           title: formData.title,
           category: formData.category,
-          price: formData.price,
+          price: Number(formData.price),
+          originalPrice: Number(formData.originalPrice) || 0,
+          isSale: formData.isSale,
+          campaignType: formData.isSale ? formData.campaignType : null,
+          saleEndDate: formData.isSale ? new Date(formData.saleEndDate).toISOString() : null,
           stock: Number(formData.quantity),
-          condition: isService ? "N/A" : formData.condition, // Force N/A for services
+          condition: isService ? "N/A" : formData.condition,
           description: formData.description,
           metaDescription: formData.metaDescription, 
           sellerPhone: formData.sellerPhone,
           images: finalImagesList,
           sellerId: user.id, 
-          sellerName: "Kabale Online Official", 
+          sellerName: "Oweitu Shop Official", 
           isAdminUpload: true, 
         }),
       });
@@ -258,7 +266,7 @@ function AdminUploadContent() {
       try {
         dbData = rawText ? JSON.parse(rawText) : {};
       } catch (parseError) {
-        throw new Error(`Server returned an unexpected format (Status ${dbRes.status}).`);
+        throw new Error(`Server returned an unexpected format.`);
       }
 
       if (dbRes.ok) {
@@ -267,14 +275,12 @@ function AdminUploadContent() {
 
         if (!editPublicId) {
           setFormData(prev => ({
+            ...prev,
             title: "",
-            category: "phones-tvs", // Default
             price: "",
-            quantity: "1",
-            condition: "new",
+            originalPrice: "",
             description: "",
             metaDescription: "", 
-            sellerPhone: prev.sellerPhone, 
           }));
           setImageFiles([]);
           setImagePreviews([]);
@@ -328,27 +334,23 @@ function AdminUploadContent() {
 
           <div>
             <label style={{ color: '#1A1A1A' }} className="block text-sm font-semibold mb-2">
-              {isService ? "Service / Trade Name *" : "Product Title *"}
+              Product Title *
             </label>
             <input required type="text" className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none transition-shadow" 
               value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} 
-              placeholder={isService ? "e.g., Professional Plumber, Event Photography..." : "e.g., iPhone 15 Pro, Sony Soundbar"} />
+              placeholder="e.g., iPhone 15 Pro, Sony Soundbar" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <label style={{ color: '#1A1A1A' }} className="block text-sm font-semibold mb-2">Category *</label>
               <select className="w-full rounded-xl border border-slate-300 px-4 py-3 bg-white focus:ring-2 focus:ring-[#FF6A00] outline-none transition-shadow"
                 value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                
-                {/* 🔥 GROUP 1: BUY AGAIN & AGAIN */}
                 <optgroup label="Buy Again & Again">
-                  <option value="supermarket">Supermarket (Groceries, Soap, etc.)</option>
+                  <option value="supermarket">Supermarket</option>
                   <option value="fashion">Fashion & Shoes</option>
                   <option value="beauty">Health & Beauty</option>
                 </optgroup>
-
-                {/* 🔥 GROUP 2: STEP-UP ELECTRONICS */}
                 <optgroup label="Step-Up Electronics">
                   <option value="phones-tvs">Phones & TVs</option>
                   <option value="sound-systems">Sound Systems</option>
@@ -356,57 +358,90 @@ function AdminUploadContent() {
                   <option value="accessories">Accessories</option>
                   <option value="watches">Watches</option>
                 </optgroup>
-
-                {/* 🔥 GROUP 3: OTHERS */}
                 <optgroup label="More">
                   <option value="other">Other Products</option>
                 </optgroup>
-
-                {/* Legacy categories for fallback if editing old items */}
-                {isService && (
-                  <optgroup label="Legacy">
-                    <option value="services">Services (Legacy)</option>
-                  </optgroup>
-                )}
               </select>
             </div>
 
             <div>
               <label style={{ color: '#1A1A1A' }} className="block text-sm font-semibold mb-2">
-                {isService ? "Total Service Fee (UGX) *" : "Price (UGX) *"}
+                Sale Price (UGX) *
               </label>
               <input required type="number" className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none transition-shadow"
                 value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
-              {/* Dynamic Deposit Display for Services */}
-              {isService && formData.price && (
-                <p style={{ color: '#FF6A00' }} className="text-[10px] font-bold mt-1.5 flex items-center gap-1">
-                  <span>ℹ️</span> Escrow Deposit to book: UGX {(Number(formData.price) * 0.1).toLocaleString()}
-                </p>
-              )}
             </div>
 
             <div>
               <label style={{ color: '#1A1A1A' }} className="block text-sm font-semibold mb-2">
-                {isService ? "Available Slots *" : "Quantity in Stock *"}
+                Original Price <span className="text-slate-400 font-normal">(Optional)</span>
+              </label>
+              <input type="number" className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none transition-shadow"
+                value={formData.originalPrice} onChange={e => setFormData({...formData, originalPrice: e.target.value})} placeholder="Crossed out price" />
+            </div>
+
+            <div>
+              <label style={{ color: '#1A1A1A' }} className="block text-sm font-semibold mb-2">
+                Available Stock *
               </label>
               <input required type="number" min="0" className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none transition-shadow"
                 value={formData.quantity} onChange={e => setFormData({...formData, quantity: e.target.value})} />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {!isService && (
-              <div>
-                <label style={{ color: '#1A1A1A' }} className="block text-sm font-semibold mb-2">Condition *</label>
-                <select className="w-full rounded-xl border border-slate-300 px-4 py-3 bg-white focus:ring-2 focus:ring-[#FF6A00] outline-none transition-shadow"
-                  value={formData.condition} onChange={e => setFormData({...formData, condition: e.target.value})}>
-                  <option value="new">Brand New</option>
-                  <option value="used">Used / Second Hand</option>
-                </select>
-              </div>
-            )}
-            {/* Takes full width if Condition is hidden */}
-            <div className={isService ? "col-span-1 sm:col-span-2" : ""}>
+          {/* 🔥 NEW SECTION: PROMOTIONS & HOMEPAGE PLACEMENT */}
+          <div className="bg-orange-50/50 border border-orange-100 rounded-xl p-5 mt-6">
+             <div className="flex items-center gap-3 mb-4">
+                <input 
+                  type="checkbox" 
+                  id="promoToggle"
+                  className="w-5 h-5 accent-[#FF6A00] cursor-pointer"
+                  checked={formData.isSale}
+                  onChange={e => setFormData({...formData, isSale: e.target.checked})}
+                />
+                <label htmlFor="promoToggle" className="font-bold text-[#FF6A00] cursor-pointer">
+                  Feature this product on the Homepage as a Promotion
+                </label>
+             </div>
+
+             {formData.isSale && (
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-3 border-t border-orange-200/50">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-800 mb-2">Select Campaign Bucket</label>
+                    <select className="w-full rounded-xl border border-orange-200 px-4 py-3 bg-white focus:ring-2 focus:ring-[#FF6A00] outline-none"
+                      value={formData.campaignType} onChange={e => setFormData({...formData, campaignType: e.target.value})}>
+                      <option value="flash-sales">⚡ Flash Sales</option>
+                      <option value="weekend-deals">🎉 Weekend Deals</option>
+                      <option value="student-deals">🎓 Student Deals</option>
+                      <option value="clearance">🏷️ Clearance Sale</option>
+                      <option value="mega-sale">🔥 Mega Sale</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-800 mb-2">Sale Ends On (Removes from homepage after)</label>
+                    <input 
+                      type="date" 
+                      required={formData.isSale}
+                      className="w-full rounded-xl border border-orange-200 px-4 py-3 bg-white focus:ring-2 focus:ring-[#FF6A00] outline-none"
+                      value={formData.saleEndDate} 
+                      onChange={e => setFormData({...formData, saleEndDate: e.target.value})} 
+                    />
+                  </div>
+               </div>
+             )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+            <div>
+              <label style={{ color: '#1A1A1A' }} className="block text-sm font-semibold mb-2">Condition *</label>
+              <select className="w-full rounded-xl border border-slate-300 px-4 py-3 bg-white focus:ring-2 focus:ring-[#FF6A00] outline-none transition-shadow"
+                value={formData.condition} onChange={e => setFormData({...formData, condition: e.target.value})}>
+                <option value="new">Brand New</option>
+                <option value="used">Used / Second Hand</option>
+              </select>
+            </div>
+            
+            <div>
               <label style={{ color: '#1A1A1A' }} className="block text-sm font-semibold mb-2">Official WhatsApp Number *</label>
               <input required type="tel" className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none transition-shadow"
                 value={formData.sellerPhone} onChange={e => setFormData({...formData, sellerPhone: e.target.value})} />
@@ -420,13 +455,13 @@ function AdminUploadContent() {
                 type="button" 
                 onClick={handleGenerateAI}
                 disabled={isGeneratingAi}
-                className="text-xs bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-200 transition-colors disabled:opacity-50 flex items-center gap-1"
+                className="text-xs bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-200 transition-colors disabled:opacity-50 flex items-center gap-1 shadow-sm"
               >
                 {isGeneratingAi ? "Generating..." : "✨ Auto-Write with AI"}
               </button>
             </div>
             <textarea required rows={5} className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none resize-none transition-shadow"
-              value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder={isService ? "Describe the service offered..." : "Full product description..."} />
+              value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Full product description..." />
           </div>
 
           <div>
@@ -489,7 +524,7 @@ function AdminUploadContent() {
                {editPublicId ? "Saving Updates..." : "Publishing to Network..."}
              </>
           ) : (
-            editPublicId ? "Save Changes" : (isService ? "Publish Service" : "Publish to Official Store")
+            editPublicId ? "Save Changes" : "Publish to Official Store"
           )}
         </button>
       </form>
