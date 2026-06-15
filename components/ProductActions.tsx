@@ -96,7 +96,7 @@ export default function ProductActions({ product, children }: { product: Product
     const priceText = isNegotiable ? "Price: Negotiable" : `Price: UGX ${currentPrice.toLocaleString()}`;
     const productUrl = `${window.location.origin}/product/${product.publicId || product.id}`;
     
-    const rawMessage = `Hi! I saw your item on Kabale Online and I'm interested in ordering/asking about it:\n\n*${product.name}*\n${priceText}\n\nLink: ${productUrl}`;
+    const rawMessage = `Hi! I saw your item on Oweitu Shop and I'm interested in ordering/asking about it:\n\n*${product.name}*\n${priceText}\n\nLink: ${productUrl}`;
     const encodedMessage = encodeURIComponent(rawMessage);
 
     window.open(`https://wa.me/${formattedPhone}?text=${encodedMessage}`, "_blank");
