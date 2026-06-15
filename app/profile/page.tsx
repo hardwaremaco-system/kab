@@ -22,7 +22,8 @@ import {
 } from "lucide-react";
 
 export default function ProfilePage() {
-  const { user, loading: authLoading, signIn, signOut } = useAuth();
+  // 🚀 FIXED: Swapped 'signIn' for 'signInWithGoogle'
+  const { user, loading: authLoading, signInWithGoogle, signOut } = useAuth();
   const [verificationStatus, setVerificationStatus] = useState<"unverified" | "pending" | "verified">("unverified");
   const [metrics, setMetrics] = useState({ views: 0, chats: 0, avgScore: 0, totalItems: -1, isLoaded: false });
   const [wallet, setWallet] = useState({ available: 0, pending: 0, withdrawn: 0, isLoaded: false });
@@ -99,8 +100,9 @@ export default function ProfilePage() {
             <h1 className="text-3xl font-black text-slate-900 mb-3 leading-tight">Your Personal<br/>Workspace.</h1>
             <p className="text-slate-500 text-[15px] px-2 w-full font-medium">Log in to manage your purchases, saved items, and local sales pipeline.</p>
           </div>
-
-          <button onClick={signIn} className="w-full bg-[#D97706] hover:bg-amber-600 text-white font-bold py-4 rounded-xl shadow-md transition-all text-[16px] flex items-center justify-center">
+          
+          {/* 🚀 FIXED: Swapped 'signIn' for 'signInWithGoogle' */}
+          <button onClick={signInWithGoogle} className="w-full bg-[#D97706] hover:bg-amber-600 text-white font-bold py-4 rounded-xl shadow-md transition-all text-[16px] flex items-center justify-center">
             Log In Securely
           </button>
         </div>
@@ -178,7 +180,7 @@ export default function ProfilePage() {
         {/* WORKSPACE NAVIGATION */}
         <h2 className="font-black text-slate-900 mb-3 text-[14px]">Your Workspace</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-          
+
           <Link href="/invite" className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm hover:border-[#D97706] transition-colors flex items-center justify-between group md:col-span-2">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-[#D97706]"><Gift size={18} /></div>
