@@ -18,8 +18,8 @@ import {
 export const revalidate = 3600;
 
 export const metadata = {
-  title: "All Products | Kabale Online",
-  description: "Browse all premium electronics and items available in Kabale.",
+  title: "All Products | Oweitu Shop",
+  description: "Browse all premium electronics and items available in Kigezi and Ankole.",
 };
 
 // 🔥 Set to 100 as requested
