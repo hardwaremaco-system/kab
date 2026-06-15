@@ -14,9 +14,9 @@ export const viewport: Viewport = {
 
 // SEO & PWA METADATA
 export const metadata: Metadata = {
-  title: "Kabale Online | The Better Way To Buy and Sell in Kabale and the Greater Kigezi Region",
+  title: "Oweitu Shop | The Better Way To Buy and Sell in Kigezi and Ankole Region",
   description:
-    "Connect with students at Kabale University, local farmers, and verified vendors for safe, Cash-on-Delivery commerce.",
+    "Connect with buyers and sellers , local farmers, and verified vendors for safe, Cash-on-Delivery commerce.",
   keywords: [
     "Kabale",
     "Kabale University",
@@ -30,19 +30,19 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Kabale Online",
+    title: "Oweitu Shop",
   },
   openGraph: {
-    title: "Kabale Online | The Better Way To Buy and Sell in Kabale and the Greater Kigezi Region",
+    title: "Oweitu Shop | The Better Way To Buy and Sell in Kabale and the Greater Kigezi Region",
     description: "Buy and sell locally in Kabale with strictly Cash on Delivery.",
-    url: "https://www.kabaleonline.com",
-    siteName: "Kabale Online",
+    url: "https://www.oweitushop.com",
+    siteName: "Oweitu Shop",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Kabale Online Marketplace",
+        alt: "Oweitu Shop",
       },
     ],
     locale: "en_UG",
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kabale Online Marketplace",
-    description: "The Better Way To Buy and Sell in Kabale and the Greater Kigezi Region",
+    title: "Oweitu Shop",
+    description: "The Better Way To Buy and Sell in Kigezi and the Ankole Region",
     images: ["/og-image.jpg"],
   },
 };
