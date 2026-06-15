@@ -38,7 +38,7 @@ export async function PATCH(request: Request) {
         const items = orderData.cartItems || orderData.items || [];
 
         const OFFICIAL_SELLER_ID = "HemTITkLkWabkm8pj9CCf5bRlHJ3";
-        const OFFICIAL_PHONE = "0759997376";
+        const OFFICIAL_PHONE = "256779094664";
         
         const hasOfficialProduct = items.some((item: any) => 
           item.sellerId === "SYSTEM" || 
