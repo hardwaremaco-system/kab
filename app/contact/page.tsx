@@ -6,8 +6,8 @@ import { db } from "@/lib/firebase/config";
 
 export default function ContactPage() {
   const [settings, setSettings] = useState({
-    whatsappNumber: "256759997376",
-    contactPhone: "+256 759 997 376",
+    whatsappNumber: "256779094664", // 🔥 FIXED
+    contactPhone: "+256 779 094664", // 🔥 FIXED
     supportEmail: "support@oweitushop.com"
   });
 
@@ -21,8 +21,8 @@ export default function ContactPage() {
         if (snap.exists()) {
           const data = snap.data();
           setSettings({
-            whatsappNumber: data.whatsappNumber || "256759997376",
-            contactPhone: data.contactPhone || "+256 759 997 376",
+            whatsappNumber: data.whatsappNumber || "256779094664", // 🔥 FIXED
+            contactPhone: data.contactPhone || "+256 779 094664", // 🔥 FIXED
             supportEmail: data.supportEmail || "support@oweitushop.com"
           });
         }
