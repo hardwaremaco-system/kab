@@ -1,4 +1,5 @@
-export type Role = "customer" | "vendor" | "admin";
+// 🔥 ADDED "editor" to the accepted roles
+export type Role = "customer" | "vendor" | "editor" | "admin";
 
 export type ProductCategory = "electronics" | "agriculture" | "student_item" | "general" | string;
 
@@ -18,9 +19,9 @@ export interface User {
   referrerId?: string | null;
   referralBalance?: number;
   referralCount?: number;
-phone?: string;
-phoneUpdatedAt?: number;
-  
+  phone?: string;
+  phoneUpdatedAt?: number;
+
   // 🔥 FIXED: Moved referralName here!
   referralName?: string;
 }
