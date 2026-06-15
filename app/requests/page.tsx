@@ -90,15 +90,15 @@ export default function RequestsPage() {
   };
 
   const copyToClipboard = (id: string) => {
-    const url = `https://www.kabaleonline.com/requests/${id}`;
+    const url = `https://www.oweitushop.com/requests/${id}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
   };
 
   const shareToWhatsApp = (req: ItemRequest) => {
-    const url = `https://www.kabaleonline.com/requests/${req.id}`;
-    const text = `I am looking for a ${req.itemNeeded} on Kabale Online! Budget: UGX ${Number(req.budget).toLocaleString()}. Know anyone selling? Check it out here: ${url}`;
+    const url = `https://www.oweitushop.com/requests/${req.id}`;
+    const text = `I am looking for a ${req.itemNeeded} on Oweitu Shop! Budget: UGX ${Number(req.budget).toLocaleString()}. Know anyone selling? Check it out here: ${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -144,7 +144,7 @@ export default function RequestsPage() {
             
             // USE THE FORMATTER HERE!
             const formattedPhone = formatWhatsAppNumber(req.buyerPhone);
-            const whatsappLink = `https://wa.me/${formattedPhone}?text=Hi%20${req.buyerName},%20I%20saw%20your%20request%20for%20"${req.itemNeeded}"%20on%20Kabale%20Online.%20I%20have%20this%20item!`;
+            const whatsappLink = `https://wa.me/${formattedPhone}?text=Hi%20${req.buyerName},%20I%20saw%20your%20request%20for%20"${req.itemNeeded}"%20on%20Oweitu%20Shop.%20I%20have%20this%20item!`;
 
             return (
               <div key={req.id} className="flex flex-col bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow relative">
@@ -207,7 +207,7 @@ export default function RequestsPage() {
                   </button>
 
                   <a 
-                    href={`https://wa.me/?text=${encodeURIComponent(`I am looking for a ${successData.item} on Kabale Online! Know anyone selling? Check it out here: https://www.kabaleonline.com/requests/${successData.id}`)}`}
+                    href={`https://wa.me/?text=${encodeURIComponent(`I am looking for a ${successData.item} on Oweitu Shop! Know anyone selling? Check it out here: https://www.oweitushop.com/requests/${successData.id}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full block bg-[#25D366] text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-md"
