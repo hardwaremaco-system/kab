@@ -303,7 +303,7 @@ export default function GuidePage() {
           {/* SUMMARY BLOCK */}
           <div className="bg-[#D97706] text-white p-6 rounded-lg text-center shadow-md">
             <h2 className="text-xl font-bold mb-2">🟢 Summary</h2>
-            <p className="font-medium text-amber-50">Kabale Online is your Marketplace, Selling platform, Buying hub, and Business growth tool.</p>
+            <p className="font-medium text-amber-50">Oweitu Shop is your Marketplace, Selling platform, Buying hub, and Business growth tool.</p>
             <p className="mt-2 text-sm text-amber-100 font-semibold uppercase tracking-wider">We make local buying and selling simple, fast, and trusted.</p>
           </div>
         </section>
