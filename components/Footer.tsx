@@ -43,7 +43,7 @@ export default function Footer() {
           </div>
 
           <h2 className="text-3xl md:text-4xl font-bold mb-2 tracking-tight">
-            Kabale Online Marketplace
+            Oweitu Marketplace
           </h2>
           <p className="text-gray-300 text-sm md:text-base mb-6">
             Everything You Need, Delivered.
@@ -61,7 +61,7 @@ export default function Footer() {
               className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-3 rounded-lg text-sm font-bold transition-colors shadow-sm"
             >
               <FaWhatsapp className="text-lg" />
-              Shop on WhatsApp (0759997376)
+              Shop on WhatsApp (+256 779 094664)
             </a>
           </div>
         </div>
