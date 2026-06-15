@@ -12,6 +12,6 @@ export default function robots(): MetadataRoute.Robots {
         '/edit/',     // Keeps product editing pages private
       ],
     },
-    sitemap: 'https://www.kabaleonline.com/sitemap.xml',
+    sitemap: 'https://www.oweitushop.com/sitemap.xml',
   };
 }
