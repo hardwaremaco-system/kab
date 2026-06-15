@@ -11,7 +11,7 @@ export default function TermsPage() {
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">1. Acceptance of Terms</h2>
         <p>
-          By accessing or using Kabale Online, you agree to comply with and be 
+          By accessing or using Oweitu Shop, you agree to comply with and be 
           bound by these Terms & Conditions. If you do not agree with any part 
           of these terms, you should not use the platform.
         </p>
@@ -21,7 +21,7 @@ export default function TermsPage() {
         <h2 className="font-bold text-xl mb-2">2. Our Role & Platform Facilitation</h2>
         <p>
           Oweitu Shop is a digital marketplace that connects buyers and sellers 
-          within Kabale town and the greater Kigezi region. While we primarily facilitate 
+          within the Ankole and Kigezi regions. While we primarily facilitate 
           these connections, we may coordinate logistics and deliveries to improve 
           the user experience. However, the core transaction remains between the 
           buyer and the seller.
@@ -53,12 +53,10 @@ export default function TermsPage() {
         <p>
           Users may not list illegal substances, stolen property, counterfeit 
           goods, weapons, hazardous materials, or any items prohibited under 
-          Ugandan law. Kabale Online reserves the right to remove any listing 
+          Ugandan law. Oweitu Shop reserves the right to remove any listing 
           that violates these rules without prior notice.
         </p>
       </section>
-
-      {/* NEW UPGRADED SECTIONS START HERE */}
 
       <hr className="my-10 border-slate-300" />
 
@@ -90,7 +88,7 @@ export default function TermsPage() {
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">10. Referral & Cookie Tracking</h2>
-        <p>Oweitu Shop uses cookies and internal systems to attribute referrals. Referrals are valid within a limited time window. Users acknowledge that tracking systems may not be perfect, and Kabale Online's system records dictate final attribution.</p>
+        <p>Oweitu Shop uses cookies and internal systems to attribute referrals. Referrals are valid within a limited time window. Users acknowledge that tracking systems may not be perfect, and Oweitu Shop's system records dictate final attribution.</p>
       </section>
 
       <section className="mb-8">
@@ -101,7 +99,7 @@ export default function TermsPage() {
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">12. Platform Control Rights & Dispute Resolution</h2>
         <p>Oweitu Shop reserves the right to remove listings, restrict users, adjust visibility, and modify platform rules at its sole discretion to maintain platform integrity.</p>
-        <p>Users are encouraged to resolve disputes amicably between themselves. While Kabale Online may intervene to mediate, we are not obligated to do so, and platform decisions are final where applicable.</p>
+        <p>Users are encouraged to resolve disputes amicably between themselves. While Oweitu Shop may intervene to mediate, we are not obligated to do so, and platform decisions are final where applicable.</p>
       </section>
 
       <hr className="my-10 border-slate-300" />
