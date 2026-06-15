@@ -19,7 +19,7 @@ export default function ContactPage() {
               <span className="text-2xl">💬</span>
               <div>
                 <p className="text-xs font-bold text-slate-400 uppercase">WhatsApp</p>
-                <a href="https://wa.me/256779094664" className="text-emerald-600 font-bold">0759997376</a>
+                <a href="https://wa.me/256779094664" className="text-emerald-600 font-bold">+256 779 094664</a>
               </div>
             </div>
             <div className="flex items-center gap-4">
