@@ -21,7 +21,7 @@ const campaignDisplayNames: Record<string, string> = {
 
 const campaignDescriptions: Record<string, string> = {
   "flash-sales": "Grab massive discounts before time runs out! Shop the best flash sales on electronics and accessories in Kabale.",
-  "weekend-deals": "Exclusive weekend price drops! Upgrade your gadgets with fast local delivery from Kabale Online.",
+  "weekend-deals": "Exclusive weekend price drops! Upgrade your gadgets with fast local delivery from Oweitu Shop.",
   "clearance": "Huge clearance markdowns! Get these products at unbeatable prices before they are gone forever.",
   "student-deals": "Special student discounts for campus essentials. Save big on tech and accessories for your hostel.",
   "mega-sale": "Our biggest deals of the season! Massive savings on top-rated electronics and more."
@@ -45,17 +45,17 @@ export async function generateMetadata({
     ? campaignFilter.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
     : "Active Deals & Discounts";
 
-  const pageTitle = `${baseTitle} | Kabale Online`;
+  const pageTitle = `${baseTitle} | Oweitu Shop`;
 
   // Generate exact description
   const description = campaignFilter && campaignDescriptions[campaignFilter]
     ? campaignDescriptions[campaignFilter]
-    : "Discover the best deals, discounts, and flash sales on Kabale Online. Fast local delivery available on all items in Kabale.";
+    : "Discover the best deals, discounts, and flash sales on Oweitu Shop. Fast local delivery available on all items in Kabale.";
 
   const currentUrl = `https://www.kabaleonline.com/deals${campaignFilter ? `?campaign=${campaignFilter}` : ''}`;
   
   // 🔥 BUILD THE DYNAMIC OG IMAGE URL FOR THE DEALS PAGE
-  const ogImage = `https://www.kabaleonline.com/api/og?title=${encodeURIComponent(baseTitle)}&desc=${encodeURIComponent(description)}`;
+  const ogImage = `https://www.oweitushop.com/api/og?title=${encodeURIComponent(baseTitle)}&desc=${encodeURIComponent(description)}`;
 
   return {
     title: pageTitle,
@@ -67,7 +67,7 @@ export async function generateMetadata({
       title: pageTitle,
       description: description,
       url: currentUrl,
-      siteName: "Kabale Online",
+      siteName: "Oweitu Shop",
       images: [{ url: ogImage, width: 1200, height: 630, alt: baseTitle }],
       type: "website",
     },
