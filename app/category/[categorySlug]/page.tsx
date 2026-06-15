@@ -128,17 +128,17 @@ export async function generateMetadata({ params }: { params: { categorySlug: str
       title, "Kabale Online", "Kabale Marketplace", "buy electronics Kabale", slug.replace(/_/g, ' '), "buy online Kabale"
     ],
     openGraph: {
-      title: `${title} | Kabale Online`,
+      title: `${title} | Oweitu Shop`,
       description: description,
       url: currentUrl,
-      siteName: "Kabale Online",
-      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${title} on Kabale Online` }],
+      siteName: "Oweitu Shop",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${title} on Owetu Shop` }],
       locale: "en_UG",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | Kabale Online`,
+      title: `${title} | Oweitu Shop`,
       description: description,
       images: [ogImageUrl],
     },
