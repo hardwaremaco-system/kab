@@ -61,7 +61,6 @@ function LeftSidebarContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { cart, removeFromCart, cartTotal } = useCart();
-  // 🚀 FIXED: Swapped 'signIn' for 'signInWithGoogle'
   const { user, signInWithGoogle } = useAuth();
 
   const maxPrice = searchParams.get("max");
@@ -78,7 +77,7 @@ function LeftSidebarContent() {
   return (
     <div className="w-full flex flex-col gap-6 select-none pb-8">
 
-      {/* 1. AUTH / WELCOME CARD (UPDATED) */}
+      {/* 1. AUTH / WELCOME CARD */}
       <div className="bg-white dark:bg-[#151515] border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm p-5 flex flex-col transition-colors">
         <span style={{ color: '#6B6B6B' }} className="text-[10px] font-black uppercase tracking-[0.2em] mb-1 dark:text-slate-400">
           Welcome,
@@ -90,7 +89,6 @@ function LeftSidebarContent() {
             {user.displayName ? user.displayName.split(' ')[0] : "Shopper"}
           </span>
         ) : (
-          {/* 🚀 FIXED: Swapped 'signIn' for 'signInWithGoogle' */}
           <button 
             onClick={signInWithGoogle} 
             className="text-lg font-black text-[#FF6A00] hover:opacity-80 transition-colors text-left outline-none truncate"
