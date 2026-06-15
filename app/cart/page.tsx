@@ -7,16 +7,15 @@ import Link from "next/link";
 import { FaTrash, FaArrowLeft, FaPlus, FaShieldAlt, FaCheckCircle } from "react-icons/fa";
 
 export default function CartPage() {
-  // 💡 Ensure `clearCart` is available in your CartContext to empty the cart after a successful order
   const { cart, updateQuantity, removeFromCart, cartTotal, addToCart, clearCart } = useCart();
   const router = useRouter();
 
-  // Native Checkout State
+  // Native Checkout State (Synchronized with Firestore API fields)
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [customerName, setCustomerName] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [buyerName, setBuyerName] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [location, setLocation] = useState("");
 
   // Real Upsell State
   const [upsellItems, setUpsellItems] = useState<any[]>([]);
@@ -31,7 +30,6 @@ export default function CartPage() {
         const res = await fetch("/api/products/upsells");
         if (res.ok) {
           const data = await res.json();
-          // Filter out items that are already in the user's cart
           const cartIds = new Set(cart.map(item => item.id));
           const filteredUpsells = data.items.filter((item: any) => !cartIds.has(item.id));
 
@@ -82,7 +80,7 @@ export default function CartPage() {
   };
 
   // ==========================================
-  // 🚀 NATIVE CHECKOUT LOGIC
+  // 🚀 NATIVE CHECKOUT SUBMISSION
   // ==========================================
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,54 +88,40 @@ export default function CartPage() {
     setIsCheckingOut(true);
 
     try {
-      const getCookie = (name: string) => {
-        if (typeof document === "undefined") return null;
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop()?.split(';').shift();
-        return null;
-      };
-      const referralCode = getCookie("kabale_ref");
-
-      // Build the order payload for the backend
+      // Setup payload matching backend route properties precisely
       const payload = {
-        customerName,
-        customerPhone,
-        deliveryAddress,
-        items: cart.map(item => ({
+        source: "web",
+        buyerName,
+        contactPhone,
+        location: location || "Kabale",
+        cartItems: cart.map(item => ({
           productId: item.id,
           name: item.title,
           price: item.price,
           quantity: item.quantity,
-          sellerId: (item as any).sellerId || "SYSTEM"
-        })),
-        subtotal: cartTotal,
-        deliveryFee,
-        total: finalTotal,
-        status: "processing", // Mark as processing initially
-        referralCodeUsed: referralCode || null,
+          sellerId: (item as any).sellerId || "SYSTEM",
+          sellerPhone: (item as any).sellerPhone || ""
+        }))
       };
 
-      // POST to your native backend route (this route should save to DB and trigger emails)
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        // Clear cart and redirect to a success page
+      const data = await res.json();
+
+      if (res.ok && data.success) {
         if (clearCart) clearCart();
         setShowCheckoutModal(false);
-        alert("Order placed successfully! Check your email for confirmation.");
-        router.push(`/order-success?id=${data.orderId || ''}`);
+        router.push(`/order-success?id=${data.orderId}`);
       } else {
-        alert("Failed to place order. Please try again.");
+        alert(data.error || "Failed to place order. Please check stock levels and try again.");
       }
     } catch (error) {
-      console.error("Checkout error:", error);
-      alert("An error occurred during checkout.");
+      console.error("Checkout submission error:", error);
+      alert("An unexpected error occurred during checkout.");
     } finally {
       setIsCheckingOut(false);
     }
@@ -165,9 +149,7 @@ export default function CartPage() {
         </Link>
       </div>
 
-      {/* ========================================== */}
-      {/* 🚀 THE BULLETPROOF GAMIFICATION BAR */}
-      {/* ========================================== */}
+      {/* Gamification Bar */}
       <div className={`mb-6 md:mb-8 p-4 rounded-2xl border transition-all w-full max-w-full overflow-hidden box-border ${isFreeDelivery ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'}`}>
         <div className="flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-end mb-3 w-full">
           <p className={`font-bold text-[13px] md:text-base leading-snug w-full sm:w-auto ${isFreeDelivery ? 'text-green-700' : 'text-slate-700'}`}>
@@ -226,7 +208,7 @@ export default function CartPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-full">
-        {/* Cart Items List */}
+        {/* Cart items details */}
         <div className="lg:col-span-2 flex flex-col gap-3 md:gap-4 w-full">
           {cart.map((item) => (
             <div key={item.id} className="flex gap-3 p-3 border border-slate-200 rounded-xl bg-slate-50 relative w-full box-border">
@@ -264,7 +246,7 @@ export default function CartPage() {
           ))}
         </div>
 
-        {/* Order Summary */}
+        {/* Totals & CTA */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 w-full h-max sticky top-24 box-border">
           <h2 className="text-base md:text-lg font-bold text-slate-800 mb-4 border-b border-slate-200 pb-3">Order Summary</h2>
 
@@ -276,7 +258,7 @@ export default function CartPage() {
           <div className="flex justify-between mb-4 text-[13px] md:text-sm border-b border-slate-200 pb-3">
             <span className="text-slate-600">Delivery Fee</span>
             {isFreeDelivery ? (
-              <span className="font-black text-[#25D366]">FREE</span>
+              <span className="font-black text-green-600">FREE</span>
             ) : (
               <span className="font-semibold text-slate-800">UGX {deliveryFee.toLocaleString()}</span>
             )}
@@ -302,7 +284,7 @@ export default function CartPage() {
       </div>
 
       {/* ========================================== */}
-      {/* 🛑 NATIVE CHECKOUT MODAL                   */}
+      {/* 🛑 NATIVE DELIVERY DETAILS FORM MODAL      */}
       {/* ========================================== */}
       {showCheckoutModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
@@ -315,46 +297,45 @@ export default function CartPage() {
 
             <div className="overflow-y-auto p-5 md:p-6">
               <form id="checkout-form" onSubmit={handlePlaceOrder} className="flex flex-col gap-4">
-                
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
                   <input 
                     type="text" 
                     required 
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
+                    value={buyerName}
+                    onChange={(e) => setBuyerName(e.target.value)}
                     placeholder="e.g. John Doe"
-                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Contact Phone Number</label>
                   <input 
                     type="tel" 
                     required 
-                    value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
-                    placeholder="e.g. 07XXXXXXXX"
-                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                    placeholder="e.g. 0740373021"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Delivery Address (Kabale)</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Delivery Location</label>
                   <textarea 
                     required 
                     rows={3}
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    placeholder="e.g. Makanga Hill, near the hospital..."
-                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent resize-none"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="e.g. Kigongi, opposite total station, room 4"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none"
                   ></textarea>
                 </div>
 
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-2">  
                   <div className="flex justify-between items-center">  
-                    <span className="text-sm font-bold text-slate-500">Amount to Pay:</span>  
+                    <span className="text-sm font-bold text-slate-500">Total Due (COD):</span>  
                     <span className="font-black text-slate-900 text-lg">UGX {finalTotal.toLocaleString()}</span>  
                   </div>  
                 </div>  
@@ -366,12 +347,12 @@ export default function CartPage() {
                 type="submit" 
                 form="checkout-form"
                 disabled={isCheckingOut} 
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] disabled:opacity-70 active:scale-[0.98]"
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] disabled:opacity-70"
               >
                 {isCheckingOut ? (
                   <span className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Processing...
+                    Placing Order...
                   </span>
                 ) : (
                   <>
