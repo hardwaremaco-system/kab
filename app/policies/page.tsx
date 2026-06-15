@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FaShieldAlt, FaMoneyBillWave, FaBoxOpen, FaHandshake } from "react-icons/fa";
 
 export const metadata = {
-  title: "Policies & Terms | Kabale Online",
+  title: "Policies & Terms | Oweitu Shop",
   description: "Buyer protection, refund policies, and seller terms for Oweitu Shop.",
 };
 
@@ -10,7 +10,7 @@ export default function PoliciesPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        
+
         {/* Header */}
         <div className="bg-slate-900 px-8 py-10 text-center">
           <h1 className="text-3xl font-black text-white mb-3">Policies & Terms of Service</h1>
@@ -25,7 +25,7 @@ export default function PoliciesPage() {
           {/* SECTION 1: BUYER PROTECTION */}
           <section>
             <h2 className="text-xl font-black text-slate-900 flex items-center gap-3 mb-4 border-b border-slate-100 pb-2">
-              <FaShieldAlt className="text-[#D97706]" /> 1. Buyer Protection & Refunds
+              <FaShieldAlt className="text-[#FF6A00]" /> 1. Buyer Protection & Refunds
             </h2>
             <p className="mb-4">
               We want you to shop with absolute confidence. Oweitu Shop acts as a secure bridge between you and local sellers.
@@ -58,7 +58,7 @@ export default function PoliciesPage() {
           {/* SECTION 2: SELLER TERMS & COMMISSIONS */}
           <section>
             <h2 className="text-xl font-black text-slate-900 flex items-center gap-3 mb-4 border-b border-slate-100 pb-2">
-              <FaHandshake className="text-[#D97706]" /> 2. Seller Terms & Commissions
+              <FaHandshake className="text-[#FF6A00]" /> 2. Seller Terms & Commissions
             </h2>
             <p className="mb-4">
               Oweitu Shop provides the marketing, AI search engine, and secure payment infrastructure to help you grow your local business.
@@ -75,14 +75,14 @@ export default function PoliciesPage() {
                 <span className="text-green-600 font-bold mt-0.5">✓</span>
                 <div>
                   <strong className="text-slate-900 block">Platform Commission (Online Payments)</strong>
-                  To cover payment gateway fees, server hosting, and platform maintenance, a small <strong className="text-[#D97706]">5% commission fee</strong> is deducted from all successfully completed Mobile Money transactions. The remaining 95% is paid out directly to your registered seller wallet/number.
+                  To cover payment gateway fees, server hosting, and platform maintenance, a small <strong className="text-[#FF6A00]">5% commission fee</strong> is deducted from all successfully completed Mobile Money transactions. The remaining 95% is paid out directly to your registered seller wallet/number.
                 </div>
               </li>
               <li className="flex gap-3 items-start">
                 <span className="text-green-600 font-bold mt-0.5">✓</span>
                 <div>
                   <strong className="text-slate-900 block">Cash on Delivery (COD) Rules</strong>
-                  For COD orders, sellers collect 100% of the cash directly from the buyer. Oweitu shop reserves the right to review high-volume COD sellers and may introduce subscription tiers in the future.
+                  For COD orders, sellers collect 100% of the cash directly from the buyer. Oweitu Shop reserves the right to review high-volume COD sellers and may introduce subscription tiers in the future.
                 </div>
               </li>
               <li className="flex gap-3 items-start">
@@ -98,7 +98,7 @@ export default function PoliciesPage() {
           {/* SECTION 3: PROHIBITED ITEMS */}
           <section>
             <h2 className="text-xl font-black text-slate-900 flex items-center gap-3 mb-4 border-b border-slate-100 pb-2">
-              <FaBoxOpen className="text-[#D97706]" /> 3. Prohibited Items
+              <FaBoxOpen className="text-[#FF6A00]" /> 3. Prohibited Items
             </h2>
             <p className="mb-3">To keep our community safe, the following items are strictly forbidden on Oweitu Shop:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm text-slate-600">
@@ -116,7 +116,7 @@ export default function PoliciesPage() {
           {/* SECTION 4: PRIVACY */}
           <section>
             <h2 className="text-xl font-black text-slate-900 flex items-center gap-3 mb-4 border-b border-slate-100 pb-2">
-              <FaMoneyBillWave className="text-[#D97706]" /> 4. Data Privacy
+              <FaMoneyBillWave className="text-[#FF6A00]" /> 4. Data Privacy
             </h2>
             <p className="mb-4">
               Your privacy is our priority. Your phone numbers, locations, and chat histories are used strictly for facilitating orders. We will never sell your personal data to third-party advertising companies. Financial details are securely processed via LivePay and Flutterwave; Oweitu Shop does not store your Mobile Money PINs or credit card numbers.
@@ -128,7 +128,7 @@ export default function PoliciesPage() {
         {/* Footer CTA */}
         <div className="bg-slate-50 border-t border-slate-200 p-8 text-center">
           <p className="text-sm text-slate-500 mb-4">Have a question about an order or our policies?</p>
-          <Link href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER}?text=Hi! I have a question about Oweitu Shop policies.`} target="_blank" className="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors">
+          <Link href="https://wa.me/256779094664?text=Hi! I have a question about Oweitu Shop policies." target="_blank" className="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors">
             Contact Support
           </Link>
         </div>
