@@ -201,7 +201,7 @@ export default function SellPage() {
   const shareToWhatsApp = () => {
     if (!successData) return;
     const url = `${window.location.origin}/product/${successData.publicId}`;
-    const text = `Hey! I'm offering *${successData.title}* on Kabale Online. Check it out here: \n\n${url}`;
+    const text = `Hey! I'm offering *${successData.title}* on Oweitu Shop. Check it out here: \n\n${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
