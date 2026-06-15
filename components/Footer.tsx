@@ -73,8 +73,8 @@ export default function Footer() {
             <h3 className="text-white font-bold text-base mb-5">Contact</h3>
             <div className="space-y-1 text-sm text-gray-300 mb-6">
               <p>Kabale, Uganda</p>
-              <p>075 999 7376</p>
-              <p>support@kabaleonline.com</p>
+              <p>+256747627787</p>
+              <p>support@oweitushop.com</p>
             </div>
 
             {/* Social Icons */}
