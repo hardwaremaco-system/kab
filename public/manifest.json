@@ -1,7 +1,7 @@
 {
-  "name": "Kabale Online",
-  "short_name": "KabaleOnline",
-  "description": "The Better Way to Buy and sell in kabale and kigezi community .",
+  "name": "Oweitu Shop",
+  "short_name": "OweituShop",
+  "description": "The Better Way to Buy and sell in kigezi and Ankole Region.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
