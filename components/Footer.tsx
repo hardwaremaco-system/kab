@@ -99,11 +99,6 @@ export default function Footer() {
               <li><Link href="/invite" className={getLinkStyle('/invite')}>Refer & Earn</Link></li>
               <li><Link href="/sell" className={getLinkStyle('/sell')}>Sell on Kabale</Link></li>
               <li><Link href="/requests" className={getLinkStyle('/requests')}>Buyer Requests</Link></li>
-              <li>
-                <Link href="/ai" className={`${getLinkStyle('/ai')} flex items-center gap-1.5`}>
-                  AI Shopping Guide
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -144,7 +139,6 @@ export default function Footer() {
           <li><Link href="/profile">Go to your Account</Link></li>
           <li><Link href="/sell">Sell an item</Link></li>
           <li><Link href="/cart">View your Cart</Link></li>
-          <li><Link href="/ai">AI Shopping Guide</Link></li>
         </ul>
 
         {/* Divider */}
