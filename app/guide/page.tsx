@@ -193,7 +193,7 @@ export default function GuidePage() {
             <ol className="list-decimal ml-4 space-y-2 text-slate-600 dark:text-slate-400">
               <li>Send payment to the numbers above.</li>
               <li>Take a screenshot of the transaction.</li>
-              <li>Send screenshot to WhatsApp: <strong>0759997376</strong>.</li>
+              <li>Send screenshot to WhatsApp: <strong>+256 779 094664</strong>.</li>
               <li>Confirm in your dashboard by tapping "I have paid".</li>
             </ol>
           </div>
@@ -209,7 +209,7 @@ export default function GuidePage() {
             <div>
               <h3 className="font-semibold text-slate-900 dark:text-white mb-2">🤖 AI Shopping Assistant</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Need help choosing products or pricing items? Ask our AI what to buy, best selling products, or for business help.</p>
-              <Link href="/ai" className="text-sm text-[#D97706] hover:underline font-medium">kabaleonline.com/ai &rarr;</Link>
+              <Link href="/ai" className="text-sm text-[#D97706] hover:underline font-medium">oweitushop.com &rarr;</Link>
             </div>
 
             <div>
@@ -265,7 +265,7 @@ export default function GuidePage() {
         <section id="about" className="space-y-8">
           <div className="bg-slate-50 dark:bg-[#111] p-6 rounded-lg border border-slate-200 dark:border-slate-800">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-              ⚡ Why Kabale Online?
+              ⚡ Why Oweitu Shop?
             </h2>
             <ul className="grid sm:grid-cols-2 gap-3 text-sm text-slate-600 dark:text-slate-400">
               <li className="flex items-center gap-2">✔ No shop needed — sell from anywhere</li>
@@ -292,7 +292,7 @@ export default function GuidePage() {
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-300 mb-2">Contact Us</h3>
                 <p>📍 Kabale, Uganda</p>
-                <p>📞 WhatsApp: <a href="https://wa.me/256759997376" className="text-[#D97706] hover:underline">0759997376</a></p>
+                <p>📞 WhatsApp: <a href="https://wa.me/256779094664" className="text-[#D97706] hover:underline">+256 779 094664</a></p>
                 <p>📧 support@kabaleonline.com</p>
                 <p>🕒 24/7 Support available</p>
               </div>
