@@ -53,7 +53,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Dashboard", href: "/admin", icon: "📊" },
     { name: "Orders", href: "/admin/orders", icon: "🛒" },
     { name: "Payout Requests", href: "/admin/payouts", icon: "💰" }, // Added Wallet/Payouts here!
-    { name: "WhatsApp Inbox", href: "/admin/inbox", icon: "💬" },
     { name: "Verifications", href: "/admin/verify", icon: "🛡️" },
     { name: "Premium Requests", href: "/admin/premium", icon: "💎" },
     { name: "All Products", href: "/admin/products", icon: "📦" },
