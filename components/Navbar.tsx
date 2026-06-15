@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useCart } from "@/context/CartContext"; 
 import SearchBar from "@/components/SearchBar";
-// 🚀 IMPORT THE AUTH MODAL
 import AuthModal from "@/components/AuthModal";
 import { 
   FaWhatsapp, 
@@ -31,33 +30,30 @@ import {
 
 export default function Navbar() {
   const pathname = usePathname();
-  // 🚀 Removed 'signIn' here since the modal handles it now
   const { user, loading, signOut } = useAuth();
   const { cartCount } = useCart(); 
-  
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
-  
-  // 🚀 ADDED: Modal State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // ==============================================
-  // COOKIE LOGIC INTEGRATION
+  // ROLE & COOKIE LOGIC 
   // ==============================================
-  const isAdmin = user?.role === "admin";
+  // Using "as string" to prevent strict type errors if types.ts is still caching
+  const isStaff = user?.role === "admin" || (user?.role as string) === "editor";
 
   useEffect(() => {
-    if (isAdmin) {
-      document.cookie = "kabale_admin_session=true; path=/; max-age=86400; secure; samesite=strict";
+    if (isStaff) {
+      document.cookie = "oweitushop_staff_session=true; path=/; max-age=86400; secure; samesite=strict";
     } else {
-      document.cookie = "kabale_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie = "oweitushop_staff_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
-  }, [isAdmin]);
+  }, [isStaff]);
 
   // Lock body scroll AND broadcast state
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Don't lock scroll if only the auth modal is open, let the modal handle its own locking if needed
       if (isMobileMenuOpen) {
         document.body.style.overflow = 'hidden';
       } else {
@@ -141,7 +137,7 @@ export default function Navbar() {
     <>
       <nav className="fixed w-full top-0 bg-white border-b-[3px] border-[#FF6A00] z-40 transition-all shadow-sm">
         {/* === DESKTOP VIEW === */}
-        <div className="hidden lg:flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 justify-between items-center h-16 gap-6">
+        <div className="hidden lg:flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 justify-between items-center h-16 gap-4 xl:gap-6">
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="text-2xl font-black text-slate-900 tracking-tight">
               Oweitu<span className="text-[#FF6A00]">Shop</span>
@@ -152,8 +148,14 @@ export default function Navbar() {
             <SearchBar />
           </div>
 
-          <div className="flex items-center space-x-6">
-            <Link href="/category/phones-tvs" className={`text-sm font-bold uppercase tracking-wide transition-colors ${isActive('/category/phones-tvs') ? 'text-[#FF6A00]' : 'text-slate-600 hover:text-[#FF6A00]'}`}>Phones & TVs</Link>
+          <div className="flex items-center space-x-4 xl:space-x-6">
+            
+            {/* 🔥 NEW: Official Store Link */}
+            <Link href="/officialStore" className={`flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide transition-colors ${isActive('/officialStore') ? 'text-[#FF6A00]' : 'text-slate-600 hover:text-[#FF6A00]'}`}>
+              <Store className="w-4 h-4" /> Official Store
+            </Link>
+
+            <Link href="/category/phones-tvs" className={`text-sm font-bold uppercase tracking-wide transition-colors hidden xl:block ${isActive('/category/phones-tvs') ? 'text-[#FF6A00]' : 'text-slate-600 hover:text-[#FF6A00]'}`}>Phones & TVs</Link>
 
             <div className="relative group">
               <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors text-slate-700 hover:text-[#FF6A00] hover:bg-slate-50 cursor-pointer">
@@ -180,6 +182,13 @@ export default function Navbar() {
 
             <CartIcon badgeSize="text-[10px]" />
 
+            {/* 🔥 NEW: Admin Access Button */}
+            {isStaff && (
+              <Link href="/admin" className="flex items-center bg-slate-900 text-white px-4 py-2.5 rounded-md text-sm font-bold uppercase tracking-wide hover:bg-slate-800 transition-colors shadow-sm">
+                Admin
+              </Link>
+            )}
+
             <Link href="/sell" className="flex items-center gap-2 bg-[#FF6A00] text-white px-5 py-2.5 rounded-md text-sm font-bold uppercase tracking-wide hover:bg-[#e65c00] transition-colors shadow-sm">
               Sell Now
             </Link>
@@ -197,6 +206,9 @@ export default function Navbar() {
                       <p className="text-xs text-slate-500 font-medium">Logged in as</p>
                       <p className="text-sm font-bold text-slate-900 truncate">{user.displayName || "User"}</p>
                     </div>
+                    {isStaff && (
+                      <Link href="/admin" className="block px-4 py-2 text-sm font-bold text-[#FF6A00] bg-orange-50 hover:bg-orange-100 transition-colors">Admin Dashboard</Link>
+                    )}
                     <Link href="/profile" className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-[#FF6A00]">My Profile</Link>
                     <Link href="/sell" className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-[#FF6A00]">My Listings</Link>
                     <Link href="/invite" className="block px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-[#FF6A00]">Partner Dashboard</Link>
@@ -205,7 +217,6 @@ export default function Navbar() {
                 </div>
               </div>
             ) : (
-              // 🚀 UPDATED: Opens Modal Instead of Direct Firebase Call
               <button onClick={() => setIsAuthModalOpen(true)} className="text-sm font-bold uppercase tracking-wide text-slate-700 hover:text-[#FF6A00] transition-colors ml-2">
                 Login
               </button>
@@ -231,12 +242,11 @@ export default function Navbar() {
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                 </Link>
               ) : (
-                // 🚀 UPDATED: Opens Modal Instead of Direct Firebase Call
                 <button onClick={() => setIsAuthModalOpen(true)} aria-label="Login">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                 </button>
               )}
-              <a href="https://wa.me/256779094664" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp to Order" className="relative text-[#25D366] hover:text-[#1EBE57] transition-colors">
+              <a href="https://wa.me/256759997376" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp to Order" className="relative text-[#25D366] hover:text-[#1EBE57] transition-colors">
                 <FaWhatsapp className="w-6 h-6" />
               </a>
             </div>
@@ -275,6 +285,21 @@ export default function Navbar() {
         </div>
 
         <div className="flex-1 overflow-y-auto bg-white flex flex-col">
+
+          {/* 🔥 NEW: Official Store Highlight Block */}
+          <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+            <Link 
+              href="/officialStore" 
+              onClick={closeMenu} 
+              className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 p-4 rounded-xl text-orange-600 hover:bg-orange-100 transition-colors shadow-sm"
+            >
+              <Store className="w-6 h-6 text-[#FF6A00]" />
+              <div className="flex flex-col">
+                <span className="font-bold text-[15px] text-slate-900">Official Store</span>
+                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-widest">Verified Products</span>
+              </div>
+            </Link>
+          </div>
 
           {/* GROUP 1: DAILY ESSENTIALS */}
           <div className="border-b border-slate-100 py-2">
@@ -319,19 +344,35 @@ export default function Navbar() {
           {/* ACTION LINKS: ACCOUNT & HELP */}
           <div className="py-4">
             {loading ? null : user ? (
-              <Link 
-                href="/profile" 
-                onClick={closeMenu} 
-                className="flex justify-between items-center px-5 py-4 mb-1 mx-2 bg-slate-50 rounded-xl hover:bg-orange-50 group transition-colors"
-              >
-                <div className="flex flex-col">
-                  <span className="text-[15px] font-bold text-slate-900 group-hover:text-[#FF6A00]">Go to my account</span>
-                  <span className="text-[12px] text-slate-500 font-medium">Orders, selling & dashboard</span>
-                </div>
-                <ChevronRight />
-              </Link>
+              <>
+                {/* 🔥 NEW: Admin Dashboard Mobile Link */}
+                {isStaff && (
+                  <Link 
+                    href="/admin" 
+                    onClick={closeMenu} 
+                    className="flex justify-between items-center px-5 py-4 mb-2 mx-2 bg-slate-900 text-white rounded-xl shadow-md transition-colors hover:bg-slate-800"
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-[15px] font-bold">Admin Dashboard</span>
+                      <span className="text-[11px] text-slate-300 font-medium uppercase tracking-widest">Command Center</span>
+                    </div>
+                    <ChevronRight />
+                  </Link>
+                )}
+
+                <Link 
+                  href="/profile" 
+                  onClick={closeMenu} 
+                  className="flex justify-between items-center px-5 py-4 mb-1 mx-2 bg-slate-50 rounded-xl hover:bg-orange-50 group transition-colors"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-[15px] font-bold text-slate-900 group-hover:text-[#FF6A00]">Go to my account</span>
+                    <span className="text-[12px] text-slate-500 font-medium">Orders, selling & dashboard</span>
+                  </div>
+                  <ChevronRight />
+                </Link>
+              </>
             ) : (
-              // 🚀 UPDATED: Opens Modal Instead of Direct Firebase Call and closes drawer
               <button 
                 onClick={() => { setIsAuthModalOpen(true); closeMenu(); }} 
                 className="w-[calc(100%-20px)] mx-auto flex justify-between items-center px-5 py-4 mb-1 bg-[#FF6A00]/10 text-[#FF6A00] rounded-xl hover:bg-[#FF6A00]/20 transition-colors"
@@ -356,10 +397,10 @@ export default function Navbar() {
             <div className="flex justify-center gap-3 mb-6">
               {[
                 { icon: FaWhatsapp, href: "https://wa.me/256759997376" }, 
-                { icon: FaFacebookF, href: "https://www.fb.com/l/6lp1kJRRR" }, 
-                { icon: FaInstagram, href: "https://instagram.com/kabale.online" },
-                { icon: FaXTwitter, href: "https://x.com/Kabale_Online" },
-                { icon: FaTiktok, href: "https://tiktok.com/@kabale.online" },
+                { icon: FaFacebookF, href: "https://www.facebook.com/" }, 
+                { icon: FaInstagram, href: "https://instagram.com/" },
+                { icon: FaXTwitter, href: "https://x.com/" },
+                { icon: FaTiktok, href: "https://tiktok.com/" },
               ].map((social, idx) => (
                 <a key={idx} href={social.href} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white border border-slate-200 text-slate-400 flex items-center justify-center rounded-full transition-colors hover:text-[#FF6A00] hover:border-[#FF6A00]">
                   <social.icon size={16} />
@@ -377,7 +418,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* 🚀 ADDED: The Auth Modal mounted here globally */}
       <AuthModal 
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
