@@ -18,7 +18,7 @@ const parseDate = (val: any): Date => {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://www.kabaleonline.com";
+  const baseUrl = "https://www.oweitushop.com";
 
   // 1. Fetch Dynamic Products
   const productsSnap = await adminDb
