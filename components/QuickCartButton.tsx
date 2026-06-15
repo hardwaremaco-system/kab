@@ -7,12 +7,13 @@ import { useAuth } from "@/components/AuthProvider";
 import { Product } from "@/types";
 
 export default function QuickCartButton({ product }: { product: Product }) {
-  const { user, signIn } = useAuth();
+  // 🚀 FIXED: Replaced 'signIn' with 'signInWithGoogle'
+  const { user, signInWithGoogle } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [contactPhone, setContactPhone] = useState("");
-  
+
   // 1. Setup mounted state for the Portal (Prevents Next.js hydration errors)
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -22,10 +23,11 @@ export default function QuickCartButton({ product }: { product: Product }) {
   const handleCartClick = (e: React.MouseEvent) => {
     e.preventDefault(); 
     e.stopPropagation(); 
-    
+
     if (!user) {
       alert("Please log in to place an order.");
-      signIn();
+      // 🚀 FIXED: Replaced 'signIn()' with 'signInWithGoogle()'
+      signInWithGoogle();
       return;
     }
     setShowModal(true);
@@ -78,9 +80,9 @@ export default function QuickCartButton({ product }: { product: Product }) {
     >
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-[#D97706]"></div>
-        
+
         <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2">Confirm Fast Checkout</h2>
-        
+
         <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 mb-4 mt-4">
           <p className="font-bold text-lg text-slate-900 dark:text-white leading-tight line-clamp-2">{product.name}</p>
           <div className="flex justify-between items-center mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
