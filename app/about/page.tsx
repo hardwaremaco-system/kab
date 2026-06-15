@@ -7,7 +7,7 @@ export default function AboutPage() {
 
       <div className="prose prose-slate lg:prose-lg">
         <p className="text-xl text-slate-600 leading-relaxed mb-8">
-          Kabale Online is the digital marketplace and community notice board 
+          Oweitu Shop is the digital marketplace and community notice board 
           for Kabale town and the greater Kigezi region. We connect 
           <strong> Kabale University students</strong>, local <strong>farmers</strong>, 
           small <strong>business owners</strong>, and everyday residents in one 
@@ -26,12 +26,12 @@ export default function AboutPage() {
         </p>
 
         <h2 className="font-bold text-2xl mb-4 text-slate-900">
-          Why We Built Kabale Online
+          Why We Built Oweitu Shop
         </h2>
         <p className="mb-6">
           Kabale is a vibrant and growing town full of hardworking students, 
           entrepreneurs, and farmers. However, information often moves slowly 
-          and opportunities can be hard to find. We created Kabale Online to 
+          and opportunities can be hard to find. We created Oweitu Shop to 
           bridge that gap — bringing the entire community into one digital space 
           where opportunities are visible and accessible to everyone.
         </p>
@@ -48,7 +48,7 @@ export default function AboutPage() {
         </div>
 
         <h2 className="font-bold text-2xl mb-4 text-slate-900">
-          What You Can Do on Kabale Online
+          What You Can Do on Oweitu Shop
         </h2>
         <ul className="list-disc pl-6 space-y-2 mb-8">
           <li>Post items for sale (electronics, furniture, clothing, etc.)</li>
