@@ -25,28 +25,29 @@ export default function Footer() {
 
   // URL-encoded prefilled message for WhatsApp
   const whatsappMessage = encodeURIComponent("Hello Oweitu Shop! I would like to place an order/shop with you.");
-  const whatsappLink = `https://wa.me/256759997376?text=${whatsappMessage}`;
+  const officialWhatsApp = "256759997376"; 
+  const whatsappLink = `https://wa.me/${officialWhatsApp}?text=${whatsappMessage}`;
 
   return (
     <footer className="bg-[#182335] text-white md:rounded-t-[2.5rem] mt-auto pb-10 pt-8 md:pb-16 md:pt-20 font-sans">
-      
+
       {/* ================================================= */}
       {/* DESKTOP VIEW (Hidden on Mobile)                   */}
       {/* ================================================= */}
       <div className="hidden md:block max-w-6xl mx-auto px-6">
-        
+
         {/* TOP SECTION: LOGO, TITLE, & WHATSAPP CTA */}
         <div className="flex flex-col items-center justify-center text-center mb-16">
-          {/* Custom KABALE Rectangle Logo */}
+          {/* Custom Rectangle Logo */}
           <div className="border-2 border-white px-4 py-1 mb-6 flex items-center justify-center rounded-sm">
-            <span className="font-bold tracking-[0.2em] text-lg uppercase">Kabale</span>
+            <span className="font-bold tracking-[0.2em] text-lg uppercase">Oweitu</span>
           </div>
 
           <h2 className="text-3xl md:text-4xl font-bold mb-2 tracking-tight">
             Oweitu Marketplace
           </h2>
           <p className="text-gray-300 text-sm md:text-base mb-6">
-            Everything You Need, Delivered.
+            Everything You Need, Delivered across Ankole & Kigezi.
           </p>
 
           {/* WhatsApp CTA */}
@@ -61,7 +62,7 @@ export default function Footer() {
               className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-3 rounded-lg text-sm font-bold transition-colors shadow-sm"
             >
               <FaWhatsapp className="text-lg" />
-              Shop on WhatsApp (+256 779 094664)
+              Shop on WhatsApp (+256 759 997 376)
             </a>
           </div>
         </div>
@@ -72,20 +73,20 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-bold text-base mb-5">Contact</h3>
             <div className="space-y-1 text-sm text-gray-300 mb-6">
-              <p>Kabale, Uganda</p>
-              <p>+256747627787</p>
+              <p>Ankole & Kigezi, Uganda</p>
+              <p>+256 759 997 376</p>
               <p>support@oweitushop.com</p>
             </div>
 
             {/* Social Icons */}
             <div className="flex gap-2">
-              <a href="https://www.fb.com/l/6lp1kJRRR" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-white text-[#182335] rounded flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="Facebook">
+              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-white text-[#182335] rounded flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="Facebook">
                 <FaFacebookF size={16} />
               </a>
-              <a href="https://instagram.com/kabale.online" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-white text-[#182335] rounded flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="Instagram">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-white text-[#182335] rounded flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="Instagram">
                 <FaInstagram size={16} />
               </a>
-              <a href="https://tiktok.com/@kabale.online" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-white text-[#182335] rounded flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="TikTok">
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-white text-[#182335] rounded flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="TikTok">
                 <FaTiktok size={16} />
               </a>
             </div>
@@ -97,7 +98,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/profile" className={getLinkStyle('/profile')}>My Profile</Link></li>
               <li><Link href="/invite" className={getLinkStyle('/invite')}>Refer & Earn</Link></li>
-              <li><Link href="/sell" className={getLinkStyle('/sell')}>Sell on Kabale</Link></li>
+              <li><Link href="/sell" className={getLinkStyle('/sell')}>Sell on Oweitu</Link></li>
               <li><Link href="/requests" className={getLinkStyle('/requests')}>Buyer Requests</Link></li>
             </ul>
           </div>
