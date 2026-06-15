@@ -304,7 +304,7 @@ function LeftSidebarContent() {
             Trusted Electronics Hub
           </h3>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-[200px]">
-            Kabale Online delivers verified gadgets with reliable support.
+            Oweitu Shop delivers verified gadgets with reliable support.
           </p>
         </div>
 
