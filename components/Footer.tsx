@@ -162,7 +162,7 @@ export default function Footer() {
             <Link href="/faq" className="underline hover:text-blue-400">FAQ</Link>
           </div>
           <p className="text-[15px] text-gray-200 tracking-wide">
-            © 2025-{new Date().getFullYear()} Kabale Online.
+            © 2025-{new Date().getFullYear()} Oweitu Shop.
           </p>
         </div>
       </div>
