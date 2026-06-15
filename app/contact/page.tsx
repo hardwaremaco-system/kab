@@ -12,7 +12,7 @@ export default function ContactPage() {
               <span className="text-2xl">📧</span>
               <div>
                 <p className="text-xs font-bold text-slate-400 uppercase">Email</p>
-                <a href="mailto:support@kabaleonline.com" className="text-primary font-bold">support@kabaleonline.com</a>
+                <a href="mailto:support@oweitushop.com" className="text-primary font-bold">support@oweitushop.com</a>
               </div>
             </div>
             <div className="flex items-center gap-4">
