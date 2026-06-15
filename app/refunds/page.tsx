@@ -8,7 +8,7 @@ export default function ReturnsPage() {
         </h1>
 
         <p className="text-gray-600 mb-10">
-          At Kabale Online, customer satisfaction is important to us. 
+          At Oweiu Shop, customer satisfaction is important to us. 
           If you receive a damaged, defective, or wrong item, we are here to help.
         </p>
 
