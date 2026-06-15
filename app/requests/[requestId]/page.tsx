@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       openGraph: {
         title,
         description,
-        url: `https://www.kabaleonline.com/requests/${params.requestId}`,
-        siteName: "Kabale Online",
+        url: `https://www.oweitushop.com/requests/${params.requestId}`,
+        siteName: "Oweitu Shop",
         images: [{ url: "/og-image.jpg", width: 1200, height: 630 }], // Uses your default OG image
         type: "website",
       },
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
     };
   } catch (error) {
-    return { title: "Buyer Request | Kabale Online" };
+    return { title: "Buyer Request | Oweitu Shop" };
   }
 }
 
@@ -66,7 +66,7 @@ export default async function SingleRequestPage({ params }: PageProps) {
   
   // FIXED: Formatted the phone number and updated the WhatsApp message text
   const formattedPhone = formatWhatsAppNumber(req?.buyerPhone);
-  const whatsappLink = `https://wa.me/${formattedPhone}?text=Hi%20${req?.buyerName},%20I%20saw%20your%20request%20for%20"${req?.itemNeeded}"%20on%20Kabale%20Online.%20I%20have%20this%20item!`;
+  const whatsappLink = `https://wa.me/${formattedPhone}?text=Hi%20${req?.buyerName},%20I%20saw%20your%20request%20for%20"${req?.itemNeeded}"%20on%20Oweitu%20Shop.%20I%20have%20this%20item!`;
 
   return (
     <div className="max-w-3xl mx-auto py-16 px-4 min-h-screen">
