@@ -33,13 +33,13 @@ export default function AdminUsersPage() {
   const handleRoleChange = async (targetUserId: string, newRole: string) => {
     if (!user || user.role !== "admin") return;
     if (user.id === targetUserId) {
-      alert("Safety Lock: You cannot demote your own account from this dashboard.");
+      alert("Safety Lock: You cannot modify your own account access from this dashboard.");
       return;
     }
 
     const confirm = window.confirm(`Are you sure you want to change this user's role to ${newRole.toUpperCase()}?`);
     if (!confirm) return;
-    
+
     setProcessingId(targetUserId);
     try {
       const res = await fetch("/api/admin/users", {
@@ -72,6 +72,7 @@ export default function AdminUsersPage() {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'admin': return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'editor': return 'bg-emerald-100 text-emerald-800 border-emerald-200'; // 🔥 New Editor Badge
       case 'vendor': return 'bg-sky-100 text-sky-800 border-sky-200';
       case 'suspended': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-slate-100 text-slate-700 border-slate-200'; // customer
@@ -81,8 +82,8 @@ export default function AdminUsersPage() {
   return (
     <div className="max-w-6xl mx-auto pb-20 md:pb-0">
       <div className="mb-8 border-b border-slate-200 pb-6">
-        <h1 className="text-3xl font-extrabold text-slate-900">User Management</h1>
-        <p className="text-slate-600 mt-2 font-medium">Control platform access, elevate admins, and manage vendors.</p>
+        <h1 className="text-3xl font-extrabold text-slate-900">User & Role Management</h1>
+        <p className="text-slate-600 mt-2 font-medium">Control platform access, assign content editors, and manage vendors.</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -115,7 +116,7 @@ export default function AdminUsersPage() {
                     <tr key={u.id} className={`hover:bg-slate-50 transition-colors ${isSelf ? 'bg-slate-50/50' : ''}`}>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold overflow-hidden flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center font-bold overflow-hidden flex-shrink-0">
                             {u.photoURL ? (
                               <Image src={u.photoURL} alt={safeName} width={40} height={40} className="object-cover" />
                             ) : (
@@ -155,12 +156,13 @@ export default function AdminUsersPage() {
                             className={`text-sm border rounded-lg px-3 py-2 outline-none font-medium cursor-pointer ${
                               isSelf 
                                 ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed' 
-                                : 'bg-white border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary text-slate-700'
+                                : 'bg-white border-slate-300 focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00] text-slate-700'
                             }`}
                           >
                             <option value="customer">Customer</option>
                             <option value="vendor">Vendor</option>
-                            <option value="admin">Admin</option>
+                            <option value="editor">Editor (Content Only)</option>
+                            <option value="admin">System Admin</option>
                             <option value="suspended">Suspended</option>
                           </select>
                         )}
