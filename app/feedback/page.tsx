@@ -46,7 +46,7 @@ export default function FeedbackPage() {
         <CheckCircle2 className="text-[#FF6A00] w-20 h-20 mb-6" />
         <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-4">We Appreciate You!</h1>
         <p className="text-slate-600 dark:text-slate-300 max-w-md mb-8">
-          Thank you for sharing your thoughts. We use this feedback to make Kabale Online better every day.
+          Thank you for sharing your thoughts. We use this feedback to make Oweitu Shop better every day.
         </p>
         <Link href="/" className="bg-[#FF6A00] text-white px-8 py-3 rounded-full font-bold hover:bg-orange-600 transition-colors">
           Back to Shopping
