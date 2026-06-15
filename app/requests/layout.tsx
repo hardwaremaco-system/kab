@@ -1,19 +1,19 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Buyer Request Board | Kabale Online",
+  title: "Buyer Request Board | Oweitu Shop",
   description: "See what students and locals in Kabale are looking to buy right now. Have an item? Browse the requests and make a quick, easy sale today.",
   openGraph: {
-    title: "Buyer Request Board | Kabale Online",
+    title: "Buyer Request Board | Oweitu Shop",
     description: "See what students and locals in Kabale are looking to buy right now. Have an item? Browse the requests and make a quick, easy sale today.",
-    url: "https://www.kabaleonline.com/requests",
-    siteName: "Kabale Online",
+    url: "https://www.oweitushop.com/requests",
+    siteName: "Oweitu Shop",
     images: [
       {
         url: "/og-image.jpg", // Make sure you have an og-image.jpg in your public folder!
         width: 1200,
         height: 630,
-        alt: "Okay Notice Buyer Requests",
+        alt: "Oweitu Shop Buyer Requests",
       },
     ],
     locale: "en_UG",
