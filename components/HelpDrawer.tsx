@@ -16,7 +16,7 @@ import { useCart } from "@/context/CartContext";
 
 export default function HelpDrawer() {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   // 🔥 Pull the cart counter from your global context
   const { cartCount } = useCart(); 
 
@@ -91,7 +91,7 @@ export default function HelpDrawer() {
 
         {/* SCROLLABLE CONTENT */}
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
-          
+
           {/* SECTION 1: Direct Contact (Optimized for Local) */}
           <section>
             <h3 className="text-[22px] font-extrabold text-slate-900 mb-2 tracking-tight">
@@ -100,10 +100,11 @@ export default function HelpDrawer() {
             <p className="text-[15px] text-slate-600 mb-5 leading-relaxed">
               Have questions about buying, delivery, or a specific electronic item? Reach out to our local support team directly.
             </p>
-            
+
             <div className="flex flex-col gap-3">
+              {/* 🔥 FIXED WHATSAPP LINK */}
               <a
-                href="https://wa.me/256759997376"
+                href="https://wa.me/256779094664"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-[#25D366] hover:bg-[#1EBE57] text-white py-3.5 px-4 rounded-full font-bold text-[15px] flex items-center justify-center gap-2 transition-colors"
@@ -111,9 +112,10 @@ export default function HelpDrawer() {
                 <FaWhatsapp size={20} />
                 Chat on WhatsApp
               </a>
-              
+
+              {/* 🔥 FIXED PHONE LINK */}
               <a
-                href="tel:+256759997376"
+                href="tel:+256779094664"
                 className="w-full bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-800 py-3 px-4 rounded-full font-bold text-[15px] flex items-center justify-center gap-2 transition-colors"
               >
                 <PhoneCall size={18} />
@@ -135,7 +137,7 @@ export default function HelpDrawer() {
             <p className="text-[15px] text-slate-600 mb-5 leading-relaxed">
               We ensure all electronics on our platform are genuine. If you spot a suspicious listing, counterfeit item, or experienced an issue with a seller, let our admins know immediately.
             </p>
-            
+
             <Link 
               href="/report" 
               onClick={toggleDrawer}
@@ -152,7 +154,7 @@ export default function HelpDrawer() {
             <h3 className="text-xl font-bold text-slate-900 mb-4 tracking-tight">
               Let us know
             </h3>
-            
+
             <div className="flex flex-col gap-1">
               <Link 
                 href="/feedback" 
@@ -165,7 +167,7 @@ export default function HelpDrawer() {
                 </span>
                 <ChevronRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
               </Link>
-              
+
               <Link 
                 href="/guide" 
                 onClick={toggleDrawer}
