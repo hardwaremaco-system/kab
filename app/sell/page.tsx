@@ -9,7 +9,8 @@ import imageCompression from "browser-image-compression";
 
 export default function SellPage() {
   const router = useRouter();
-  const { user, signIn, loading: authLoading } = useAuth();
+  // 🚀 FIXED: Replaced 'signIn' with 'signInWithGoogle'
+  const { user, signInWithGoogle, loading: authLoading } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [isCompressing, setIsCompressing] = useState(false);
@@ -350,7 +351,7 @@ export default function SellPage() {
               <label className="block text-sm font-bold text-slate-900 mb-2">Category *</label>
               <select className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none bg-slate-50"
                 value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                
+
                 {/* 🔥 GROUP 1: BUY AGAIN & AGAIN */}
                 <optgroup label="Buy Again & Again">
                   <option value="supermarket">Supermarket (Groceries, Soap, etc.)</option>
@@ -448,7 +449,8 @@ export default function SellPage() {
               Sign in with Google to publish your product to the marketplace. Your form data is saved.
             </p>
             <div className="space-y-3">
-              <button onClick={() => { setLoading(true); signIn(); }} 
+              {/* 🚀 FIXED: Replaced 'signIn' with 'signInWithGoogle' */}
+              <button onClick={() => { setLoading(true); signInWithGoogle(); }} 
                 className="w-full rounded-lg bg-[#FF6A00] px-4 py-3 text-base font-bold text-white hover:bg-[#e65c00] transition-colors"
               >
                 Sign in with Google
