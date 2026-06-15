@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useCart } from "@/context/CartContext"; 
 import SearchBar from "@/components/SearchBar";
+// 🚀 IMPORT THE AUTH MODAL
+import AuthModal from "@/components/AuthModal";
 import { 
   FaWhatsapp, 
   FaFacebookF, 
@@ -14,7 +16,6 @@ import {
   FaTiktok 
 } from "react-icons/fa6";
 
-// Imported uniform icons including the new Daily Essentials icons
 import { 
   Watch, 
   Smartphone, 
@@ -30,10 +31,15 @@ import {
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { user, loading, signIn, signOut } = useAuth();
+  // 🚀 Removed 'signIn' here since the modal handles it now
+  const { user, loading, signOut } = useAuth();
   const { cartCount } = useCart(); 
+  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
+  
+  // 🚀 ADDED: Modal State
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // ==============================================
   // COOKIE LOGIC INTEGRATION
@@ -51,6 +57,7 @@ export default function Navbar() {
   // Lock body scroll AND broadcast state
   useEffect(() => {
     if (typeof window !== "undefined") {
+      // Don't lock scroll if only the auth modal is open, let the modal handle its own locking if needed
       if (isMobileMenuOpen) {
         document.body.style.overflow = 'hidden';
       } else {
@@ -102,9 +109,6 @@ export default function Navbar() {
     <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
   );
 
-  // ==============================================
-  // NEW CATEGORY GROUPINGS FOR MOBILE & DESKTOP
-  // ==============================================
   const dailyCategories = [
     { label: "Supermarket", href: "/category/supermarket", Icon: ShoppingBasket },
     { label: "Fashion & Shoes", href: "/category/fashion", Icon: Shirt },
@@ -201,7 +205,8 @@ export default function Navbar() {
                 </div>
               </div>
             ) : (
-              <button onClick={signIn} className="text-sm font-bold uppercase tracking-wide text-slate-700 hover:text-[#FF6A00] transition-colors ml-2">
+              // 🚀 UPDATED: Opens Modal Instead of Direct Firebase Call
+              <button onClick={() => setIsAuthModalOpen(true)} className="text-sm font-bold uppercase tracking-wide text-slate-700 hover:text-[#FF6A00] transition-colors ml-2">
                 Login
               </button>
             )}
@@ -226,7 +231,8 @@ export default function Navbar() {
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                 </Link>
               ) : (
-                <button onClick={signIn} aria-label="Login">
+                // 🚀 UPDATED: Opens Modal Instead of Direct Firebase Call
+                <button onClick={() => setIsAuthModalOpen(true)} aria-label="Login">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                 </button>
               )}
@@ -268,9 +274,6 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* ============================================== */}
-        {/* RESTRUCTURED SCROLLABLE CONTENT                */}
-        {/* ============================================== */}
         <div className="flex-1 overflow-y-auto bg-white flex flex-col">
 
           {/* GROUP 1: DAILY ESSENTIALS */}
@@ -328,8 +331,9 @@ export default function Navbar() {
                 <ChevronRight />
               </Link>
             ) : (
+              // 🚀 UPDATED: Opens Modal Instead of Direct Firebase Call and closes drawer
               <button 
-                onClick={() => { signIn(); closeMenu(); }} 
+                onClick={() => { setIsAuthModalOpen(true); closeMenu(); }} 
                 className="w-[calc(100%-20px)] mx-auto flex justify-between items-center px-5 py-4 mb-1 bg-[#FF6A00]/10 text-[#FF6A00] rounded-xl hover:bg-[#FF6A00]/20 transition-colors"
               >
                 <span className="text-[15px] font-bold">Login / Sign Up</span>
@@ -372,6 +376,12 @@ export default function Navbar() {
 
         </div>
       </div>
+
+      {/* 🚀 ADDED: The Auth Modal mounted here globally */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
     </>
   );
 }
