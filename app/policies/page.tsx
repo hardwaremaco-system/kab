@@ -3,7 +3,7 @@ import { FaShieldAlt, FaMoneyBillWave, FaBoxOpen, FaHandshake } from "react-icon
 
 export const metadata = {
   title: "Policies & Terms | Kabale Online",
-  description: "Buyer protection, refund policies, and seller terms for Kabale Online.",
+  description: "Buyer protection, refund policies, and seller terms for Oweitu Shop.",
 };
 
 export default function PoliciesPage() {
@@ -119,7 +119,7 @@ export default function PoliciesPage() {
               <FaMoneyBillWave className="text-[#D97706]" /> 4. Data Privacy
             </h2>
             <p className="mb-4">
-              Your privacy is our priority. Your phone numbers, locations, and chat histories are used strictly for facilitating orders. We will never sell your personal data to third-party advertising companies. Financial details are securely processed via LivePay and Flutterwave; Kabale Online does not store your Mobile Money PINs or credit card numbers.
+              Your privacy is our priority. Your phone numbers, locations, and chat histories are used strictly for facilitating orders. We will never sell your personal data to third-party advertising companies. Financial details are securely processed via LivePay and Flutterwave; Oweitu Shop does not store your Mobile Money PINs or credit card numbers.
             </p>
           </section>
 
