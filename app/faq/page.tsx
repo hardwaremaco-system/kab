@@ -1,8 +1,8 @@
 export default function FAQPage() {
   const faqs = [
     {
-      q: "What is Kabale Online?",
-      a: "Kabale Online is a local digital marketplace connecting students, farmers, and small businesses within Kabale town and the greater Kigezi region. It allows users to buy, sell, and promote goods and services within their community."
+      q: "What is Oweitu Shop?",
+      a: "Oweitu Shop is a  digital marketplace connecting students, farmers, and small businesses within Kabale town and the  Kigezi and Ankole region. It allows users to buy, sell, and promote goods and services within their community."
     },
     {
       q: "Is delivery free?",
@@ -18,15 +18,15 @@ export default function FAQPage() {
     },
     {
       q: "Can I sell farm produce?",
-      a: "Yes. Kabale Online proudly supports local farmers. You can list Irish potatoes, onions, beans, vegetables, and other produce in the Agriculture category to reach bulk buyers and retailers."
+      a: "Yes. Oweitu Shop proudly supports local farmers. You can list Irish potatoes, onions, beans, vegetables, and other produce in the Agriculture category to reach bulk buyers and retailers."
     },
     {
       q: "Can I advertise my hostel or rental rooms?",
       a: "Yes. Landlords and hostel managers can list available rooms, include pricing, location details, and contact information to attract Kabale University students and other tenants."
     },
     {
-      q: "Is Kabale Online involved in transactions?",
-      a: "No. Kabale Online only connects buyers and sellers. We do not handle payments, deliveries, or hold goods. All agreements are made directly between users."
+      q: "Is Oweitu Shop involved in transactions?",
+      a: "No. Oweitu Shop only connects buyers and sellers. We do not handle payments, deliveries, or hold goods. All agreements are made directly between users."
     },
     {
       q: "How do I stay safe while buying or selling?",
@@ -37,8 +37,8 @@ export default function FAQPage() {
       a: "Basic listings are free. In the future, premium promotional options may be introduced for businesses that want more visibility."
     },
     {
-      q: "Who can use Kabale Online?",
-      a: "Anyone in Kabale district and the Kigezi region — students, farmers, entrepreneurs, shop owners, and residents — can use the platform to connect and trade locally."
+      q: "Who can use Oweitu Shop?",
+      a: "Anyone in Kabale district, the Kigezi and Ankole region — students, farmers, entrepreneurs, shop owners, and residents — can use the platform to connect and trade locally."
     }
   ];
 
@@ -49,7 +49,7 @@ export default function FAQPage() {
       </h1>
 
       <p className="text-slate-600 mb-10 text-lg">
-        Everything you need to know about using Kabale Online safely and effectively.
+        Everything you need to know about using Oweitu Shop safely and effectively.
       </p>
 
       <div className="space-y-4">
@@ -74,7 +74,7 @@ export default function FAQPage() {
         </h3>
         <p className="text-slate-600 mb-4">
           If your question isn’t listed here, feel free to contact us directly.
-          We're here to support the Kabale community.
+          We're here to support the community.
         </p>
         <button className="px-6 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition">
           Contact Support
