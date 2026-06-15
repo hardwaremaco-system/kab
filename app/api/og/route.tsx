@@ -19,8 +19,8 @@ export async function GET(request: Request) {
 
     // Grab the dynamic text passed in the URL, with safe fallbacks and Invite Overrides
     const title = isInvite 
-      ? `${name} invited you to Kabale Online! 🎁`
-      : (searchParams.get('title') || 'Kabale Online Marketplace');
+      ? `${name} invited you to Oweitu Shop! 🎁`
+      : (searchParams.get('title') || 'Oweitu Marketplace');
 
     // 🔥 FIXED: Strictly e-commerce focused messaging
     const description = isInvite
