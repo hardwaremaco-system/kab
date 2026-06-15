@@ -1,5 +1,5 @@
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
-const SENDER_EMAIL = "support@kabaleonline.com"; // Update with your verified Brevo sender email
+const SENDER_EMAIL = "support@oweitushop.com"; // Update with your verified Brevo sender email
 const SENDER_NAME = "Kabale Admin";
 const YEAR = new Date().getFullYear();
 
