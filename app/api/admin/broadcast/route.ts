@@ -30,8 +30,8 @@ export async function POST(req: Request) {
 
     // 4. BREVO CONFIG
     const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
-    const SENDER_EMAIL = "support@kabaleonline.com"; 
-    const SENDER_NAME = "Kabale Online";
+    const SENDER_EMAIL = "support@oweitushop.com"; 
+    const SENDER_NAME = "Oweitu Shop Admin";
 
     // 5. CHUNK EMAILS (40 at a time for maximum deliverability)
     const chunkSize = 40;
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           sender: { email: SENDER_EMAIL, name: SENDER_NAME },
-          to: [{ email: SENDER_EMAIL, name: "Kabale Community" }], 
+          to: [{ email: SENDER_EMAIL, name: "Oweitu Community" }], 
           bcc: bccList, 
           subject: subject,
           htmlContent: `
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
                 ${htmlContent}
               </div>
               <div style="text-align: center; padding: 20px; font-size: 12px; color: #94a3b8;">
-                You are receiving this because you have an account on Kabale Online.<br>
+                You are receiving this because you have an account on Oweitu Shop.<br>
                 Kabale, Western Region, Uganda.
               </div>
             </div>
