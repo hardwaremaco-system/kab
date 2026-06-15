@@ -27,6 +27,7 @@ export default function LayoutClient({
       {/* INJECT GTM GLOBALLY ONLY IF ID EXISTS */}
       {GTM_ID && <GoogleTagManager gtmId={GTM_ID} />}
 
+      {/* PERFECT PLACEMENT: AuthProvider wraps everything that needs user data */}
       <AuthProvider>
         {/* WRAPPED THE APP IN THE CART PROVIDER */}
         <CartProvider>
