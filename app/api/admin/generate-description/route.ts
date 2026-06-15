@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     // A prompt engineered to sound like a professional e-commerce store
     const prompt = `Write a high-converting, professional e-commerce product description for a "${condition}" condition "${productName}" in the "${category}" category. Keep it under 4 short paragraphs. Highlight key benefits. Also, write a 1-sentence SEO meta description. Return ONLY valid JSON in this exact format: {"description": "your description here", "metaDescription": "your short seo snippet here"}`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$){apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -30,9 +30,11 @@ export async function POST(req: Request) {
     // Extract the raw text from Google's response
     const rawText = aiData.candidates[0].content.parts[0].text;
     
-    // Parse the JSON out of the AI's response (removing markdown code blocks if any)
-    const cleanedText = rawText.replace(/```json/g, '').replace(/
-```/g, '').trim();
+    // 🔥 FIXED: Using new RegExp() prevents Vercel build errors from line-breaks
+    const regexJson = new RegExp('```json', 'g');
+    const regexTicks = new RegExp('```', 'g');
+    
+    const cleanedText = rawText.replace(regexJson, '').replace(regexTicks, '').trim();
     const parsedData = JSON.parse(cleanedText);
 
     return NextResponse.json({
