@@ -1,12 +1,14 @@
+import Link from "next/link";
+
 export default function FAQPage() {
   const faqs = [
     {
       q: "What is Oweitu Shop?",
-      a: "Oweitu Shop is a  digital marketplace connecting students, farmers, and small businesses within Kabale town and the  Kigezi and Ankole region. It allows users to buy, sell, and promote goods and services within their community."
+      a: "Oweitu Shop is a digital marketplace connecting students, farmers, and small businesses across the Ankole and Kigezi regions. It allows users to securely buy, sell, and promote goods and services within their local community."
     },
     {
       q: "Is delivery free?",
-      a: "Delivery arrangements are negotiated directly between the buyer and seller. Many students meet at Kabale University campus gates or central town locations for convenience and safety."
+      a: "Delivery arrangements are negotiated directly between the buyer and seller. We recommend meeting at central town locations, university campuses, or well-lit public areas for convenience and safety."
     },
     {
       q: "How do I pay?",
@@ -14,15 +16,15 @@ export default function FAQPage() {
     },
     {
       q: "How do I post an item for sale?",
-      a: "Create an account, click on 'Post Listing', upload clear photos, write a detailed description, set your price, and publish. The more clear and honest your listing is, the faster it will sell."
+      a: "Create an account, click on 'Sell Now', upload clear photos, write a detailed description, set your price, and publish. The more clear and honest your listing is, the faster it will sell."
     },
     {
       q: "Can I sell farm produce?",
-      a: "Yes. Oweitu Shop proudly supports local farmers. You can list Irish potatoes, onions, beans, vegetables, and other produce in the Agriculture category to reach bulk buyers and retailers."
+      a: "Yes. Oweitu Shop proudly supports local farmers. You can list Irish potatoes, matooke, onions, beans, vegetables, and other produce to reach bulk buyers and retailers across the region."
     },
     {
       q: "Can I advertise my hostel or rental rooms?",
-      a: "Yes. Landlords and hostel managers can list available rooms, include pricing, location details, and contact information to attract Kabale University students and other tenants."
+      a: "Yes. Landlords and hostel managers can list available rooms, include pricing, location details, and contact information to attract university students and other tenants."
     },
     {
       q: "Is Oweitu Shop involved in transactions?",
@@ -34,11 +36,11 @@ export default function FAQPage() {
     },
     {
       q: "Are there fees for posting?",
-      a: "Basic listings are free. In the future, premium promotional options may be introduced for businesses that want more visibility."
+      a: "Basic listings are free. Premium promotional options (like Homepage Flash Sales) are available for businesses that want maximum visibility."
     },
     {
       q: "Who can use Oweitu Shop?",
-      a: "Anyone in Kabale district, the Kigezi and Ankole region — students, farmers, entrepreneurs, shop owners, and residents — can use the platform to connect and trade locally."
+      a: "Anyone in the Ankole and Kigezi regions — students, farmers, entrepreneurs, shop owners, and residents — can use the platform to connect and trade locally."
     }
   ];
 
@@ -76,9 +78,9 @@ export default function FAQPage() {
           If your question isn’t listed here, feel free to contact us directly.
           We're here to support the community.
         </p>
-        <button className="px-6 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition">
+        <Link href="/contact" className="inline-block px-6 py-3 bg-[#FF6A00] text-white rounded-xl font-bold hover:bg-[#e65c00] shadow-sm transition-colors">
           Contact Support
-        </button>
+        </Link>
       </div>
     </div>
   );
