@@ -36,7 +36,7 @@ export default function SellCtaBanner() {
           </h2>
 
           <p className="text-sm md:text-base text-slate-300 mb-8 leading-relaxed font-medium max-w-xl mx-auto">
-            Join hundreds of locals making money every day. Reach thousands of buyers across Kabale with zero upfront fees.
+            Join hundreds of locals making money every day. Reach thousands of buyers across Kigezi and Ankole with zero upfront fees.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center">
@@ -54,7 +54,7 @@ export default function SellCtaBanner() {
 
             {/* Secondary Button - Frosted Glass effect */}
             <a 
-              href="https://wa.me/256759997376?text=Hello,%20I%20need%20support%20with%20Kabale%20Online" 
+              href="https://wa.me/256759997376?text=Hello,%20I%20need%20support%20with%20oweitu%20shop" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="flex items-center justify-center gap-2 px-8 py-3.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold text-sm md:text-base rounded-xl transition-all backdrop-blur-md w-full sm:w-auto"
