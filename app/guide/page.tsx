@@ -2,20 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Documentation & Guide | Kabale Online",
+  title: "Documentation & Guide | Oweitu Shop",
   description: "Learn how to buy, sell, and grow your business on Kabale's premier online marketplace. Complete guide, video tutorials, and promotion steps.",
-  keywords: ["Kabale Online guide", "how to sell in Kabale", "buy online Uganda", "Kabale e-commerce setup", "boost ads Kabale", "cash on delivery Kabale"],
+  keywords: ["oweitu shop guide", "how to sell in Kabale", "buy online Uganda", "Kabale e-commerce setup", "boost ads Kabale", "cash on delivery Kabale"],
   openGraph: {
-    title: "Documentation & Guide | Kabale Online",
-    description: "The complete guide to buying, selling, and growing your business on Kabale Online.",
-    url: "https://kabaleonline.com/guide",
-    siteName: "Kabale Online",
+    title: "Documentation & Guide | Oweitu Shop",
+    description: "The complete guide to buying, selling, and growing your business on Oweitu Shop.",
+    url: "https://oweitushop.com/guide",
+    siteName: "Oweitu Shop",
     images: [
       {
         url: "/guide-og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Kabale Online Documentation",
+        alt: "Oweitu Shop Documentation",
       },
     ],
     locale: "en_UG",
