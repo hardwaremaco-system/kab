@@ -17,7 +17,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // Keep the VIP cookie fresh or clear it based on the user's role
   useEffect(() => {
     if (!loading) {
-      if (user?.role === "admin" || user?.role === "editor") {
+      // 🔥 FIXED: Added "as string" to bypass TypeScript's strict role dictionary
+      if (user?.role === "admin" || (user?.role as string) === "editor") {
         document.cookie = "oweitushop_staff_session=true; path=/; max-age=86400; secure; samesite=strict";
       } else {
         document.cookie = "oweitushop_staff_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
@@ -35,7 +36,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   // Reject if there is no user, OR if they don't have admin/editor roles
-  if (!user || (user.role !== "admin" && user.role !== "editor")) {
+  // 🔥 FIXED: Added "as string" bypass here too
+  if (!user || (user.role !== "admin" && (user.role as string) !== "editor")) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-slate-50 px-4 text-center">
         <div className="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-6 text-4xl shadow-sm">⛔</div>
@@ -48,7 +50,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // 🔥 ROLE-BASED NAVIGATION ITEMS
+  // ROLE-BASED NAVIGATION ITEMS
   const navItems = [
     { name: "Dashboard", href: "/admin", icon: "📊", roles: ["admin", "editor"] },
     { name: "Orders", href: "/admin/orders", icon: "🛒", roles: ["admin", "editor"] },
@@ -67,8 +69,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Search Logs", href: "/admin/searches", icon: "🔍", roles: ["admin"] },
   ];
 
-  // Filter the menu based on the logged-in user's role
-  const visibleNavItems = navItems.filter(item => item.roles.includes(user.role));
+  // 🔥 FIXED: Added "as string" so the .includes() function stops throwing type errors
+  const visibleNavItems = navItems.filter(item => item.roles.includes(user.role as string));
 
   const safeDisplayName = user.displayName || "Staff Member";
   const safeFirstLetter = safeDisplayName.charAt(0) || "O";
@@ -157,7 +159,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </main>
 
-      {/* Added tiny style to make scrollbar look nice on sidebar if it gets too long */}
       <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
