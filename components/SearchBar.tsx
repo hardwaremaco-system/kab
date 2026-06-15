@@ -18,7 +18,7 @@ interface SearchBarProps {
   onSearch?: () => void;
 }
 
-// 🔥 STRATEGIC TRENDING SEARCHES: Updated to match your new list
+// 🔥 STRATEGIC TRENDING SEARCHES
 const TRENDING_SEARCHES = [
   "watches", 
   "cables", 
@@ -142,9 +142,8 @@ function SearchBarContent({ onSearch }: SearchBarProps) {
             onClick={() => {
               setQuery("");
               setSuggestions([]);
-              setIsOpen(false); // 🔥 Explicitly closes the dropdown
+              setIsOpen(false); 
             }}
-            // Adjusted right placement to account for the wider Search button
             className="absolute right-[100px] md:right-[110px] z-10 p-2 text-slate-400 hover:text-slate-600"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,11 +158,10 @@ function SearchBarContent({ onSearch }: SearchBarProps) {
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
           placeholder="Search products, brands and category"
-          // Increased pr-[130px] so text doesn't hide behind the new wide button
           className="w-full pl-4 pr-[130px] py-2 md:py-2.5 border border-slate-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6A00] focus:border-transparent transition-all shadow-sm"
         />
 
-        {/* UPDATED SEARCH BUTTON */}
+        {/* SEARCH BUTTON */}
         <button 
           type="submit"
           aria-label="Submit Search"
@@ -173,7 +171,6 @@ function SearchBarContent({ onSearch }: SearchBarProps) {
              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
           ) : (
             <>
-              {/* Added explicit Search text */}
               <span className="text-xs sm:text-sm font-bold tracking-wide">Search</span>
               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -228,28 +225,29 @@ function SearchBarContent({ onSearch }: SearchBarProps) {
         </div>
       )}
 
-      {/* CUSTOM LOADER OVERLAY RESTORED (Color updated to #FF6A00) */}
+      {/* 🔥 NEW ORBITAL LOADER (Matches GlobalLoader) */}
       {isNavigating && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-transparent pointer-events-none transition-opacity duration-300">
           <style>{`
-            @keyframes kineticSpin {
-              0% { transform: scale(0.6) rotate(0deg); opacity: 0.7; }
-              50% { transform: scale(1.2) rotate(90deg); opacity: 1; }
-              100% { transform: scale(0.6) rotate(360deg); opacity: 0.7; }
+            @keyframes orbitalSpin {
+              0% { transform: scale(0.8) rotate(0deg); opacity: 0.7; }
+              50% { transform: scale(1.15) rotate(180deg); opacity: 1; }
+              100% { transform: scale(0.8) rotate(360deg); opacity: 0.7; }
             }
-            .animate-kinetic-spin {
-              animation: kineticSpin 1.4s infinite ease-in-out;
+            .animate-orbital-spin {
+              animation: orbitalSpin 1.8s infinite ease-in-out;
             }
           `}</style>
 
           <svg 
-            className="animate-kinetic-spin w-16 h-16 text-[#FF6A00] drop-shadow-md" 
+            className="animate-orbital-spin w-16 h-16 text-[#FF6A00] drop-shadow-md" 
             viewBox="0 0 100 100" 
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
           >
-            <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="7" className="opacity-90" />
-            <path d="M38 28v44m0-22l20-22m-20 22l20 22" stroke="currentColor" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" strokeWidth="6" strokeLinecap="round" transform="rotate(30 50 50)" />
+            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" strokeWidth="6" strokeLinecap="round" transform="rotate(90 50 50)" />
+            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" strokeWidth="6" strokeLinecap="round" transform="rotate(150 50 50)" />
           </svg>
         </div>
       )}
