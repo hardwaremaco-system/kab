@@ -82,9 +82,9 @@ export default function InviteHubPage() {
 
   // LOGGED-IN HUB VIEW
   const referralCode = user.referralCode || "PENDING";
-  const referralLink = `https://www.kabaleonline.com/invite/${referralCode}`;
+  const referralLink = `https://www.oweitushop.com/invite/${referralCode}`;
   const balance = user.referralBalance || 0;
-  const currentDisplayName = user.referralName || user.displayName?.split(' ')[0] || "Kabale User";
+  const currentDisplayName = user.referralName || user.displayName?.split(' ')[0] || "Oweitu User";
   
   // 🚀 FIXED: TypeScript will accept this perfectly.
   const currentPhone = user.phone;
@@ -96,7 +96,7 @@ export default function InviteHubPage() {
     });
   };
 
-  const rawGeneralShareMsg = `Hey! 👋\n\nI get my campus supplies safely from *Kabale Online*.\n\nUse my link to order your stuff with Cash on Delivery:\n👉 ${referralLink}`;
+  const rawGeneralShareMsg = `Hey! 👋\n\nI get my campus supplies safely from *Oweitu Shop*.\n\nUse my link to order your stuff with Cash on Delivery:\n👉 ${referralLink}`;
 
   return (
     <div className="w-full min-h-screen bg-slate-50 overflow-x-hidden pb-10">
