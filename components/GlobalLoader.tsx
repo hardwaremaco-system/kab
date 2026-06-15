@@ -22,7 +22,7 @@ export default function GlobalLoader() {
       if (!anchor) return;
 
       const href = anchor.getAttribute("href");
-      
+
       if (
         href &&
         href.startsWith("/") &&
@@ -42,57 +42,56 @@ export default function GlobalLoader() {
   return (
     // Completely transparent background
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-transparent pointer-events-none transition-opacity duration-300">
-      
-      {/* Custom Keyframe Animation for Kinetic Spin & Zoom */}
+
+      {/* Custom Keyframe Animation for Orbital Spin & Pulse */}
       <style>{`
-        @keyframes kineticSpin {
+        @keyframes orbitalSpin {
           0% { 
-            transform: scale(0.6) rotate(0deg); 
+            transform: scale(0.8) rotate(0deg); 
             opacity: 0.7;
           }
           50% { 
-            /* ZOOM IN: Only rotates 90 degrees here, making the spin SLOW */
-            transform: scale(1.2) rotate(90deg); 
+            transform: scale(1.15) rotate(180deg); 
             opacity: 1;
           }
           100% { 
-            /* ZOOM OUT: Has to rush the remaining 270 degrees, making the spin FAST */
-            transform: scale(0.6) rotate(360deg); 
+            transform: scale(0.8) rotate(360deg); 
             opacity: 0.7;
           }
         }
-        .animate-kinetic-spin {
-          /* ease-in-out smooths out the speed transition so it feels like natural momentum */
-          animation: kineticSpin 1.4s infinite ease-in-out;
+        .animate-orbital-spin {
+          /* ease-in-out smooths out the speed transition so it breathes naturally */
+          animation: orbitalSpin 1.8s infinite ease-in-out;
         }
       `}</style>
 
-      {/* The Animated "K" in a Circle SVG */}
+      {/* The 3 Chained Ovals SVG */}
       <svg 
-        className="animate-kinetic-spin w-16 h-16 text-[#D97706] drop-shadow-md" 
+        className="animate-orbital-spin w-16 h-16 text-[#FF6A00] drop-shadow-md" 
         viewBox="0 0 100 100" 
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* The Outer Circle */}
-        <circle 
-          cx="50" 
-          cy="50" 
-          r="42" 
-          stroke="currentColor" 
-          strokeWidth="7" 
-          className="opacity-90"
+        {/* Oval 1 */}
+        <ellipse 
+          cx="50" cy="50" rx="42" ry="14" 
+          stroke="currentColor" strokeWidth="6" strokeLinecap="round"
+          transform="rotate(30 50 50)" 
         />
-        {/* The Letter K */}
-        <path 
-          d="M38 28v44m0-22l20-22m-20 22l20 22" 
-          stroke="currentColor" 
-          strokeWidth="7" 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
+        {/* Oval 2 */}
+        <ellipse 
+          cx="50" cy="50" rx="42" ry="14" 
+          stroke="currentColor" strokeWidth="6" strokeLinecap="round"
+          transform="rotate(90 50 50)" 
+        />
+        {/* Oval 3 */}
+        <ellipse 
+          cx="50" cy="50" rx="42" ry="14" 
+          stroke="currentColor" strokeWidth="6" strokeLinecap="round"
+          transform="rotate(150 50 50)" 
         />
       </svg>
-      
+
     </div>
   );
 }
