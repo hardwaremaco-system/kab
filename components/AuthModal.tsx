@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider"; 
-import { Eye, EyeOff, X, Chrome } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react"; // 🚀 Removed Chrome
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -44,7 +44,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       onClose(); 
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message.replace("Firebase: ", "")); // Cleans up ugly Firebase errors
+        setError(err.message.replace("Firebase: ", "")); 
       } else {
         setError("Authentication failed");
       }
@@ -160,9 +160,17 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <button
           type="button" 
           onClick={handleGoogleSignIn}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white py-2.5 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          className="mt-6 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white py-2.5 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
         >
-          <Chrome size={20} className="text-blue-500" />
+          {/* 🚀 Replaced Lucide Chrome with an official-looking Google SVG */}
+          <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+            <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
+              <path fill="#4285F4" d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 52.749 L -8.284 52.749 C -8.574 53.879 -9.254 54.819 -10.204 55.449 L -10.204 57.779 L -6.324 57.779 C -4.054 55.699 -2.624 52.589 -3.264 51.509 Z"/>
+              <path fill="#34A853" d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -6.824 60.279 L -10.204 57.949 C -11.274 58.669 -12.864 59.189 -14.754 59.189 C -18.384 59.189 -21.474 56.739 -22.584 53.439 L -26.584 53.439 L -26.584 56.549 C -24.404 60.859 -19.914 63.239 -14.754 63.239 Z"/>
+              <path fill="#FBBC05" d="M -22.584 53.439 C -22.874 52.589 -23.034 51.689 -23.034 50.769 C -23.034 49.849 -22.874 48.949 -22.584 48.099 L -22.584 44.989 L -26.584 44.989 C -27.464 46.739 -27.974 48.699 -27.974 50.769 C -27.974 52.839 -27.464 54.799 -26.584 56.549 L -22.584 53.439 Z"/>
+              <path fill="#EA4335" d="M -14.754 42.299 C -12.984 42.299 -11.404 42.909 -10.154 44.099 L -6.744 40.689 C -8.804 38.769 -11.514 37.669 -14.754 37.669 C -19.914 37.669 -24.404 40.049 -26.584 44.359 L -22.584 47.469 C -21.474 44.169 -18.384 42.299 -14.754 42.299 Z"/>
+            </g>
+          </svg>
           Continue with Google
         </button>
 
