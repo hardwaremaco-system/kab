@@ -14,7 +14,7 @@ export default function InlineOfferLink({ product, safeName }: { product: any, s
 
   return (
     <a 
-      href={`https://wa.me/${botPhoneNumber}?text=${encodeURIComponent(`Hi! I want to make an offer for this item on Kabale Online:\n\n*${safeName}*\nProduct ID: [${product.id}]\n\nMy offer is: UGX `)}`}
+      href={`https://wa.me/${botPhoneNumber}?text=${encodeURIComponent(`Hi! I want to make an offer for this item on Oweitu Shop:\n\n*${safeName}*\nProduct ID: [${product.id}]\n\nMy offer is: UGX `)}`}
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleOfferClick}
