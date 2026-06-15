@@ -15,7 +15,7 @@ export default function AdminBroadcastPage() {
     e.preventDefault();
     if (!user || user.role !== "admin") return;
 
-    if (!window.confirm("🚨 WARNING: This will send an email to EVERY registered user on Kabale Online. Are you absolutely sure?")) {
+    if (!window.confirm("🚨 WARNING: This will send an email to EVERY registered user on Oweitu Shop. Are you absolutely sure?")) {
       return;
     }
 
