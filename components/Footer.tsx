@@ -24,7 +24,7 @@ export default function Footer() {
     }`;
 
   // URL-encoded prefilled message for WhatsApp
-  const whatsappMessage = encodeURIComponent("Hello Kabale Online! I would like to place an order/shop with you.");
+  const whatsappMessage = encodeURIComponent("Hello Oweitu Shop! I would like to place an order/shop with you.");
   const whatsappLink = `https://wa.me/256759997376?text=${whatsappMessage}`;
 
   return (
