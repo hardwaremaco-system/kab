@@ -25,7 +25,7 @@ export default function Footer() {
 
   // URL-encoded prefilled message for WhatsApp
   const whatsappMessage = encodeURIComponent("Hello Oweitu Shop! I would like to place an order/shop with you.");
-  const officialWhatsApp = "256759997376"; 
+  const officialWhatsApp = "256779094664"; // 🔥 FIXED 
   const whatsappLink = `https://wa.me/${officialWhatsApp}?text=${whatsappMessage}`;
 
   return (
@@ -62,7 +62,7 @@ export default function Footer() {
               className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-3 rounded-lg text-sm font-bold transition-colors shadow-sm"
             >
               <FaWhatsapp className="text-lg" />
-              Shop on WhatsApp (+256 759 997 376)
+              Shop on WhatsApp (+256 779 094664)
             </a>
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function Footer() {
             <h3 className="text-white font-bold text-base mb-5">Contact</h3>
             <div className="space-y-1 text-sm text-gray-300 mb-6">
               <p>Ankole & Kigezi, Uganda</p>
-              <p>+256 759 997 376</p>
+              <p>+256 779 094664</p>
               <p>support@oweitushop.com</p>
             </div>
 
@@ -131,21 +131,16 @@ export default function Footer() {
       </div>
 
       {/* ================================================= */}
-      {/* MOBILE VIEW (Similar to uploaded image)           */}
+      {/* MOBILE VIEW                                       */}
       {/* ================================================= */}
       <div className="block md:hidden px-5">
-        {/* Main Links */}
         <ul className="flex flex-col space-y-[1.125rem] text-[17px] font-medium tracking-wide mb-8">
           <li><Link href="/">Home</Link></li>
           <li><Link href="/profile">Go to your Account</Link></li>
           <li><Link href="/sell">Sell an item</Link></li>
           <li><Link href="/cart">View your Cart</Link></li>
         </ul>
-
-        {/* Divider */}
         <hr className="border-gray-500 mb-6" />
-
-        {/* Legal Links & Copyright */}
         <div className="flex flex-col items-center">
           <div className="flex flex-wrap justify-center text-[15px] text-[#4f90f7] mb-4">
             <Link href="/refunds" className="underline hover:text-blue-400">Refund Policy</Link>
@@ -161,7 +156,6 @@ export default function Footer() {
           </p>
         </div>
       </div>
-
     </footer>
   );
 }
