@@ -20,7 +20,7 @@ export default function TermsPage() {
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">2. Our Role & Platform Facilitation</h2>
         <p>
-          Kabale Online is a digital marketplace that connects buyers and sellers 
+          Oweitu Shop is a digital marketplace that connects buyers and sellers 
           within Kabale town and the greater Kigezi region. While we primarily facilitate 
           these connections, we may coordinate logistics and deliveries to improve 
           the user experience. However, the core transaction remains between the 
@@ -41,7 +41,7 @@ export default function TermsPage() {
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">4. Safety & Payments</h2>
         <p>
-          Kabale Online strongly recommends Cash on Delivery (COD). Users should 
+          Oweitu Shop strongly recommends Cash on Delivery (COD). Users should 
           meet in safe, public locations and verify items before payment. We are 
           not liable for fraudulent transactions, payment disputes, damages, or 
           losses resulting from user interactions.
@@ -73,12 +73,12 @@ export default function TermsPage() {
         <h2 className="font-bold text-xl mb-2">7. Seller Terms & Obligations</h2>
         <p><strong>Listing Accuracy & Stock:</strong> Sellers must ensure accurate descriptions, real images, and correct pricing. Sellers must only list available items and update stock regularly. Listing unavailable items is a direct violation.</p>
         <p><strong>Order Fulfillment:</strong> Sellers must confirm orders within the specified time and prepare items immediately. Sellers may not cancel confirmed orders without a valid reason.</p>
-        <p><strong>Performance Monitoring:</strong> Kabale Online tracks delivery success rates, response times, and cancellation rates. Low-performing sellers may be deprioritized in search results or removed from the platform entirely.</p>
+        <p><strong>Performance Monitoring:</strong> Oweitu Shop tracks delivery success rates, response times, and cancellation rates. Low-performing sellers may be deprioritized in search results or removed from the platform entirely.</p>
       </section>
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">8. Enforcement, Penalties & Consequences</h2>
-        <p>Kabale Online enforces strict compliance to maintain trust. We utilize a warning system where first violations receive a warning, and repeated violations result in stricter actions.</p>
+        <p>Oweitu Shop enforces strict compliance to maintain trust. We utilize a warning system where first violations receive a warning, and repeated violations result in stricter actions.</p>
         <p>Penalties for violating platform rules may include reduced listing visibility, temporary suspension, permanent account removal, and potential financial penalties for failed fulfillment.</p>
       </section>
 
@@ -90,17 +90,17 @@ export default function TermsPage() {
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">10. Referral & Cookie Tracking</h2>
-        <p>Kabale Online uses cookies and internal systems to attribute referrals. Referrals are valid within a limited time window. Users acknowledge that tracking systems may not be perfect, and Kabale Online's system records dictate final attribution.</p>
+        <p>Oweitu Shop uses cookies and internal systems to attribute referrals. Referrals are valid within a limited time window. Users acknowledge that tracking systems may not be perfect, and Kabale Online's system records dictate final attribution.</p>
       </section>
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">11. Delivery & Fulfillment Disclaimer</h2>
-        <p>While Kabale Online may facilitate delivery and coordinate logistics, we do not strictly guarantee delivery times or total seller compliance. We are not legally liable for delays caused by sellers or failed deliveries due to user error.</p>
+        <p>While Oweitu Shop may facilitate delivery and coordinate logistics, we do not strictly guarantee delivery times or total seller compliance. We are not legally liable for delays caused by sellers or failed deliveries due to user error.</p>
       </section>
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">12. Platform Control Rights & Dispute Resolution</h2>
-        <p>Kabale Online reserves the right to remove listings, restrict users, adjust visibility, and modify platform rules at its sole discretion to maintain platform integrity.</p>
+        <p>Oweitu Shop reserves the right to remove listings, restrict users, adjust visibility, and modify platform rules at its sole discretion to maintain platform integrity.</p>
         <p>Users are encouraged to resolve disputes amicably between themselves. While Kabale Online may intervene to mediate, we are not obligated to do so, and platform decisions are final where applicable.</p>
       </section>
 
@@ -118,7 +118,7 @@ export default function TermsPage() {
         <h2 className="font-bold text-xl mb-2">14. Contact</h2>
         <p>
           If you have questions regarding these Terms & Conditions, please 
-          contact us through the official Kabale Online communication channels.
+          contact us through the official Oweitu Shop communication channels.
         </p>
       </section>
     </div>
