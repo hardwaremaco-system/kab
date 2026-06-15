@@ -117,15 +117,15 @@ export async function generateMetadata({ params }: { params: { categorySlug: str
   const title = categoryData ? categoryData.title : `${slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
   const description = categoryData ? categoryData.description : `Shop the best local deals for ${slug.replace(/_/g, ' ')} delivered fast to your location.`;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.kabaleonline.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.oweitushop.com";
   const currentUrl = `${baseUrl}/category/${slug}`;
   const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(title)}&desc=${encodeURIComponent("Fast Local Delivery in Kabale")}`;
 
   return {
-    title: `${title} | Kabale Online`,
+    title: `${title} | Oweitu Shop`,
     description: description,
     keywords: [
-      title, "Kabale Online", "Kabale Marketplace", "buy electronics Kabale", slug.replace(/_/g, ' '), "buy online Kabale"
+      title, "Oweitu Shop", "Oweitu Marketplace", "buy electronics Kabale", slug.replace(/_/g, ' '), "buy online"
     ],
     openGraph: {
       title: `${title} | Oweitu Shop`,
