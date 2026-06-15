@@ -141,7 +141,7 @@ export default function WhatsAppCheckoutPage() {
         <div className="bg-[#111111] p-6 text-center relative">
           <div className="absolute top-0 left-0 w-full h-1 bg-[#FF6A00]"></div>
           <h1 className="text-white text-xl font-black tracking-tight flex items-center justify-center gap-2">
-            Kabale Online <FaLock className="text-[#FF6A00] text-sm" />
+            Oweitu Shop <FaLock className="text-[#FF6A00] text-sm" />
           </h1>
           <p className="text-slate-400 text-xs mt-1 font-medium">Secure WhatsApp Checkout</p>
         </div>
@@ -218,7 +218,7 @@ export default function WhatsAppCheckoutPage() {
           {/* Trust Badge */}
           <div className="mt-6 flex items-center justify-center gap-2 text-xs font-bold text-slate-400">
             <FaShieldAlt className="text-green-500" />
-            Protected by Kabale Online Security
+            Protected by Oweitu Shop Security
           </div>
         </div>
       </div>
