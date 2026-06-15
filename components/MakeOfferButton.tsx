@@ -35,10 +35,10 @@ export default function MakeOfferButton({ product }: { product: any }) {
     }).catch(console.error);
 
     const numericOffer = Number(offerAmount);
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.kabaleonline.com";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.oweitushop.com";
     const itemUrl = `${baseUrl}/product/${product.publicId || product.id}`;
 
-    const message = `Hello! I'm looking at your *${safeName}* listed for UGX ${currentPrice.toLocaleString()} on Kabale Online.\n\nI have cash ready today, but my budget is *UGX ${numericOffer.toLocaleString()}*. Deal?\n\nLink: ${itemUrl}`;
+    const message = `Hello! I'm looking at your *${safeName}* listed for UGX ${currentPrice.toLocaleString()} on Oweitu Shop.\n\nI have cash ready today, but my budget is *UGX ${numericOffer.toLocaleString()}*. Deal?\n\nLink: ${itemUrl}`;
 
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, "_blank");
 
