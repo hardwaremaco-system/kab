@@ -6,7 +6,8 @@ import { doc, setDoc, deleteDoc, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 
 export default function SaveProductButton({ product }: { product: any }) {
-  const { user, signIn } = useAuth();
+  // 🚀 FIXED: Swapped 'signIn' for 'signInWithGoogle'
+  const { user, signInWithGoogle } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +26,8 @@ export default function SaveProductButton({ product }: { product: any }) {
   const toggleSave = async () => {
     if (!user) {
       // Don't alert, just trigger the login process
-      signIn();
+      // 🚀 FIXED: Swapped 'signIn()' for 'signInWithGoogle()'
+      signInWithGoogle();
       return;
     }
 
