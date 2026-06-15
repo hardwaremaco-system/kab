@@ -61,7 +61,8 @@ function LeftSidebarContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { cart, removeFromCart, cartTotal } = useCart();
-  const { user, signIn } = useAuth();
+  // 🚀 FIXED: Swapped 'signIn' for 'signInWithGoogle'
+  const { user, signInWithGoogle } = useAuth();
 
   const maxPrice = searchParams.get("max");
   const sortType = searchParams.get("sort");
@@ -82,15 +83,16 @@ function LeftSidebarContent() {
         <span style={{ color: '#6B6B6B' }} className="text-[10px] font-black uppercase tracking-[0.2em] mb-1 dark:text-slate-400">
           Welcome,
         </span>
-        
+
         {user ? (
           <span style={{ color: '#1A1A1A' }} className="text-xl font-black dark:text-white truncate">
             {/* 🔥 Grabs only the first name by splitting at the space */}
             {user.displayName ? user.displayName.split(' ')[0] : "Shopper"}
           </span>
         ) : (
+          {/* 🚀 FIXED: Swapped 'signIn' for 'signInWithGoogle' */}
           <button 
-            onClick={signIn} 
+            onClick={signInWithGoogle} 
             className="text-lg font-black text-[#FF6A00] hover:opacity-80 transition-colors text-left outline-none truncate"
           >
             Sign In
