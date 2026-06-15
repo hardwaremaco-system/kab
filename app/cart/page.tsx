@@ -4,20 +4,23 @@ import { useState, useMemo, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FaTrash, FaArrowLeft, FaWhatsapp, FaPlus, FaShieldAlt } from "react-icons/fa";
+import { FaTrash, FaArrowLeft, FaPlus, FaShieldAlt, FaCheckCircle } from "react-icons/fa";
 
 export default function CartPage() {
-  const { cart, updateQuantity, removeFromCart, cartTotal, addToCart } = useCart();
+  // 💡 Ensure `clearCart` is available in your CartContext to empty the cart after a successful order
+  const { cart, updateQuantity, removeFromCart, cartTotal, addToCart, clearCart } = useCart();
   const router = useRouter();
 
-  const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(false);
-  const [loadingWhatsApp, setLoadingWhatsApp] = useState(false);
-  
+  // Native Checkout State
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+
   // Real Upsell State
   const [upsellItems, setUpsellItems] = useState<any[]>([]);
   const [loadingUpsells, setLoadingUpsells] = useState(true);
-
-  const botPhoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "256740373021";
 
   // ==========================================
   // 📥 FETCH REAL UPSELL ITEMS
@@ -31,7 +34,7 @@ export default function CartPage() {
           // Filter out items that are already in the user's cart
           const cartIds = new Set(cart.map(item => item.id));
           const filteredUpsells = data.items.filter((item: any) => !cartIds.has(item.id));
-          
+
           setUpsellItems(filteredUpsells);
         }
       } catch (error) {
@@ -49,11 +52,9 @@ export default function CartPage() {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const { deliveryFee, progress, message, isFreeDelivery } = useMemo(() => {
-    // Rule 1: High value orders (UGX 20k+) get free delivery instantly
     if (cartTotal >= 20000) {
       return { deliveryFee: 0, progress: 100, message: "Your order qualifies for FREE delivery!", isFreeDelivery: true };
     }
-    // Rule 2: Item count scaling (1=2000, 2=1500, 3=1000, 4+=FREE)
     if (totalItems >= 4) {
       return { deliveryFee: 0, progress: 100, message: "🎉 FREE DELIVERY UNLOCKED!", isFreeDelivery: true };
     }
@@ -63,71 +64,10 @@ export default function CartPage() {
     if (totalItems === 2) {
       return { deliveryFee: 1500, progress: 50, message: "Add 1 more item and save UGX 500 on delivery.", isFreeDelivery: false };
     }
-    // Default: 1 item (or empty)
     return { deliveryFee: 2000, progress: 25, message: "Add 1 more item and save UGX 500 on delivery.", isFreeDelivery: false };
   }, [cartTotal, totalItems]);
 
   const finalTotal = cartTotal + deliveryFee;
-
-  // ==========================================
-  // WHATSAPP CHECKOUT LOGIC
-  // ==========================================
-  const handleCheckoutClick = () => {
-    if (cart.length === 0) return;
-    setShowWhatsAppPopup(true);
-  };
-
-  const handleBotInquiry = async () => {
-    setLoadingWhatsApp(true);
-    try {
-      const getCookie = (name: string) => {
-        if (typeof document === "undefined") return null;
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop()?.split(';').shift();
-        return null;
-      };
-      const referralCode = getCookie("kabale_ref");
-
-      const payloadCartItems = cart.map(item => ({
-        productId: item.id,
-        name: item.title,
-        price: item.price,
-        quantity: item.quantity,
-        sellerId: (item as any).sellerId || "SYSTEM", 
-        sellerPhone: (item as any).sellerPhone || ""
-      }));
-
-      const res = await fetch("/api/orders/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          cartItems: payloadCartItems,
-          referralCodeUsed: referralCode || null 
-        }),
-      });
-
-      let referenceCode = "CART-ORDER"; 
-      if (res.ok) {
-        const data = await res.json();
-        referenceCode = data.leadId; 
-      }
-
-      const itemsList = cart.map(item => `${item.quantity}x ${item.title}`).join("\n");
-      const deliveryText = isFreeDelivery ? "FREE" : `UGX ${deliveryFee.toLocaleString()}`;
-      
-      const rawMessage = `Hi! I want to order the following items on Kabale Online:\n\n${itemsList}\n\n*Subtotal: UGX ${cartTotal.toLocaleString()}*\n*Delivery: ${deliveryText}*\n*Grand Total: UGX ${finalTotal.toLocaleString()}*\n\nRef: [${referenceCode}]`;
-      const encodedMessage = encodeURIComponent(rawMessage);
-
-      window.open(`https://wa.me/${botPhoneNumber}?text=${encodedMessage}`, "_blank");
-    } catch (error) {
-      const rawMessage = `Hi! I want to order my cart items.\n\nTotal: UGX ${finalTotal.toLocaleString()}`;
-      window.open(`https://wa.me/${botPhoneNumber}?text=${encodeURIComponent(rawMessage)}`, "_blank");
-    } finally {
-      setLoadingWhatsApp(false);
-      setShowWhatsAppPopup(false); 
-    }
-  };
 
   const handleQuickAdd = (item: any) => {
     addToCart({
@@ -141,13 +81,75 @@ export default function CartPage() {
     });
   };
 
+  // ==========================================
+  // 🚀 NATIVE CHECKOUT LOGIC
+  // ==========================================
+  const handlePlaceOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (cart.length === 0) return;
+    setIsCheckingOut(true);
+
+    try {
+      const getCookie = (name: string) => {
+        if (typeof document === "undefined") return null;
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return null;
+      };
+      const referralCode = getCookie("kabale_ref");
+
+      // Build the order payload for the backend
+      const payload = {
+        customerName,
+        customerPhone,
+        deliveryAddress,
+        items: cart.map(item => ({
+          productId: item.id,
+          name: item.title,
+          price: item.price,
+          quantity: item.quantity,
+          sellerId: (item as any).sellerId || "SYSTEM"
+        })),
+        subtotal: cartTotal,
+        deliveryFee,
+        total: finalTotal,
+        status: "processing", // Mark as processing initially
+        referralCodeUsed: referralCode || null,
+      };
+
+      // POST to your native backend route (this route should save to DB and trigger emails)
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        // Clear cart and redirect to a success page
+        if (clearCart) clearCart();
+        setShowCheckoutModal(false);
+        alert("Order placed successfully! Check your email for confirmation.");
+        router.push(`/order-success?id=${data.orderId || ''}`);
+      } else {
+        alert("Failed to place order. Please try again.");
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("An error occurred during checkout.");
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
+
   if (cart.length === 0) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-4">
         <div className="text-6xl mb-4">🛒</div>
         <h1 className="text-2xl font-bold text-slate-800 mb-2">Your cart is empty</h1>
         <p className="text-slate-500 mb-6 text-center">Looks like you haven't added anything yet.</p>
-        <Link href="/" className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 px-8 rounded-lg transition-colors">
+        <Link href="/" className="bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-lg transition-colors">
           Start Shopping
         </Link>
       </div>
@@ -158,8 +160,8 @@ export default function CartPage() {
     <div className="w-full max-w-4xl mx-auto p-3 sm:p-4 md:p-8 bg-white min-h-screen relative overflow-x-hidden box-border">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Shopping Cart</h1>
-        <Link href="/" className="text-sm font-bold text-slate-500 hover:text-[#25D366] flex items-center gap-2">
-          <FaArrowLeft className="hidden sm:block" /> Continue
+        <Link href="/" className="text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-2">
+          <FaArrowLeft className="hidden sm:block" /> Continue Shopping
         </Link>
       </div>
 
@@ -167,7 +169,6 @@ export default function CartPage() {
       {/* 🚀 THE BULLETPROOF GAMIFICATION BAR */}
       {/* ========================================== */}
       <div className={`mb-6 md:mb-8 p-4 rounded-2xl border transition-all w-full max-w-full overflow-hidden box-border ${isFreeDelivery ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'}`}>
-        
         <div className="flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-end mb-3 w-full">
           <p className={`font-bold text-[13px] md:text-base leading-snug w-full sm:w-auto ${isFreeDelivery ? 'text-green-700' : 'text-slate-700'}`}>
             {isFreeDelivery ? "✨ " : "🚚 "}{message}
@@ -176,7 +177,7 @@ export default function CartPage() {
             {totalItems >= 4 || cartTotal >= 20000 ? "UNLOCKED" : `${totalItems}/4 ITEMS`}
           </span>
         </div>
-        
+
         <div className="relative h-2 md:h-2.5 w-full max-w-full bg-slate-200 rounded-full overflow-hidden mb-4 isolate">
           <div 
             className={`absolute top-0 left-0 h-full transition-all duration-500 ease-out rounded-full ${isFreeDelivery ? 'bg-[#25D366]' : 'bg-[#D97706]'}`}
@@ -184,13 +185,12 @@ export default function CartPage() {
           ></div>
         </div>
 
-        {/* Real Quick Add Upsell */}
         {!isFreeDelivery && (
           <div className="pt-3 md:pt-4 border-t border-slate-200/60 w-full max-w-full overflow-hidden">
             <p className="text-[10px] md:text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">
               Quick add to save on delivery:
             </p>
-            
+
             {loadingUpsells ? (
               <div className="flex flex-nowrap gap-3 overflow-x-auto pb-2 w-full">
                 {[1, 2, 3].map(i => (
@@ -198,10 +198,7 @@ export default function CartPage() {
                 ))}
               </div>
             ) : upsellItems.length > 0 ? (
-              <div 
-                className="flex flex-nowrap gap-3 overflow-x-auto pb-2 w-full max-w-full snap-x snap-mandatory scroll-smooth hide-scrollbar"
-                style={{ WebkitOverflowScrolling: 'touch' }}
-              >
+              <div className="flex flex-nowrap gap-3 overflow-x-auto pb-2 w-full max-w-full snap-x snap-mandatory scroll-smooth hide-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
                 {upsellItems.map((item) => (
                   <div key={item.id} className="flex-shrink-0 bg-white border border-slate-200 rounded-lg p-2 flex items-center gap-2.5 w-[190px] md:w-[220px] snap-start shadow-sm hover:border-[#D97706] transition-colors box-border">
                     <div className="w-10 h-10 bg-slate-50 rounded-md overflow-hidden flex items-center justify-center shrink-0 border border-slate-100">
@@ -275,7 +272,7 @@ export default function CartPage() {
             <span>Subtotal ({totalItems} items)</span>
             <span className="font-semibold text-slate-800">UGX {cartTotal.toLocaleString()}</span>
           </div>
-          
+
           <div className="flex justify-between mb-4 text-[13px] md:text-sm border-b border-slate-200 pb-3">
             <span className="text-slate-600">Delivery Fee</span>
             {isFreeDelivery ? (
@@ -291,83 +288,106 @@ export default function CartPage() {
           </div>
 
           <button 
-            onClick={handleCheckoutClick}
-            className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[14px]"
+            onClick={() => setShowCheckoutModal(true)}
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px]"
           >
-            <FaWhatsapp className="text-lg" /> 
-            Checkout via WhatsApp
+            Proceed to Checkout
           </button>
-          
+
           <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-medium">
-            <FaShieldAlt className="text-[#25D366]" /> 
+            <FaShieldAlt className="text-slate-400" /> 
             Secure purchase powered by Kabale Online
           </div>
         </div>
       </div>
 
       {/* ========================================== */}
-      {/* 🛑 RICH WHATSAPP INTERCEPTION POPUP        */}
+      {/* 🛑 NATIVE CHECKOUT MODAL                   */}
       {/* ========================================== */}
-      {showWhatsAppPopup && (
+      {showCheckoutModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200">
-            <div className="p-6 md:p-8">
-              <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5 mx-auto border border-green-100">
-                <FaWhatsapp className="text-3xl text-[#25D366]" />
-              </div>
-              <h3 className="text-xl font-black text-slate-900 text-center mb-2 tracking-tight">Complete Your Order</h3>
-              <p className="text-[13px] text-slate-500 text-center mb-6 leading-relaxed">
-                When WhatsApp opens, tap <strong className="text-slate-800">SEND</strong> (looks like 
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#25D366] border border-green-600 align-sub ml-1 shadow-inner">
-                  <svg className="w-3 h-3 text-black ml-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                </span>
-                on mobile) to send your cart details and confirm instantly.
-              </p>
-              
-              <div className="bg-slate-50 rounded-xl p-4 mb-6 border border-slate-100">
-                <ul className="flex flex-col gap-3">
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700">
-                    <span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
-                    Fast confirmation
-                  </li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700">
-                    <span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
-                    Quick delivery
-                  </li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-slate-700">
-                    <span className="w-5 h-5 rounded-full bg-green-100 text-[#25D366] flex items-center justify-center text-[10px]">✓</span> 
-                    Trusted support
-                  </li>
-                </ul>
-              </div>
-
-              {/* Order Summary Mini-Box */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">  
-                <p className="font-bold text-sm text-slate-600 leading-tight mb-2">
-                  Paying for {totalItems} item{totalItems > 1 ? "s" : ""}
-                </p>  
-                <div className="flex justify-between items-center pt-2 border-t border-slate-200">  
-                  <span className="text-sm font-bold text-slate-500">Order Total:</span>  
-                  <span className="font-black text-slate-900 text-lg">UGX {finalTotal.toLocaleString()}</span>  
-                </div>  
-              </div>  
-
-              <div className="flex flex-col gap-3">
-                <button onClick={handleBotInquiry} disabled={loadingWhatsApp} className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] disabled:opacity-70 active:scale-[0.98]">
-                  {loadingWhatsApp ? (
-                    <span className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Connecting...
-                    </span>
-                  ) : (
-                    <>Continue to WhatsApp</>
-                  )}
-                </button>
-                <button onClick={() => setShowWhatsAppPopup(false)} disabled={loadingWhatsApp} className="w-full py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">
-                  Cancel
-                </button>
-              </div>
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200 flex flex-col max-h-[90vh]">
+            
+            <div className="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+              <h3 className="text-lg font-black text-slate-900">Delivery Details</h3>
+              <button onClick={() => setShowCheckoutModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
             </div>
+
+            <div className="overflow-y-auto p-5 md:p-6">
+              <form id="checkout-form" onSubmit={handlePlaceOrder} className="flex flex-col gap-4">
+                
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="e.g. John Doe"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                  <input 
+                    type="tel" 
+                    required 
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    placeholder="e.g. 07XXXXXXXX"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Delivery Address (Kabale)</label>
+                  <textarea 
+                    required 
+                    rows={3}
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    placeholder="e.g. Makanga Hill, near the hospital..."
+                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent resize-none"
+                  ></textarea>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-2">  
+                  <div className="flex justify-between items-center">  
+                    <span className="text-sm font-bold text-slate-500">Amount to Pay:</span>  
+                    <span className="font-black text-slate-900 text-lg">UGX {finalTotal.toLocaleString()}</span>  
+                  </div>  
+                </div>  
+              </form>
+            </div>
+
+            <div className="p-5 border-t border-slate-200 bg-white flex flex-col gap-3">
+              <button 
+                type="submit" 
+                form="checkout-form"
+                disabled={isCheckingOut} 
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] disabled:opacity-70 active:scale-[0.98]"
+              >
+                {isCheckingOut ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Processing...
+                  </span>
+                ) : (
+                  <>
+                    <FaCheckCircle /> Confirm & Place Order
+                  </>
+                )}
+              </button>
+              <button 
+                onClick={() => setShowCheckoutModal(false)} 
+                disabled={isCheckingOut} 
+                className="w-full py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+            
           </div>
         </div>
       )}
