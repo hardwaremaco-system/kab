@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation"; 
 import { Suspense } from "react";
-import { collection, query, where, getDocs, orderBy, limit } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, limit } from "firebase/firestore/lite";
 import { db } from "@/lib/firebase/config";
 import CategoryProductFeed from "@/components/CategoryProductFeed";
 import LeftSidebar from "@/components/LeftSidebar"; 
