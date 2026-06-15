@@ -230,7 +230,7 @@ export default function Navbar() {
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                 </button>
               )}
-              <a href="https://wa.me/256759997376" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp to Order" className="relative text-[#25D366] hover:text-[#1EBE57] transition-colors">
+              <a href="https://wa.me/256779094664" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp to Order" className="relative text-[#25D366] hover:text-[#1EBE57] transition-colors">
                 <FaWhatsapp className="w-6 h-6" />
               </a>
             </div>
