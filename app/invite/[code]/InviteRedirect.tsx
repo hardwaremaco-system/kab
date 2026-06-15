@@ -22,7 +22,7 @@ export default function InviteRedirect({ code }: { code: string }) {
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4">
       <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#D97706] mb-4"></div>
       <h1 className="text-2xl font-black text-slate-900 mb-2">Accepting Invite...</h1>
-      <p className="text-slate-500 text-sm">Taking you to Kabale Online.</p>
+      <p className="text-slate-500 text-sm">Taking you to Oweitu Shop.</p>
     </div>
   );
 }
