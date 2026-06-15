@@ -264,7 +264,7 @@ export default function Navbar() {
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
           <Link href="/" onClick={closeMenu} className="text-xl font-black text-slate-900 tracking-tight flex-1">
-            Kabale<span className="text-[#FF6A00]">Online</span>
+            Oweitu<span className="text-[#FF6A00]">Shop</span>
           </Link>
         </div>
 
