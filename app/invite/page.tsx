@@ -9,14 +9,16 @@ import {
 } from "react-icons/fa";
 
 export default function InviteHubPage() {
-  const { user, signIn, loading } = useAuth();
+  // 🚀 FIXED: Destructured signInWithGoogle instead of the old signIn
+  const { user, signInWithGoogle, loading } = useAuth();
   const [copied, setCopied] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false); 
 
   const handleSignIn = async () => {
     setIsLoggingIn(true);
     try {
-      await signIn();
+      // 🚀 FIXED: Calling the new Google sign-in method
+      await signInWithGoogle();
     } catch (error) {
       console.error(error);
       setIsLoggingIn(false); 
@@ -73,7 +75,7 @@ export default function InviteHubPage() {
             </div>
           </div>
           <button onClick={handleSignIn} disabled={isLoggingIn} className="w-full bg-[#D97706] hover:bg-amber-600 text-white font-bold py-4 rounded-xl shadow-md transition-all text-[16px] flex items-center justify-center disabled:opacity-70">
-            {isLoggingIn ? "Authenticating..." : "Join the Partner Network"}
+            {isLoggingIn ? "Authenticating..." : "Join the Partner Network (via Google)"}
           </button>
         </div>
       </div>
@@ -85,7 +87,7 @@ export default function InviteHubPage() {
   const referralLink = `https://www.oweitushop.com/invite/${referralCode}`;
   const balance = user.referralBalance || 0;
   const currentDisplayName = user.referralName || user.displayName?.split(' ')[0] || "Oweitu User";
-  
+
   // 🚀 FIXED: TypeScript will accept this perfectly.
   const currentPhone = user.phone;
 
