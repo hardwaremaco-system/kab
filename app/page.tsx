@@ -18,6 +18,8 @@ import AboutKabaleOnline from "@/components/AboutKabaleOnline";
 import ThemedCategoryGrid from "@/components/ThemedCategoryGrid";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import LeftSidebar from "@/components/LeftSidebar"; 
+import TrustedBrandsScroller from "@/components/TrustedBrandsScroller";
+
 
 // BANNERS & SCROLLERS
 import CampaignScroller from "@/components/CampaignScroller";
@@ -135,7 +137,11 @@ export default async function Home() {
   <ShoppingMadeEasyBanner />
 </div>
 
-                
+                {/* 🔥 BRAND SCROLLER */}
+<div className="w-full mb-4 sm:mb-6">
+  <TrustedBrandsScroller />
+</div>
+
 
                 {officialProducts.length > 0 && (
                   <ProductSection 
