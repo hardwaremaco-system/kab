@@ -3,8 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation"; 
 import { Suspense } from "react";
+// 🔥 Updated to use firestore/lite
 import { collection, query, where, getDocs, orderBy, limit } from "firebase/firestore/lite";
-import { db } from "@/lib/firebase/config";
+// 🔥 Updated to import dbLite
+import { dbLite } from "@/lib/firebase/config";
 import CategoryProductFeed from "@/components/CategoryProductFeed";
 import LeftSidebar from "@/components/LeftSidebar"; 
 import { 
@@ -175,8 +177,9 @@ export default async function CategoryPage({
   const bgImageUrl = categoryData ? categoryData.bgImage : "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&q=80"; // Default abstract pattern
 
   // 3. DYNAMIC FIREBASE QUERY 
+  // 🔥 Updated to use dbLite
   const categoryQ = query(
-    collection(db, "products"),
+    collection(dbLite, "products"),
     where("category", "in", backendCategoriesToFetch),
     orderBy("createdAt", "desc"),
     limit(PAGE_SIZE)
