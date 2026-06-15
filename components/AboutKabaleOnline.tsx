@@ -14,11 +14,11 @@ export default function AboutKabaleOnline() {
         
         {/* 🔥 THEMED TITLE: Focused on the "Why Shop With Us" proposition */}
         <h2 className={`text-xl md:text-2xl font-black ${theme.bg} bg-clip-text text-transparent tracking-tight mb-4 leading-tight transition-colors duration-500`}>
-          Why shop with Kabale Online?
+          Why shop with Oweitu?
         </h2>
         
         <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2 text-left md:text-center max-w-3xl mx-auto">
-          We are Kigezi’s most trusted online marketplace, bringing the city's best electronics, fashion, and home essentials directly to you. We take the stress out of shopping with unbeatable prices, secure payment methods, and lightning-fast local delivery.
+          We are Kigezi and Ankole’s most trusted online marketplace, bringing the city's best electronics, fashion, and home essentials directly to you. We take the stress out of shopping with unbeatable prices, secure payment methods, and lightning-fast local delivery.
         </p>
 
         <div className={`grid transition-all duration-300 ease-in-out text-left ${isExpanded ? 'grid-rows-[1fr] opacity-100 mt-6' : 'grid-rows-[0fr] opacity-0'}`}>
