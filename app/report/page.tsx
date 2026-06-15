@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function ReportPage() {
   const { user } = useAuth();
-  
+
   const [reportType, setReportType] = useState("suspicious_listing");
   const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
@@ -38,7 +38,7 @@ export default function ReportPage() {
         status: "pending", 
         createdAt: serverTimestamp(),
       });
-      
+
       setIsSuccess(true);
     } catch (err) {
       console.error("Error submitting report:", err);
@@ -54,7 +54,7 @@ export default function ReportPage() {
         <CheckCircle2 className="text-[#25D366] w-20 h-20 mb-6" />
         <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-4">Report Submitted</h1>
         <p className="text-slate-600 dark:text-slate-300 max-w-md mb-8">
-          Thank you for helping keep Kabale Online safe. Our admin team will review this immediately.
+          Thank you for helping keep Oweitu Shop safe. Our admin team will review this immediately.
         </p>
         <Link href="/" className="bg-[#FF6A00] text-white px-8 py-3 rounded-full font-bold hover:bg-orange-600 transition-colors">
           Return to Home
@@ -80,7 +80,7 @@ export default function ReportPage() {
 
       <div className="bg-white dark:bg-[#151515] rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          
+
           {/* Report Type */}
           <div className="flex flex-col gap-2">
             <label className="font-bold text-slate-900 dark:text-white">What are you reporting?</label>
@@ -101,7 +101,7 @@ export default function ReportPage() {
             <label className="font-bold text-slate-900 dark:text-white">Product Link or URL (Optional)</label>
             <input 
               type="text"
-              placeholder="e.g. https://kabaleonline.com/product/123"
+              placeholder="e.g. https://oweitushop.com/product/123"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00]"
@@ -129,10 +129,10 @@ export default function ReportPage() {
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full bg-[#151515] hover:bg-black dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 py-4 rounded-xl font-bold text-[16px] transition-all disabled:opacity-70 flex justify-center items-center"
+            className="w-full bg-[#FF6A00] hover:bg-[#e65c00] text-white py-4 rounded-xl font-bold text-[16px] transition-all disabled:opacity-70 flex justify-center items-center shadow-sm"
           >
             {isSubmitting ? (
-              <div className="h-6 w-6 rounded-full border-2 border-white dark:border-slate-900 border-t-transparent animate-spin"></div>
+              <div className="h-6 w-6 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
             ) : (
               "Submit Report"
             )}
