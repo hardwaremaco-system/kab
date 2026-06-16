@@ -1,6 +1,6 @@
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
-const SENDER_EMAIL = "support@oweitushop.com"; // Update with your verified Brevo sender email
-const SENDER_NAME = "Kabale Admin";
+const SENDER_EMAIL = "support@oweitushop.com";
+const SENDER_NAME = "Oweitu Shop";
 const YEAR = new Date().getFullYear();
 
 // --- BASE EMAIL SENDER ---
@@ -39,95 +39,74 @@ async function sendEmail({ to, subject, htmlContent }: { to: { email: string; na
 const emailWrapper = (content: string) => `
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #334155;">
+<body style="font-family: sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #334155;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-    <div style="background-color: #D97706; padding: 24px; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.5px;">Kabale Online</h1>
+    <div style="background-color: #FF6A00; padding: 24px; text-align: center;">
+      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 900;">Oweitu Shop</h1>
     </div>
-    <div style="padding: 32px 24px;">
-      ${content}
-    </div>
+    <div style="padding: 32px 24px;">${content}</div>
     <div style="background-color: #f1f5f9; padding: 24px; text-align: center; font-size: 13px; color: #64748b; border-top: 1px solid #e2e8f0;">
-      <p style="margin: 0; font-weight: 600;">Kabale Online Admin Ledger</p>
-      <p style="margin: 12px 0 0 0;">&copy; ${YEAR} Kabale Online.</p>
+      <p style="margin: 0; font-weight: 600;">Oweitu Shop Operations</p>
+      <p style="margin: 12px 0 0 0;">&copy; ${YEAR} Oweitu Shop. All rights reserved.</p>
     </div>
   </div>
 </body>
 </html>
 `;
 
-// --- ADMIN MASTER ALERT ONLY ---
-export async function sendAdminAlert(
-  orderNumber: string, 
-  itemName: string, 
-  total: number, 
-  buyerPhone: string,
-  sellerPhone: string
-) {
+// --- 1. ADMIN ORDER ALERT ---
+export async function sendAdminAlert(orderNumber: string, itemName: string, total: number, buyerPhone: string, sellerPhone: string) {
   const masterEmail = "shopkabale@gmail.com"; 
-
   const content = `
-    <h2 style="margin-top: 0; color: #dc2626; font-size: 24px;">🚨 WhatsApp Order Created!</h2>
-    <p style="font-size: 16px; line-height: 1.6;">A new native WhatsApp transaction has started on the platform.</p>
-    
-    <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin: 24px 0;">
-      <p style="margin: 0 0 8px 0; font-size: 14px; color: #991b1b; font-weight: 600;">ORDER DETAILS</p>
-      <p style="margin: 0 0 4px 0;"><strong>Order ID:</strong> ${orderNumber}</p>
-      <p style="margin: 0 0 4px 0;"><strong>Item:</strong> ${itemName}</p>
-      <p style="margin: 0 0 16px 0;"><strong>Value:</strong> UGX ${total.toLocaleString()}</p>
-      
-      <p style="margin: 0 0 8px 0; font-size: 14px; color: #991b1b; font-weight: 600;">PARTICIPANTS</p>
-      <p style="margin: 0 0 4px 0;"><strong>Buyer Phone:</strong> <a href="https://wa.me/${buyerPhone.replace(/\D/g, '')}" style="color: #D97706; text-decoration: none;">${buyerPhone}</a></p>
-      <p style="margin: 0 0 0 0;"><strong>Seller Phone:</strong> <a href="https://wa.me/${sellerPhone.replace(/\D/g, '')}" style="color: #D97706; text-decoration: none;">${sellerPhone}</a></p>
+    <h2 style="color: #dc2626; margin-top: 0;">🚨 New Order Received!</h2>
+    <p>A new transaction has been initiated on Oweitu Shop.</p>
+    <div style="background-color: #fef2f2; padding: 16px; border-radius: 8px; margin: 24px 0;">
+      <p><strong>Order ID:</strong> ${orderNumber}</p>
+      <p><strong>Item:</strong> ${itemName}</p>
+      <p><strong>Total:</strong> UGX ${total.toLocaleString()}</p>
+      <p><strong>Buyer Phone:</strong> ${buyerPhone}</p>
+      <p><strong>Seller Phone:</strong> ${sellerPhone}</p>
     </div>
-    
-    <p style="font-size: 16px; line-height: 1.6; font-weight: bold;">Check your Admin Dashboard for live status updates.</p>
   `;
-
-  await sendEmail({ 
-    to: [{ email: masterEmail, name: "Kabale Admin" }], 
-    subject: `🚨 KABALE ORDER: UGX ${total.toLocaleString()}`, 
-    htmlContent: emailWrapper(content) 
-  });
+  await sendEmail({ to: [{ email: masterEmail, name: "Admin" }], subject: `🚨 NEW ORDER: ${orderNumber}`, htmlContent: emailWrapper(content) });
 }
 
-
-// --- ADMIN PAYOUT LEDGER ALERT ---
-export async function sendAdminPayoutAlert(
-  requestId: string,
-  sellerId: string,
-  amount: number,
-  newStatus: string
-) {
-  const masterEmail = "shopkabale@gmail.com"; 
-  
-  const statusColor = newStatus === 'paid' ? '#16a34a' : newStatus === 'rejected' ? '#dc2626' : '#D97706';
-  const statusText = newStatus.toUpperCase();
-
+// --- 2. BUYER RECEIPT ---
+export async function sendBuyerReceipt(buyerEmail: string, buyerName: string, orderNumber: string, itemName: string, total: number) {
   const content = `
-    <h2 style="margin-top: 0; color: #0f172a; font-size: 24px;">💰 Payout Request Updated</h2>
-    <p style="font-size: 16px; line-height: 1.6;">A seller payout request has been processed and logged in the ledger.</p>
-    
-    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 24px 0;">
-      <p style="margin: 0 0 8px 0; font-size: 14px; color: #475569; font-weight: 600;">TRANSACTION LEDGER</p>
-      <p style="margin: 0 0 4px 0;"><strong>Request ID:</strong> ${requestId}</p>
-      <p style="margin: 0 0 4px 0;"><strong>Seller ID:</strong> ${sellerId}</p>
-      <p style="margin: 0 0 16px 0;"><strong>Disbursement Amount:</strong> UGX ${amount.toLocaleString()}</p>
-      
-      <p style="margin: 0 0 8px 0; font-size: 14px; color: #475569; font-weight: 600;">NEW STATUS</p>
-      <p style="margin: 0; font-weight: 900; color: ${statusColor};">${statusText}</p>
+    <h2 style="color: #16a34a; margin-top: 0;">🎉 Order Confirmed!</h2>
+    <p>Hi ${buyerName}, thank you for shopping with Oweitu Shop!</p>
+    <div style="background-color: #f0fdf4; padding: 16px; border-radius: 8px; margin: 24px 0;">
+      <p><strong>Order ID:</strong> ${orderNumber}</p>
+      <p><strong>Item:</strong> ${itemName}</p>
+      <p><strong>Total to Pay:</strong> UGX ${total.toLocaleString()}</p>
     </div>
-    
-    <p style="font-size: 14px; line-height: 1.6; color: #64748b;">If this status is "PAID", the funds have been successfully deducted from the seller's Available Balance in Firestore.</p>
+    <p>Our team will contact you shortly to coordinate delivery.</p>
   `;
+  await sendEmail({ to: [{ email: buyerEmail, name: buyerName }], subject: `Order Receipt - ${orderNumber}`, htmlContent: emailWrapper(content) });
+}
 
-  await sendEmail({ 
-    to: [{ email: masterEmail, name: "Kabale Admin" }], 
-    subject: `💳 PAYOUT ${statusText}: UGX ${amount.toLocaleString()}`, 
-    htmlContent: emailWrapper(content) 
-  });
+// --- 3. SELLER NOTIFICATION ---
+export async function sendSellerNotification(sellerEmail: string, sellerName: string, orderNumber: string, itemName: string, total: number) {
+  const content = `
+    <h2 style="color: #FF6A00; margin-top: 0;">🚀 You Made a Sale!</h2>
+    <p>Hi ${sellerName}, congratulations on your sale!</p>
+    <div style="background-color: #fff7ed; padding: 16px; border-radius: 8px; margin: 24px 0;">
+      <p><strong>Item Sold:</strong> ${itemName}</p>
+      <p><strong>Payout Amount:</strong> UGX ${total.toLocaleString()}</p>
+    </div>
+    <p>Please check your Oweitu Shop seller dashboard to manage fulfillment.</p>
+  `;
+  await sendEmail({ to: [{ email: sellerEmail, name: sellerName }], subject: `You sold an item on Oweitu Shop!`, htmlContent: emailWrapper(content) });
+}
+
+// --- 4. ADMIN PAYOUT ALERT ---
+export async function sendAdminPayoutAlert(requestId: string, sellerId: string, amount: number, newStatus: string) {
+  const masterEmail = "shopkabale@gmail.com"; 
+  const content = `
+    <h2 style="color: #0f172a; margin-top: 0;">💰 Payout Update: ${newStatus.toUpperCase()}</h2>
+    <p>Request ID: ${requestId}</p>
+    <p>Amount: UGX ${amount.toLocaleString()}</p>
+  `;
+  await sendEmail({ to: [{ email: masterEmail, name: "Admin" }], subject: `💳 Payout Update: ${newStatus}`, htmlContent: emailWrapper(content) });
 }
