@@ -9,7 +9,6 @@ import imageCompression from "browser-image-compression";
 
 export default function SellPage() {
   const router = useRouter();
-  // 🚀 FIXED: Replaced 'signIn' with 'signInWithGoogle'
   const { user, signInWithGoogle, loading: authLoading } = useAuth();
 
   const [loading, setLoading] = useState(false);
@@ -112,6 +111,7 @@ export default function SellPage() {
     try {
       let imageUrls: string[] = [];
 
+      // 1. UPLOAD IMAGES TO CLOUDINARY
       if (imageFiles.length > 0) {
         const signRes = await fetch("/api/cloudinary/sign", {
           method: "POST",
@@ -157,33 +157,53 @@ export default function SellPage() {
         }).filter(url => url) as string[];
       }
 
-      // Safely handle default values
+      // 2. SAVE PRODUCT TO FIREBASE
+      const productPayload = {
+        title: formData.title,
+        category: formData.category,
+        price: formData.price,
+        stock: isService ? 1 : (Number(formData.quantity) || 1), 
+        condition: isService ? "new" : (formData.condition || "used"),
+        description: formData.description || "No description provided.",
+        sellerPhone: formData.sellerPhone,
+        images: imageUrls,
+        sellerId: currentUser.id,
+        sellerName: currentUser.displayName || "Kabale Seller",
+      };
+
       const dbRes = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: formData.title,
-          category: formData.category,
-          price: formData.price,
-          stock: isService ? 1 : (Number(formData.quantity) || 1), 
-          condition: isService ? "new" : (formData.condition || "used"),
-          description: formData.description || "No description provided.",
-          sellerPhone: formData.sellerPhone,
-          images: imageUrls,
-          sellerId: currentUser.id,
-          sellerName: currentUser.displayName || "Kabale Seller",
-        }),
+        body: JSON.stringify(productPayload),
       });
 
       const dbData = await dbRes.json();
 
-      if (dbData.success) {
-        setSuccessData({ publicId: dbData.publicId, title: formData.title });
-        setLoading(false);
-        await fetch('/api/revalidate');
-      } else {
+      if (!dbData.success) {
         throw new Error(dbData.error || "Database rejected the product.");
       }
+
+      // 3. 🔥 PUSH TO ALGOLIA IMMEDIATELY (Manual Sync)
+      try {
+        await fetch("/api/sync-algolia", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            ...productPayload, 
+            id: dbData.publicId, // Mapping the generated DB ID to Algolia's objectID
+            name: productPayload.title // Algolia often expects 'name' depending on your config
+          })
+        });
+        console.log("Product successfully synced to Algolia!");
+      } catch (syncError) {
+        // We log the error but don't break the user experience if Algolia fails momentarily
+        console.error("Failed to sync with Algolia search engine:", syncError);
+      }
+
+      // 4. FINISH AND UPDATE UI
+      setSuccessData({ publicId: dbData.publicId, title: formData.title });
+      setLoading(false);
+      await fetch('/api/revalidate');
 
     } catch (error: any) {
       console.error("Upload process failed:", error);
@@ -219,7 +239,7 @@ export default function SellPage() {
           Item Posted Successfully!
         </h1>
         <p className="text-slate-600 mb-8 text-lg">
-          Your <span className="font-bold text-slate-900">{successData.title}</span> is now live on Kabale Online. 
+          Your <span className="font-bold text-slate-900">{successData.title}</span> is now live on Oweitu Shop. 
         </p>
 
         <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4 mb-8">
@@ -449,7 +469,6 @@ export default function SellPage() {
               Sign in with Google to publish your product to the marketplace. Your form data is saved.
             </p>
             <div className="space-y-3">
-              {/* 🚀 FIXED: Replaced 'signIn' with 'signInWithGoogle' */}
               <button onClick={() => { setLoading(true); signInWithGoogle(); }} 
                 className="w-full rounded-lg bg-[#FF6A00] px-4 py-3 text-base font-bold text-white hover:bg-[#e65c00] transition-colors"
               >
