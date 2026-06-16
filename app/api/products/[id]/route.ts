@@ -38,10 +38,15 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       userId, 
       title, 
       category, 
-      price, 
+      price,
+      originalPrice,    // 🔥 ADDED
+      isSale,           // 🔥 ADDED
+      campaignType,     // 🔥 ADDED
+      saleEndDate,      // 🔥 ADDED
       stock, 
       condition, 
-      description, 
+      description,
+      metaDescription,  // 🔥 ADDED 
       images, 
       sellerPhone,
       isAdminUpload 
@@ -57,15 +62,20 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    // Update Firestore
+    // 🔥 FIXED: Added all new promotional and SEO fields to Firestore update
     await docRef.update({
       title,
       name: title, // Backwards compatibility
       category,
       price: Number(price),
+      originalPrice: Number(originalPrice) || 0,
+      isSale: Boolean(isSale),
+      campaignType: campaignType || null,
+      saleEndDate: saleEndDate || null,
       stock: Number(stock), 
       condition,
       description,
+      metaDescription: metaDescription || "",
       images,
       sellerPhone
     });
@@ -110,7 +120,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
     const docRef = adminDb.collection("products").doc(id);
     const docSnap = await docRef.get();
-    
+
     if (!docSnap.exists) return NextResponse.json({ error: "Product not found" }, { status: 404 });
 
     // Update Firestore
@@ -142,7 +152,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("userId");
     const isAdmin = searchParams.get("isAdmin") === "true"; 
-    const adminId = searchParams.get("adminId"); // NEW: Catching the adminId from the quick-delete table
+    const adminId = searchParams.get("adminId"); // Catching the adminId from the quick-delete table
 
     const docRef = adminDb.collection("products").doc(params.id);
     const doc = await docRef.get();
