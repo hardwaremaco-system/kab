@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     const prompt = `Write a high-converting, professional e-commerce product description for a "${condition}" condition "${productName}" in the "${category}" category. Keep it under 4 short paragraphs. Highlight key benefits. Also, write a 1-sentence SEO meta description. Return ONLY valid JSON in this exact format: {"description": "your description here", "metaDescription": "your short seo snippet here"}`;
 
-    // 🔥 Broken into pieces so GitHub CANNOT turn it into a Markdown link when pasting
+    // Broken into pieces so GitHub CANNOT turn it into a Markdown link
     const part1 = "https://generativelanguage.";
     const part2 = "googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
     const finalUrl = part1 + part2 + apiKey;
@@ -32,9 +32,11 @@ export async function POST(req: Request) {
     const aiData = await response.json();
     const rawText = aiData.candidates[0].content.parts[0].text;
 
-    // 🔥 Using replaceAll with standard strings avoids any Regex line-break issues in GitHub mobile
-    const cleanedText = rawText.replaceAll('```json', '').replaceAll('
-```', '').trim();
+    // 🔥 FOOLPROOF FIX: Generate backticks mathematically so GitHub Mobile doesn't see them as Markdown
+    const backticks = String.fromCharCode(96, 96, 96);
+    const jsonMarker = backticks + 'json';
+
+    const cleanedText = rawText.replaceAll(jsonMarker, '').replaceAll(backticks, '').trim();
     const parsedData = JSON.parse(cleanedText);
 
     return NextResponse.json({
