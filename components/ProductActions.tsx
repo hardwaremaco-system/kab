@@ -10,10 +10,11 @@ import { FaWhatsapp } from "react-icons/fa";
 export default function ProductActions({ product, children }: { product: Product, children?: React.ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
-  
+
   const { addToCart, cart, cartTotal } = useCart();
 
-  const [quantity, setQuantity] = useState(1);
+  // 1. Updated state to accept a string temporarily for when the user clears the input
+  const [quantity, setQuantity] = useState<number | string>(1);
   const [loading, setLoading] = useState(false);
 
   const [showMore, setShowMore] = useState(false);
@@ -48,10 +49,14 @@ export default function ProductActions({ product, children }: { product: Product
       title: product.name || "Unknown Item", 
       price: currentPrice, 
       image: product.images?.[0] || "",
-      quantity: quantity,
+      // 2. Ensure we pass a valid number to the cart
+      quantity: Number(quantity) || 1, 
       sellerId: product.sellerId || "SYSTEM", 
       sellerPhone: product.sellerPhone || ""
     });
+
+    // Reset empty or invalid inputs back to 1 after adding to cart
+    if (!quantity || Number(quantity) < 1) setQuantity(1);
 
     setShowCartToast(true);
 
@@ -87,7 +92,6 @@ export default function ProductActions({ product, children }: { product: Product
       return;
     }
 
-    // Format phone number for wa.me link (replace leading 0 with 256 for Uganda)
     let formattedPhone = product.sellerPhone.replace(/\D/g, "");
     if (formattedPhone.startsWith("0")) {
       formattedPhone = "256" + formattedPhone.substring(1);
@@ -95,7 +99,7 @@ export default function ProductActions({ product, children }: { product: Product
 
     const priceText = isNegotiable ? "Price: Negotiable" : `Price: UGX ${currentPrice.toLocaleString()}`;
     const productUrl = `${window.location.origin}/product/${product.publicId || product.id}`;
-    
+
     const rawMessage = `Hi! I saw your item on Oweitu Shop and I'm interested in ordering/asking about it:\n\n*${product.name}*\n${priceText}\n\nLink: ${productUrl}`;
     const encodedMessage = encodeURIComponent(rawMessage);
 
@@ -135,9 +139,33 @@ export default function ProductActions({ product, children }: { product: Product
         {!isNegotiable ? (
           <div className="flex items-center gap-3">
             <div className="flex items-center border border-slate-300 rounded-md overflow-hidden h-12 bg-white shadow-sm">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 h-full text-lg font-bold text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors">-</button>
-              <span className="px-4 font-semibold text-lg border-x border-slate-300 h-full flex items-center justify-center min-w-[45px] text-slate-800 bg-slate-50">{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)} className="px-4 h-full text-lg font-bold text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors">+</button>
+              {/* 3. Updated increment/decrement to safely handle string states */}
+              <button onClick={() => setQuantity(Math.max(1, (Number(quantity) || 1) - 1))} className="px-4 h-full text-lg font-bold text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors">-</button>
+              
+              {/* 4. Replaced <span> with <input> */}
+              <input 
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  // Allow empty string so users can delete and re-type
+                  if (val === "") {
+                    setQuantity("");
+                  } else {
+                    setQuantity(parseInt(val, 10));
+                  }
+                }}
+                onBlur={() => {
+                  // Revert to 1 if user leaves it empty or inputs a number less than 1
+                  if (quantity === "" || Number(quantity) < 1) {
+                    setQuantity(1);
+                  }
+                }}
+                className="w-14 text-center font-semibold text-lg border-x border-slate-300 h-full text-slate-800 bg-slate-50 outline-none focus:bg-white focus:ring-inset focus:ring-2 focus:ring-slate-300 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+
+              <button onClick={() => setQuantity((Number(quantity) || 1) + 1)} className="px-4 h-full text-lg font-bold text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors">+</button>
             </div>
             <button onClick={handleAddToCart} className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold h-12 rounded-md text-sm uppercase tracking-wider shadow-sm transition-all active:scale-[0.98]">
               Add to Cart
@@ -152,7 +180,6 @@ export default function ProductActions({ product, children }: { product: Product
           </div>
         )}
 
-        {/* Trigger direct open window directly instead of the popup state */}
         <button onClick={handleDirectWhatsApp} className={`w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-md shadow-sm transition-all flex items-center justify-center gap-2 text-[15px] ${isNegotiable ? 'animate-pulse' : ''}`}>
           <FaWhatsapp className="text-xl" /> 
           {isNegotiable ? "Negotiate on WhatsApp" : "Order Using WhatsApp"}
