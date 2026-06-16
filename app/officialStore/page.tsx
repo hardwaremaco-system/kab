@@ -10,26 +10,26 @@ export const dynamic = "force-dynamic";
 // SEO & OPEN GRAPH METADATA
 // ==========================================
 export const metadata: Metadata = {
-  title: "Official Store | Kabale Online",
-  description: "Shop premium, verified products sold directly by Kabale Online. Guaranteed quality, secure mobile payments, and fast delivery across Kabale and Kigezi.",
+  title: "Official Store | Oweitu Shop",
+  description: "Shop premium, verified products sold directly by Oweitu Shop. Guaranteed quality, secure mobile payments, and fast delivery across the Ankole and Kigezi regions.",
   keywords: [
-    "Kabale Online Official Store", 
-    "verified products Kabale", 
+    "Oweitu Shop Official Store", 
+    "verified products Ankole Kigezi", 
     "secure shopping Uganda", 
     "Kigezi e-commerce", 
-    "buy premium items Kabale"
+    "buy premium items Oweitu Shop"
   ],
   openGraph: {
-    title: "Official Store | Kabale Online",
-    description: "Shop premium, verified products sold directly by Kabale Online. Guaranteed quality, secure mobile payments, and fast delivery.",
-    url: "https://kabaleonline.com/officialStore",
-    siteName: "Kabale Online",
+    title: "Official Store | Oweitu Shop",
+    description: "Shop premium, verified products sold directly by Oweitu Shop. Guaranteed quality, secure mobile payments, and fast delivery.",
+    url: "https://oweitushop.com/officialStore",
+    siteName: "Oweitu Shop",
     images: [
       {
         url: "/official-og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Kabale Online Official Store",
+        alt: "Oweitu Shop Official Store",
       },
     ],
     locale: "en_UG",
@@ -37,8 +37,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Official Store | Kabale Online",
-    description: "Shop premium, verified products sold directly by Kabale Online. Guaranteed quality and fast delivery.",
+    title: "Official Store | Oweitu Shop",
+    description: "Shop premium, verified products sold directly by Oweitu Shop. Guaranteed quality and fast delivery.",
     images: ["/official-og-image.jpg"],
   },
 };
@@ -66,9 +66,9 @@ export default async function OfficialStorePage() {
   });
 
   return (
-    <div className="min-h-screen bg-transparent pb-12 pt-2 sm:pt-4 font-sans selection:bg-[#D97706] selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-transparent pb-12 pt-2 sm:pt-4 font-sans selection:bg-[#FF6A00] selection:text-white overflow-x-hidden">
       <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4">
-        
+
         {/* DESKTOP SPLIT GRID */}
         <div className="flex flex-col md:flex-row gap-4 w-full">
 
@@ -79,20 +79,20 @@ export default async function OfficialStorePage() {
 
           {/* CENTER CONTENT */}
           <div className="flex-grow min-w-0 flex flex-col w-full gap-4">
-            
+
             {/* PREMIUM STORE BANNER */}
-            <div className="bg-slate-900 dark:bg-black rounded-none md:rounded-md p-6 sm:p-8 md:p-10 relative overflow-hidden flex flex-col justify-center shadow-sm border-b-4 md:border-b border-[#D97706] select-none">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-[#D97706]/10 rounded-full blur-3xl pointer-events-none" />
-              
+            <div className="bg-slate-900 dark:bg-black rounded-none md:rounded-md p-6 sm:p-8 md:p-10 relative overflow-hidden flex flex-col justify-center shadow-sm border-b-4 md:border-b border-[#FF6A00] select-none">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[#FF6A00]/10 rounded-full blur-3xl pointer-events-none" />
+
               <div className="relative z-10">
-                <span className="inline-block bg-[#D97706] text-white px-3 py-1.5 rounded-sm text-[9px] sm:text-[10px] font-black uppercase tracking-widest mb-3 sm:mb-4 shadow-md">
-                  Verified by Kabale Online
+                <span className="inline-block bg-[#FF6A00] text-white px-3 py-1.5 rounded-sm text-[9px] sm:text-[10px] font-black uppercase tracking-widest mb-3 sm:mb-4 shadow-md">
+                  Verified by Oweitu Shop
                 </span>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 sm:mb-3 tracking-tight">
                   Official Store
                 </h1>
                 <p className="text-slate-400 text-xs sm:text-sm md:text-base font-medium max-w-2xl leading-relaxed">
-                  Shop premium, verified products sold directly by us. Guaranteed quality, secure mobile payments, and fast delivery across Kabale and Kigezi.
+                  Shop premium, verified products sold directly by us. Guaranteed quality, secure mobile payments, and fast delivery across the Ankole and Kigezi regions.
                 </p>
               </div>
             </div>
