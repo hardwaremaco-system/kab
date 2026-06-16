@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogOut } from "lucide-react"; // 🔥 Added icon for logout
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth(); 
+  const { user, loading, signOut } = useAuth(); // 🔥 Added signOut here
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -14,10 +15,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Keep the VIP cookie fresh or clear it based on the user's role
   useEffect(() => {
     if (!loading) {
-      // 🔥 FIXED: Added "as string" to bypass TypeScript's strict role dictionary
       if (user?.role === "admin" || (user?.role as string) === "editor") {
         document.cookie = "oweitushop_staff_session=true; path=/; max-age=86400; secure; samesite=strict";
       } else {
@@ -35,8 +34,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // Reject if there is no user, OR if they don't have admin/editor roles
-  // 🔥 FIXED: Added "as string" bypass here too
   if (!user || (user.role !== "admin" && (user.role as string) !== "editor")) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-slate-50 px-4 text-center">
@@ -50,7 +47,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // ROLE-BASED NAVIGATION ITEMS
   const navItems = [
     { name: "Dashboard", href: "/admin", icon: "📊", roles: ["admin", "editor"] },
     { name: "Orders", href: "/admin/orders", icon: "🛒", roles: ["admin", "editor"] },
@@ -69,9 +65,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Search Logs", href: "/admin/searches", icon: "🔍", roles: ["admin"] },
   ];
 
-  // 🔥 FIXED: Added "as string" so the .includes() function stops throwing type errors
   const visibleNavItems = navItems.filter(item => item.roles.includes(user.role as string));
-
   const safeDisplayName = user.displayName || "Staff Member";
   const safeFirstLetter = safeDisplayName.charAt(0) || "O";
   const roleDisplay = user.role === "admin" ? "System Admin" : "Content Editor";
@@ -98,20 +92,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             );
           })}
         </nav>
+        
+        {/* DESKTOP FOOTER (Profile + Logout) */}
         <div className="p-6 border-t border-slate-800 relative z-10 bg-slate-950/50 backdrop-blur-md">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#D97706] to-amber-400 flex items-center justify-center font-black text-white shadow-inner text-lg">
-              {safeFirstLetter}
-            </div>
-            <div className="overflow-hidden">
-              <p className="text-sm font-bold text-white truncate">{safeDisplayName}</p>
-              <p className="text-[10px] text-[#D97706] uppercase tracking-widest font-black mt-0.5">{roleDisplay}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#D97706] to-amber-400 flex items-center justify-center font-black text-white shadow-inner text-lg">
+                {safeFirstLetter}
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-sm font-bold text-white truncate">{safeDisplayName}</p>
+                <p className="text-[10px] text-[#D97706] uppercase tracking-widest font-black mt-0.5">{roleDisplay}</p>
+              </div>
             </div>
           </div>
+          <button onClick={signOut} className="w-full flex items-center justify-center gap-2 text-red-400 hover:text-red-300 py-2 text-sm font-bold border border-red-900/50 rounded-lg hover:bg-red-900/20 transition-all">
+            <LogOut size={16} /> Sign Out
+          </button>
         </div>
       </aside>
 
-      {/* MOBILE OVERLAY & SLIDING MENU */}
+      {/* MOBILE MENU */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 md:hidden transition-opacity" onClick={() => setIsMobileMenuOpen(false)}></div>
       )}
@@ -135,6 +136,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </Link>
             );
           })}
+          {/* MOBILE LOGOUT */}
+          <button onClick={signOut} className="w-full flex items-center gap-4 px-4 py-3.5 mt-4 text-red-400 hover:bg-red-900/20 rounded-xl font-bold transition-all">
+            <LogOut size={20} /> Sign Out
+          </button>
         </nav>
       </aside>
 
