@@ -15,7 +15,8 @@ export async function POST(req: Request) {
 
     const prompt = `Write a professional e-commerce product description for a "${condition}" condition "${productName}" in the "${category}" category. Keep it under 4 short paragraphs. Also, write a 1-sentence SEO meta description. Return JSON with keys: "description" and "metaDescription".`;
 
-    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+    // 🔥 FIXED: Updated from the retired 1.5 model to Google's active 'gemini-2.5-flash' model
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
-          // 🔥 This forces Google to return pure JSON. No markdown, no backticks, no crashing!
+          // This forces Google to return pure JSON. No markdown, no crashing!
           response_mime_type: "application/json", 
         }
       })
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
 
     const aiData = await response.json();
 
-    // 🔥 If Google returns an error (like an invalid API Key), catch it safely!
+    // If Google returns an error, catch it safely!
     if (!response.ok || aiData.error) {
       console.error("Google AI Error:", aiData.error);
       return NextResponse.json({ success: false, error: aiData.error?.message || "AI API Error" }, { status: 500 });
