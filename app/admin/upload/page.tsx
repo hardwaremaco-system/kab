@@ -82,7 +82,7 @@ function AdminUploadContent() {
   }, [editPublicId, user]);
 
   // ============================================================================
-  // AI GENERATION LOGIC (Now hits our internal API)
+  // AI GENERATION LOGIC
   // ============================================================================
   const handleGenerateAI = async () => {
     if (!formData.title) {
@@ -199,6 +199,7 @@ function AdminUploadContent() {
     try {
       let newlyUploadedUrls: string[] = [];
 
+      // 1. CLOUDINARY UPLOAD
       if (imageFiles.length > 0) {
         const signRes = await fetch("/api/cloudinary/sign", {
           method: "POST",
@@ -234,30 +235,34 @@ function AdminUploadContent() {
       }
 
       const finalImagesList = [...existingImages, ...newlyUploadedUrls];
+      
+      const productPayload = {
+        title: formData.title,
+        category: formData.category,
+        price: Number(formData.price),
+        originalPrice: Number(formData.originalPrice) || 0,
+        isSale: formData.isSale,
+        campaignType: formData.isSale ? formData.campaignType : null,
+        saleEndDate: formData.isSale ? new Date(formData.saleEndDate).toISOString() : null,
+        stock: Number(formData.quantity),
+        condition: isService ? "N/A" : formData.condition,
+        description: formData.description,
+        metaDescription: formData.metaDescription, 
+        sellerPhone: formData.sellerPhone,
+        images: finalImagesList,
+        sellerId: user.id, 
+        sellerName: "Oweitu Shop Official", 
+        isAdminUpload: true, 
+      };
+
       const method = editPublicId ? "PUT" : "POST";
       const apiUrl = editPublicId ? `/api/products/${productIdToUpdate}` : "/api/products";
 
+      // 2. FIREBASE SAVE
       const dbRes = await fetch(apiUrl, {
         method: method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: formData.title,
-          category: formData.category,
-          price: Number(formData.price),
-          originalPrice: Number(formData.originalPrice) || 0,
-          isSale: formData.isSale,
-          campaignType: formData.isSale ? formData.campaignType : null,
-          saleEndDate: formData.isSale ? new Date(formData.saleEndDate).toISOString() : null,
-          stock: Number(formData.quantity),
-          condition: isService ? "N/A" : formData.condition,
-          description: formData.description,
-          metaDescription: formData.metaDescription, 
-          sellerPhone: formData.sellerPhone,
-          images: finalImagesList,
-          sellerId: user.id, 
-          sellerName: "Oweitu Shop Official", 
-          isAdminUpload: true, 
-        }),
+        body: JSON.stringify(productPayload),
       });
 
       const rawText = await dbRes.text();
@@ -270,6 +275,24 @@ function AdminUploadContent() {
       }
 
       if (dbRes.ok) {
+        // 3. 🔥 PUSH TO ALGOLIA IMMEDIATELY (Manual Sync)
+        try {
+          const syncId = editPublicId ? productIdToUpdate : dbData.publicId;
+          await fetch("/api/sync-algolia", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              ...productPayload, 
+              id: syncId, // Mapping the DB ID to Algolia's objectID
+              name: productPayload.title 
+            })
+          });
+          console.log("Official product successfully synced to Algolia!");
+        } catch (syncError) {
+          console.error("Failed to sync with Algolia search engine:", syncError);
+        }
+
+        // 4. UI SUCCESS HANDLING
         setSuccessMessage(editPublicId ? "Official item updated successfully!" : "New official product published!");
         window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -389,7 +412,6 @@ function AdminUploadContent() {
             </div>
           </div>
 
-          {/* 🔥 NEW SECTION: PROMOTIONS & HOMEPAGE PLACEMENT */}
           <div className="bg-orange-50/50 border border-orange-100 rounded-xl p-5 mt-6">
              <div className="flex items-center gap-3 mb-4">
                 <input 
