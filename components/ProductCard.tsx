@@ -19,19 +19,19 @@ export default function ProductCard({ product }: { product: any }) {
   const isSold = product.status === "sold";
 
   const titleStr = product.title || product.name || 'Product';
-  // Note: We skip appending "(Free delivery available)" here because it takes up too much room on a single line
   const displayTitle = titleStr;
 
   // ==========================================
-  // 2. PRICING & CAMPAIGN DEALS LOGIC
+  // 2. PRICING LOGIC (🔥 FIXED)
   // ==========================================
   const currentPrice = Number(product.price) || 0;
   const originalPrice = Number(product.originalPrice) || 0;
-
   const isNegotiable = currentPrice === 0;
-  const isSale = product.isSale === true && !isNegotiable && originalPrice > currentPrice;
 
-  const discountPercent = isSale 
+  // 🔥 We now check purely if the original price is greater than the current price
+  const hasDiscount = originalPrice > currentPrice && !isNegotiable;
+
+  const discountPercent = hasDiscount 
     ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) 
     : 0;
 
@@ -71,7 +71,6 @@ export default function ProductCard({ product }: { product: any }) {
         {/* ======================= */}
         {/* TOP: IMAGE & BADGES     */}
         {/* ======================= */}
-        {/* 🔥 FIX: Changed aspect-square (1:1) to aspect-[4/5] (tall rectangle) to maximize image size */}
         <div className="relative aspect-[4/5] w-full bg-slate-50 dark:bg-[#0a0a0a] overflow-hidden border-b border-slate-100 dark:border-slate-800/60">
           {optimizedImage ? (
             <Image 
@@ -105,7 +104,7 @@ export default function ProductCard({ product }: { product: any }) {
           )}
 
           {/* Discount Badge (Top Right) */}
-          {!isSold && isSale && discountPercent > 0 && (
+          {!isSold && hasDiscount && discountPercent > 0 && (
             <div className="absolute top-2 right-2 bg-red-50 text-red-600 border border-red-200 text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded shadow-sm z-10">
               -{discountPercent}%
             </div>
@@ -115,22 +114,18 @@ export default function ProductCard({ product }: { product: any }) {
         {/* ======================= */}
         {/* BOTTOM: TEXT & DETAILS  */}
         {/* ======================= */}
-        {/* 🔥 FIX: Tightened padding (p-2.5) to reduce white space */}
         <div className="flex flex-col flex-grow p-2.5 sm:p-3">
 
-          {/* Category / Meta */}
           <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5 truncate">
             {product.category?.replace('-', ' ') || 'Electronics'}
           </span>
 
-          {/* 🔥 FIX: Changed line-clamp-2 to truncate (single line) and reduced bottom margin */}
           <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate leading-tight mb-2 group-hover:text-[#FF6A00] transition-colors">
             {displayTitle}
           </h3>
 
           <div className="mt-auto flex flex-col gap-2">
 
-            {/* CONDITIONAL STOCK BAR */}
             {!isSold && hasStockData && (
               <div className="flex flex-col gap-1 w-full">
                 <div className="w-full h-[4px] bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -145,20 +140,19 @@ export default function ProductCard({ product }: { product: any }) {
               </div>
             )}
 
-            {/* Price Line */}
-            {/* 🔥 FIX: Tightened padding top on price divider */}
             <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between">
 
               <div className="flex flex-col justify-center">
-                <span className={`text-sm sm:text-base font-black leading-none ${isSold ? 'text-slate-400 line-through' : isNegotiable ? 'text-[#FF6A00]' : 'text-slate-900 dark:text-white group-hover:text-[#FF6A00]'} transition-colors`}>
-                  {isNegotiable ? "Negotiable" : `UGX ${currentPrice.toLocaleString()}`}
-                </span>
-
-                {isSale && (
-                  <span className="text-[10px] font-bold text-slate-400 line-through mt-0.5">
+                {/* 🔥 The Original Price is now strictly tied to hasDiscount */}
+                {hasDiscount && (
+                  <span className="text-[10px] font-bold text-slate-400 line-through mb-0.5">
                     UGX {originalPrice.toLocaleString()}
                   </span>
                 )}
+                
+                <span className={`text-sm sm:text-base font-black leading-none ${isSold ? 'text-slate-400 line-through' : isNegotiable ? 'text-[#FF6A00]' : 'text-slate-900 dark:text-white group-hover:text-[#FF6A00]'} transition-colors`}>
+                  {isNegotiable ? "Negotiable" : `UGX ${currentPrice.toLocaleString()}`}
+                </span>
               </div>
 
               {!isSold && (
