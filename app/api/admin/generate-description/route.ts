@@ -17,7 +17,6 @@ export async function POST(req: Request) {
     // A prompt engineered to sound like a professional e-commerce store
     const prompt = `Write a high-converting, professional e-commerce product description for a "${condition}" condition "${productName}" in the "${category}" category. Keep it under 4 short paragraphs. Highlight key benefits. Also, write a 1-sentence SEO meta description. Return ONLY valid JSON in this exact format: {"description": "your description here", "metaDescription": "your short seo snippet here"}`;
 
-    // 🔥 FIXED: Removed the broken Markdown link formatting and replaced it with a standard template literal string
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -31,7 +30,7 @@ export async function POST(req: Request) {
     // Extract the raw text from Google's response
     const rawText = aiData.candidates[0].content.parts[0].text;
 
-    // Using new RegExp() prevents Vercel build errors from line-breaks
+    // 🔥 FIXED: Removed the accidental line breaks inside the single quotes
     const regexJson = new RegExp('```json', 'g');
     const regexTicks = new RegExp('
 ```', 'g');
