@@ -44,7 +44,7 @@ export default function ReturnsPage() {
           If you receive a damaged, defective, or wrong item, we are here to help.
         </p>
 
-        <div className="space-y-8 bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+        <div className="space-y-8 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
 
           {/* Eligible Returns */}
           <section className="border-b border-slate-100 pb-6">
@@ -103,16 +103,24 @@ export default function ReturnsPage() {
               Contact our support team for return assistance. We are available 24/7 to help resolve your issues.
             </p>
 
-            <div className="space-y-3 font-medium bg-slate-50 p-6 rounded-xl border border-slate-100">
-              <p className="flex items-center gap-3 text-slate-800">
+            <div className="space-y-4 font-medium bg-slate-50 p-6 rounded-xl border border-slate-100 overflow-hidden">
+              <p className="flex flex-wrap items-center gap-2 sm:gap-3 text-slate-800">
                 <span className="text-xl">💬</span> WhatsApp: 
-                <a href={`https://wa.me/${settings.whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="text-[#FF6A00] hover:underline font-bold">
+                <a 
+                  href={`https://wa.me/${settings.whatsappNumber}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-[#FF6A00] hover:underline font-bold break-all"
+                >
                   +{settings.whatsappNumber}
                 </a>
               </p>
-              <p className="flex items-center gap-3 text-slate-800">
+              <p className="flex flex-wrap items-center gap-2 sm:gap-3 text-slate-800">
                 <span className="text-xl">📧</span> Email: 
-                <a href={`mailto:${settings.supportEmail}`} className="text-[#FF6A00] hover:underline font-bold">
+                <a 
+                  href={`mailto:${settings.supportEmail}`} 
+                  className="text-[#FF6A00] hover:underline font-bold break-all"
+                >
                   {settings.supportEmail}
                 </a>
               </p>
