@@ -308,7 +308,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
 
       <div className="mt-8 mb-12 border-t border-slate-200 pt-8 text-center px-4">
         <p className="text-[#6B6B6B] text-sm font-medium">Got something to sell?{' '}
-          <Link href="/sell" className="text-[#FF6A00] font-bold underline decoration-2 underline-offset-4">Start selling on Kabale Online</Link>
+          <Link href="/sell" className="text-[#FF6A00] font-bold underline decoration-2 underline-offset-4">Start selling on Oweitu Shop</Link>
         </p>
       </div>
     </div>
