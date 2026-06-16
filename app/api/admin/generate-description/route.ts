@@ -9,35 +9,42 @@ export async function POST(req: Request) {
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
-
     if (!apiKey) {
       return NextResponse.json({ success: false, error: "Server missing AI API Key" }, { status: 500 });
     }
 
-    const prompt = `Write a high-converting, professional e-commerce product description for a "${condition}" condition "${productName}" in the "${category}" category. Keep it under 4 short paragraphs. Highlight key benefits. Also, write a 1-sentence SEO meta description. Return ONLY valid JSON in this exact format: {"description": "your description here", "metaDescription": "your short seo snippet here"}`;
+    const prompt = `Write a professional e-commerce product description for a "${condition}" condition "${productName}" in the "${category}" category. Keep it under 4 short paragraphs. Also, write a 1-sentence SEO meta description. Return JSON with keys: "description" and "metaDescription".`;
 
-    // Broken into pieces so GitHub CANNOT turn it into a Markdown link
-    const part1 = "https://generativelanguage.";
-    const part2 = "googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
-    const finalUrl = part1 + part2 + apiKey;
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
 
-    const response = await fetch(finalUrl, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          // 🔥 This forces Google to return pure JSON. No markdown, no backticks, no crashing!
+          response_mime_type: "application/json", 
+        }
       })
     });
 
     const aiData = await response.json();
-    const rawText = aiData.candidates[0].content.parts[0].text;
 
-    // 🔥 FOOLPROOF FIX: Generate backticks mathematically so GitHub Mobile doesn't see them as Markdown
-    const backticks = String.fromCharCode(96, 96, 96);
-    const jsonMarker = backticks + 'json';
+    // 🔥 If Google returns an error (like an invalid API Key), catch it safely!
+    if (!response.ok || aiData.error) {
+      console.error("Google AI Error:", aiData.error);
+      return NextResponse.json({ success: false, error: aiData.error?.message || "AI API Error" }, { status: 500 });
+    }
 
-    const cleanedText = rawText.replaceAll(jsonMarker, '').replaceAll(backticks, '').trim();
-    const parsedData = JSON.parse(cleanedText);
+    // Safely extract the text
+    const rawText = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
+    
+    if (!rawText) {
+      throw new Error("AI returned an empty response.");
+    }
+
+    const parsedData = JSON.parse(rawText);
 
     return NextResponse.json({
       success: true,
@@ -45,8 +52,8 @@ export async function POST(req: Request) {
       metaDescription: parsedData.metaDescription
     });
 
-  } catch (error) {
-    console.error("AI Generation Error:", error);
-    return NextResponse.json({ success: false, error: "Failed to generate AI content" }, { status: 500 });
+  } catch (error: any) {
+    console.error("API Error:", error);
+    return NextResponse.json({ success: false, error: error.message || "Failed to generate AI content" }, { status: 500 });
   }
 }
