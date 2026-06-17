@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Refer & Earn | Kabale Online Partner Program",
+  title: "Refer & Earn | oweitu shop Partner Program",
   description:
     "Invite friends to Oweitu Shop and earn 3,000 UGX directly to your Mobile Money for every new customer. Join the campus partner program today!",
   openGraph: {
