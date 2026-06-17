@@ -113,7 +113,7 @@ export default function RequestsPage() {
           </span>
           <h1 className="text-3xl sm:text-5xl font-black mb-4">Can't find what you need?</h1>
           <p className="text-slate-300 text-lg max-w-2xl mx-auto mb-8">
-            Post what you are looking for and your maximum budget. Sellers in Kabale will contact you directly with offers!
+            Post what you are looking for and your maximum budget. Sellers in the world will contact you directly with offers!
           </p>
           <button 
             onClick={() => { setIsModalOpen(true); setSuccessData(null); }}
