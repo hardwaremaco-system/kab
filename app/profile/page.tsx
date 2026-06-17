@@ -225,7 +225,7 @@ export default function ProfilePage() {
         {/* ACTIONS */}
         <div className="flex flex-col gap-3 w-full">
           <a 
-            href="https://whatsapp.com/channel/0029Vb7mKqmKGGGKqH0bvq2D" 
+            href="https://whatsapp.com/channel/0029VbDPgdfFXUuRvlO2c73b" 
             target="_blank" 
             rel="noreferrer"
             className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2 text-[14px]"
