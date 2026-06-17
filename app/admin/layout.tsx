@@ -4,26 +4,16 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut } from "lucide-react"; // 🔥 Added icon for logout
+import { LogOut } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading, signOut } = useAuth(); // 🔥 Added signOut here
+  const { user, loading, signOut } = useAuth();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
-
-  useEffect(() => {
-    if (!loading) {
-      if (user?.role === "admin" || (user?.role as string) === "editor") {
-        document.cookie = "oweitushop_staff_session=true; path=/; max-age=86400; secure; samesite=strict";
-      } else {
-        document.cookie = "oweitushop_staff_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-      }
-    }
-  }, [user, loading]);
 
   if (loading) {
     return (
@@ -34,6 +24,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
+  // Purely role-based client-side check
   if (!user || (user.role !== "admin" && (user.role as string) !== "editor")) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-slate-50 px-4 text-center">
@@ -92,7 +83,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             );
           })}
         </nav>
-        
+
         {/* DESKTOP FOOTER (Profile + Logout) */}
         <div className="p-6 border-t border-slate-800 relative z-10 bg-slate-950/50 backdrop-blur-md">
           <div className="flex items-center justify-between mb-4">
