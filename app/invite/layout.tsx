@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Earn 3,000 UGX per Referral | Kabale Online",
+    title: "Earn 3,000 UGX per Referral | oweitu shop",
     description: "Get paid to your Mobile Money when you invite friends to shop on Oweitu Shop.",
     images: ["https://www.oweitushop.com/api/og"],
   },
