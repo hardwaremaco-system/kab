@@ -222,7 +222,7 @@ export default function SettingsPage() {
         <div className="bg-slate-100 p-5 rounded-xl border border-slate-200 w-full">
           <p className="font-black text-slate-800 mb-3 uppercase tracking-wider text-[11px]">Network Guidelines</p>
           <ul className="text-[12px] text-slate-600 font-medium space-y-2 pl-4 list-disc marker:text-[#D97706]">
-            <li><strong className="text-slate-800 font-black">Official Items Only:</strong> Commissions apply only to verified official Kabale Online stock. Third-party seller items are excluded.</li>
+            <li><strong className="text-slate-800 font-black">Official Items Only:</strong> Commissions apply only to verified official Oweitu shop stock. Third-party seller items are excluded.</li>
             <li><strong className="text-slate-800 font-black">Infinite Cookie Window:</strong> Earn on both new AND returning customers. If they use your link, you get the cut.</li>
             <li><strong className="text-slate-800 font-black">Dynamic Scaling:</strong> Earn 10% of the cart value (Max 3,000 UGX). Micro-carts under 5k earn a flat 300 UGX.</li>
             <li><strong className="text-slate-800 font-black">Instant Unlocks:</strong> Your wallet is credited the exact moment the order delivery is marked successful by the admin.</li>
