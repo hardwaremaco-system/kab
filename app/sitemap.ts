@@ -19,42 +19,51 @@ const parseDate = (val: any): Date => {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.oweitushop.com";
+  
+  let productEntries: MetadataRoute.Sitemap = [];
+  let blogEntries: MetadataRoute.Sitemap = [];
 
-  // 1. Fetch Dynamic Products
-  const productsSnap = await adminDb
-    .collection("products")
-    .orderBy("createdAt", "desc")
-    .limit(1000) 
-    .get();
+  // 🔥 Wrap DB calls in try/catch so the sitemap doesn't completely break if Firebase timeouts
+  try {
+    // 1. Fetch Dynamic Products
+    const productsSnap = await adminDb
+      .collection("products")
+      .orderBy("createdAt", "desc")
+      .limit(1000) 
+      .get();
 
-  const productEntries = productsSnap.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      url: `${baseUrl}/product/${data.publicId || doc.id}`,
-      lastModified: parseDate(data.updatedAt || data.createdAt),
-      changeFrequency: 'daily' as const,
-      priority: 0.8,
-    };
-  });
+    productEntries = productsSnap.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        url: `${baseUrl}/product/${data.publicId || doc.id}`,
+        lastModified: parseDate(data.updatedAt || data.createdAt),
+        changeFrequency: 'daily' as const,
+        priority: 0.8,
+      };
+    });
 
-  // 2. Fetch Dynamic Blog Posts
-  const blogSnap = await adminDb
-    .collection("blog_posts")
-    .orderBy("publishedAt", "desc")
-    .limit(1000) 
-    .get();
+    // 2. Fetch Dynamic Blog Posts
+    const blogSnap = await adminDb
+      .collection("blog_posts")
+      .orderBy("publishedAt", "desc")
+      .limit(1000) 
+      .get();
 
-  const blogEntries = blogSnap.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      url: `${baseUrl}/blog/${doc.id}`,
-      lastModified: parseDate(data.updatedAt || data.publishedAt),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    };
-  });
+    blogEntries = blogSnap.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        url: `${baseUrl}/blog/${doc.id}`,
+        lastModified: parseDate(data.updatedAt || data.publishedAt),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching dynamic routes for sitemap:", error);
+    // It will gracefully fall back to empty arrays for dynamic content
+  }
 
-  // 3. Category Hubs (Updated with all 10 dynamic categories + legacy)
+  // 3. Category Hubs
   const categories = [
     "bundles",
     "student_essentials",
