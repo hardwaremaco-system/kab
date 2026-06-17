@@ -28,7 +28,7 @@ export default function SettingsPage() {
   }
 
   const hasLockedAlias = !!user.referralName;
-  const currentDisplayName = user.referralName || user.displayName?.split(' ')[0] || "Kabale User";
+  const currentDisplayName = user.referralName || user.displayName?.split(' ')[0] || "Oweitu User";
   
   // 🚀 FIXED: Removed the TS error trigger
   const currentPhone = user.phone;
