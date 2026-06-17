@@ -38,18 +38,10 @@ export default function Navbar() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // ==============================================
-  // ROLE & COOKIE LOGIC 
+  // ROLE LOGIC 
   // ==============================================
   // Using "as string" to prevent strict type errors if types.ts is still caching
   const isStaff = user?.role === "admin" || (user?.role as string) === "editor";
-
-  useEffect(() => {
-    if (isStaff) {
-      document.cookie = "oweitushop_staff_session=true; path=/; max-age=86400; secure; samesite=strict";
-    } else {
-      document.cookie = "oweitushop_staff_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    }
-  }, [isStaff]);
 
   // Lock body scroll AND broadcast state
   useEffect(() => {
