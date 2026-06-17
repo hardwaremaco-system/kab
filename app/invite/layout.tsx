@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Invite friends to Oweitu Shop and earn 3,000 UGX directly to your Mobile Money for every new customer. Join the campus partner program today!",
   openGraph: {
-    title: "Earn 3,000 UGX per Referral | Kabale Online",
+    title: "Earn 3,000 UGX per Referral | oweitu shop",
     description:
       "Get paid directly to your MTN/Airtel Mobile Money when you invite friends to shop official items on Oweitu Shop. Start earning today!",
     url: "https://www.oweitushop.com/invite",
