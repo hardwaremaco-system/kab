@@ -96,7 +96,7 @@ export default function MagicReplyPage({ params }: { params: { messageId: string
         <div className="bg-slate-900 p-6 sm:p-8 text-white text-center relative overflow-hidden">
           <div className="relative z-10">
             <span className="bg-[#D97706] text-[10px] uppercase font-black px-3 py-1 rounded-full mb-3 inline-block tracking-widest">
-              Kabale Online Secure Reply
+              Oweitu Shop Secure Reply
             </span>
             <h1 className="text-2xl sm:text-3xl font-bold">Customer Support</h1>
           </div>
