@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ 
       revalidated: true, 
       timestamp: new Date().toISOString(),
-      message: "Success! The 'products' cache for Kabale Online has been wiped." 
+      message: "Success! The 'products' cache for oweitu shop Online has been wiped." 
     });
   } catch (err) {
     console.error("Cache wipe failed:", err);
