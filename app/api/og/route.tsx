@@ -45,8 +45,8 @@ export async function GET(request: Request) {
         >
           {/* Logo / Brand Name */}
           <div style={{ display: 'flex', fontSize: 48, fontWeight: 'black', marginBottom: '20px', letterSpacing: '-0.05em' }}>
-            <span style={{ color: 'white' }}>Kabale</span>
-            <span style={{ color: '#D97706' }}>Online</span>
+            <span style={{ color: 'white' }}>Oweitu</span>
+            <span style={{ color: '#D97706' }}>Shop</span>
           </div>
 
           {/* 🔥 NEW: Deal Badge (Only renders if dealType is provided) */}
