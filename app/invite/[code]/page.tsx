@@ -16,9 +16,9 @@ export async function generateMetadata(
   const code = params.code;
 
   // Default fallback text if code is invalid or database fails
-  let title = "You've been invited to Kabale Online! 🎁";
-  let description = "Join Kabale Online to buy and sell locally with Cash on Delivery.";
-  let ogImageUrl = "https://www.kabaleonline.com/api/og";
+  let title = "You've been invited to oweitu Online shop! 🎁";
+  let description = "Join oweitu Online to buy and sell locally with Cash on Delivery.";
+  let ogImageUrl = "https://www.oweitushop.com/api/og";
 
   // 🔥 FIX: Removed the strict length check so it actually runs the database query
   if (code) {
@@ -40,11 +40,11 @@ export async function generateMetadata(
         }
 
         // Override with the personalized text!
-        title = `${displayAlias} invited you to Kabale Online! 🎁`;
+        title = `${displayAlias} invited you to oweitu shop Online! 🎁`;
         description = `Click here to accept ${displayAlias}'s invite and shop safely on campus with Cash on Delivery.`;
 
         // 🚀 Add the customized name to the image URL so it prints on the graphic
-        ogImageUrl = `https://www.kabaleonline.com/api/og?name=${encodeURIComponent(displayAlias)}`;
+        ogImageUrl = `https://www.oweitushop.com/api/og?name=${encodeURIComponent(displayAlias)}`;
       }
     } catch (error) {
       console.error("Failed to fetch referrer for OG tags:", error);
@@ -57,8 +57,8 @@ export async function generateMetadata(
     openGraph: {
       title,
       description,
-      url: `https://www.kabaleonline.com/invite/${code}`,
-      siteName: "Kabale Online",
+      url: `https://www.oweitushop.com/invite/${code}`,
+      siteName: "oweitu shop",
       images: [
         {
           url: ogImageUrl,
