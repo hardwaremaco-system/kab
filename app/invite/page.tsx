@@ -44,7 +44,7 @@ export default function InviteHubPage() {
         <div className="max-w-[480px] md:max-w-2xl mx-auto p-4 pt-8 md:pt-12 flex flex-col w-full">
           <div className="text-center mb-8 w-full">
             <span className="text-[#D97706] font-black tracking-widest uppercase text-[11px] mb-2 block">Creator & Affiliate Network</span>
-            <h1 className="text-3xl font-black text-slate-900 mb-3 leading-tight">Promote Kabale.<br/>Earn Real Cash.</h1>
+            <h1 className="text-3xl font-black text-slate-900 mb-3 leading-tight">Promote Oweitu Shop.<br/>Earn Real Cash.</h1>
             <p className="text-slate-500 text-[15px] px-2 w-full font-medium">Earn up to <strong className="text-slate-900">3,000 UGX</strong> directly to your Mobile Money every time someone buys using your link.</p>
           </div>
 
