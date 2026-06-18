@@ -115,7 +115,7 @@ export default function AdminSearchesPage() {
       <div className="mb-8 border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900">Search Logs</h1>
-          <p className="text-slate-600 mt-2 font-medium">See exactly what the Kabale community is looking for.</p>
+          <p className="text-slate-600 mt-2 font-medium">See exactly what the Western community is looking for.</p>
         </div>
         <div className="bg-purple-50 text-purple-700 px-4 py-2 rounded-lg font-bold text-sm border border-purple-100 shadow-sm flex items-center gap-2">
           <span>🔍</span> {logs.length} Queries Loaded
