@@ -90,7 +90,7 @@ export default function CheckoutForm({ product }: { product: Product }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-2">Delivery Location in Kabale *</label>
+            <label className="block text-sm font-semibold text-slate-900 mb-2">Delivery Location in western Uganda *</label>
             <textarea 
               required 
               rows={3}
