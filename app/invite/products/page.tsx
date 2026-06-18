@@ -76,7 +76,7 @@ export default function CreatorStudioPage() {
                <div className="py-12 text-center text-slate-400 text-sm font-medium">No official products found.</div>
             ) : (
               promotableProducts.map((product) => {
-                const productLink = `https://www.kabaleonline.com/product/${product.publicId || product.id}?ref=${referralCode}`;
+                const productLink = `https://www.oweitushop.com/product/${product.publicId || product.id}?ref=${referralCode}`;
                 const isCopied = copied === product.id;
                 const estCommission = calculateCommission(product.price);
 
