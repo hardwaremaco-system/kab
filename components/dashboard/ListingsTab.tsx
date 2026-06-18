@@ -90,7 +90,7 @@ export default function ListingsTab({ userId, hasInventory }: { userId: string, 
         <div className="w-20 h-20 bg-[#D97706]/10 text-[#D97706] rounded-full flex items-center justify-center text-4xl mx-auto mb-4">💸</div>
         <h2 className="text-2xl font-black text-slate-900 mb-2 leading-tight">Turn your items into cash instantly</h2>
         <p className="text-slate-600 text-sm mb-8 leading-relaxed">
-          Join hundreds of successful sellers in Kabale. Post your unused items, reach thousands of local buyers daily, and keep 100% of your profits.
+          Join hundreds of successful sellers in Western Ugandan. Post your unused items, reach thousands of local buyers daily, and keep 100% of your profits.
         </p>
         <Link href="/sell" className="w-full block py-4 bg-[#D97706] text-white font-black text-lg rounded-xl shadow-md hover:bg-amber-600 active:scale-95 transition-all">
           Post Your First Item Free
