@@ -400,7 +400,7 @@ function LeftSidebarContent() {
              <div className="h-5 w-8 rounded-sm bg-slate-200 dark:bg-slate-700 animate-ug-red"></div>
            </div>
            <p style={{ color: '#6B6B6B' }} className="text-xs dark:text-slate-400 font-semibold leading-relaxed">
-             Encrypted Mobile Money checkout powered by <span style={{ color: '#1A1A1A' }} className="dark:text-white font-bold">Kabale Online Pay</span>.
+             Encrypted Mobile Money checkout powered by <span style={{ color: '#1A1A1A' }} className="dark:text-white font-bold">oweitu shop Online Pay</span>.
            </p>
         </div>
       </div>
