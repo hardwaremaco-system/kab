@@ -168,7 +168,7 @@ export default function SellPage() {
         sellerPhone: formData.sellerPhone,
         images: imageUrls,
         sellerId: currentUser.id,
-        sellerName: currentUser.displayName || "Kabale Seller",
+        sellerName: currentUser.displayName || "Oweitu Seller",
       };
 
       const dbRes = await fetch("/api/products", {
