@@ -130,7 +130,7 @@ function SearchResults() {
                 <svg className="animate-spin w-16 h-16 text-[#D97706] drop-shadow-md mb-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="7" className="opacity-90" strokeDasharray="200" strokeDashoffset="50" />
                 </svg>
-                <p className="font-bold text-slate-500 animate-pulse">Searching Kabale Online for "{query}"...</p>
+                <p className="font-bold text-slate-500 animate-pulse">Searching Oweitu Shop for "{query}"...</p>
               </div>
             ) : (
               <>
@@ -167,7 +167,7 @@ function SearchResults() {
                       <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 rounded-2xl p-6 mb-8">
                         <span className="text-4xl block mb-2">✅</span>
                         <h3 className="font-bold text-lg mb-1">Alert Setup Complete!</h3>
-                        <p className="text-sm">We'll message you at <strong>{contactInfo}</strong> the exact moment someone posts this item in Kabale.</p>
+                        <p className="text-sm">We'll message you at <strong>{contactInfo}</strong> the exact moment someone posts this item in western.</p>
                       </div>
                     ) : (
                       <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 sm:p-8 mb-8 text-left shadow-inner">
