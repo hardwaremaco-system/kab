@@ -313,7 +313,7 @@ function LeftSidebarContent() {
             <Truck className="w-5 h-5 text-[#FF6A00] shrink-0 mt-0.5" strokeWidth={2.5} />
             <div className="flex flex-col">
               <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">Fast Delivery</span>
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-snug">Swift and secure dispatch directly to your door anywhere in Kabale.</span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-snug">Swift and secure dispatch directly to your door anywhere in western Uganda.</span>
             </div>
           </div>
 
