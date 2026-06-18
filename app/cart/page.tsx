@@ -278,7 +278,7 @@ export default function CartPage() {
 
           <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-medium">
             <FaShieldAlt className="text-slate-400" /> 
-            Secure purchase powered by Kabale Online
+            Secure purchase powered by Oweitu Shop
           </div>
         </div>
       </div>
