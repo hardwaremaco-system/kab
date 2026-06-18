@@ -239,7 +239,7 @@ export default function ServiceCheckoutPage({ params }: { params: { id: string }
             {/* 🔒 SECURE PAYMENT BADGE */}
             <div className="mt-6 flex items-center justify-center gap-2 text-[11px] uppercase tracking-wider font-bold text-green-700 bg-green-50 py-3 rounded-xl border border-green-200">
               <FaShieldAlt className="text-green-600 text-sm" />
-              Secure Payment via Kabale Online
+              Secure Payment via Oweitu Shop
             </div>
           </div>
         </div>
