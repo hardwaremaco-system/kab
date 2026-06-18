@@ -20,7 +20,7 @@ export async function generateMetadata(
     const snap = await adminDb.collection("blog_posts").doc(params.id).get();
     if (!snap.exists) {
       return {
-        title: "Article Not Found | Kabale Online",
+        title: "Article Not Found | Oweitu Shop",
         description: "This article does not exist.",
       };
     }
