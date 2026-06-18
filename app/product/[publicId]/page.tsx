@@ -19,7 +19,7 @@ import { MdVerifiedUser } from "react-icons/md";
 
 export async function generateMetadata({ params }: { params: { publicId: string } }): Promise<Metadata> {
   const product = await getProductByPublicId(params.publicId);
-  if (!product) return { title: "Item Not Found | Kabale Online" };
+  if (!product) return { title: "Item Not Found | Oweitu Shop" };
 
   const productRef = doc(db, "products", product.id);
   const rawSnap = await getDoc(productRef);
@@ -39,13 +39,13 @@ export async function generateMetadata({ params }: { params: { publicId: string 
     : (Number(rawData.originalPrice) || Number(product.price));
 
   const formattedPrice = currentPrice === 0 ? "Negotiable" : `UGX ${(currentPrice || 0).toLocaleString()}`;
-  const title = `${safeName} - Available in Kabale | ${formattedPrice}`;
+  const title = `${safeName} - Available in western Uganda | ${formattedPrice}`;
   const description = product.description?.slice(0, 150) || `Buy this ${safeName} for ${formattedPrice}. Pay strictly Cash on Delivery in Kabale town.`;
-  const imageUrl = product.images?.[0] || "https://www.kabaleonline.com/og-image.jpg";
+  const imageUrl = product.images?.[0] || "https://www.oweitushop.com/og-image.jpg";
 
   return {
     title, description,
-    openGraph: { title, description, url: `https://www.kabaleonline.com/product/${params.publicId}`, siteName: "Kabale Online", images: [{ url: imageUrl, width: 1200, height: 630, alt: safeName }], type: "website" },
+    openGraph: { title, description, url: `https://www.oweitushop.com/product/${params.publicId}`, siteName: "Oweitu Shop", images: [{ url: imageUrl, width: 1200, height: 630, alt: safeName }], type: "website" },
     twitter: { card: "summary_large_image", title, description, images: [imageUrl] },
   };
 }
@@ -155,8 +155,8 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
 
   const jsonLd = {
     "@context": "https://schema.org", "@type": "Product", "name": safeName, "image": optimizedImages[0] || "",
-    "description": product.description || `Buy ${safeName} safely in Kabale.`,
-    "offers": { "@type": "Offer", "url": `https://www.kabaleonline.com/product/${params.publicId}`, "priceCurrency": "UGX", "price": safePrice, "availability": isSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock", "itemCondition": safeCondition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition", "seller": { "@type": "Organization", "name": product.sellerName || "Kabale Online" } }
+    "description": product.description || `Buy ${safeName} safely in Western Uganda.`,
+    "offers": { "@type": "Offer", "url": `https://www.Sweitu Shop.com/product/${params.publicId}`, "priceCurrency": "UGX", "price": safePrice, "availability": isSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock", "itemCondition": safeCondition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition", "seller": { "@type": "Organization", "name": product.sellerName || "Kabale Online" } }
   };
 
   const campaignTitle = campaignType 
