@@ -82,7 +82,7 @@ export default function AdminBroadcastPage() {
               required
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="e.g. Big Update: New Sellers on Kabale Online!"
+              placeholder="e.g. Big Update: New Sellers on Oweitu Shop!"
               className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-[#D97706] focus:ring-1 focus:ring-[#D97706] transition-colors font-medium"
             />
           </div>
