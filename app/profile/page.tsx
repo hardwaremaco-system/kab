@@ -127,7 +127,7 @@ export default function ProfilePage() {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-black text-slate-900 truncate w-full">{user.displayName || "Kabale User"}</h1>
+            <h1 className="text-xl font-black text-slate-900 truncate w-full">{user.displayName || "Oweitu User"}</h1>
             <p className="text-slate-500 font-medium text-[13px] truncate w-full">{user.email}</p>
           </div>
         </div>
