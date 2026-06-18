@@ -61,7 +61,7 @@ export async function POST(req: Request) {
           htmlContent: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #334155;">
               <div style="background-color: #D97706; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Kabale Online</h1>
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Oweitu Shop</h1>
               </div>
               <div style="padding: 30px 20px; background-color: #ffffff; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; line-height: 1.6;">
                 ${htmlContent}
