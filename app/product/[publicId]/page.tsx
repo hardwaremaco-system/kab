@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: { params: { publicId: string 
 
   const formattedPrice = currentPrice === 0 ? "Negotiable" : `UGX ${(currentPrice || 0).toLocaleString()}`;
   const title = `${safeName} - Available in western Uganda | ${formattedPrice}`;
-  const description = product.description?.slice(0, 150) || `Buy this ${safeName} for ${formattedPrice}. Pay strictly Cash on Delivery in Kabale town.`;
+  const description = product.description?.slice(0, 150) || `Buy this ${safeName} for ${formattedPrice}. Pay strictly Cash on Delivery in Western Uganda.`;
   const imageUrl = product.images?.[0] || "https://www.oweitushop.com/og-image.jpg";
 
   return {
@@ -156,7 +156,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
   const jsonLd = {
     "@context": "https://schema.org", "@type": "Product", "name": safeName, "image": optimizedImages[0] || "",
     "description": product.description || `Buy ${safeName} safely in Western Uganda.`,
-    "offers": { "@type": "Offer", "url": `https://www.Sweitu Shop.com/product/${params.publicId}`, "priceCurrency": "UGX", "price": safePrice, "availability": isSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock", "itemCondition": safeCondition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition", "seller": { "@type": "Organization", "name": product.sellerName || "Kabale Online" } }
+    "offers": { "@type": "Offer", "url": `https://www.oweituShop.com/product/${params.publicId}`, "priceCurrency": "UGX", "price": safePrice, "availability": isSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock", "itemCondition": safeCondition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition", "seller": { "@type": "Organization", "name": product.sellerName || "Oweitu Shop" } }
   };
 
   const campaignTitle = campaignType 
@@ -242,7 +242,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
               <div className="p-0 bg-white overflow-x-auto">
                 <table className="w-full text-sm text-left"><tbody className="divide-y divide-slate-100">
                     <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Condition</th><td className="px-4 py-3 text-[#1A1A1A] capitalize">{safeCondition}</td></tr>
-                    <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Location</th><td className="px-4 py-3 text-[#1A1A1A]">Available locally in Kabale</td></tr>
+                    <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Location</th><td className="px-4 py-3 text-[#1A1A1A]">Available locally in Western Uganda</td></tr>
                     <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Sold By</th><td className="px-4 py-3 text-[#1A1A1A] font-bold flex items-center gap-2">{product.sellerName || "Verified Seller"} {isAdmin && <span className="text-blue-600"><MdVerifiedUser /></span>}</td></tr>
                 </tbody></table>
               </div>
