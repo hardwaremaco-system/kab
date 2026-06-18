@@ -119,7 +119,7 @@ export async function POST(request: Request) {
           amount: securePaymentAmount, 
           currency: "UGX",
           reference: referenceId,
-          description: `Kabale Online Order ${orderNumber}`
+          description: `Oweitu Shop Order ${orderNumber}`
         })
       });
     } catch (err) {
