@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const data = docSnap.data();
     const formattedBudget = Number(data?.budget).toLocaleString();
     const title = `${data?.buyerName} is looking for: ${data?.itemNeeded}`;
-    const description = `Budget: UGX ${formattedBudget}. Do you have this item in Kabale? Tap to message ${data?.buyerName} directly on Kabale Online!`;
+    const description = `Budget: UGX ${formattedBudget}. Do you have this item in Western Uganda? Tap to message ${data?.buyerName} directly on Oweitu shop!`;
 
     return {
       title,
