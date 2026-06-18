@@ -39,7 +39,7 @@ export default async function SuccessPage({ params }: { params: { orderId: strin
     displayPhone = serviceItem.sellerPhone;
     const cleanPhone = displayPhone.replace(/\D/g, "");
     const formattedWaPhone = cleanPhone.startsWith("0") ? `256${cleanPhone.slice(1)}` : cleanPhone;
-    const waMessage = encodeURIComponent(`Hello! I just paid the deposit for your service (${serviceItem.name.replace("Booking Deposit: ", "")}) on Kabale Online. When can we schedule the meetup?`);
+    const waMessage = encodeURIComponent(`Hello! I just paid the deposit for your service (${serviceItem.name.replace("Booking Deposit: ", "")}) on Oweitu Shop. When can we schedule the meetup?`);
     waLink = `https://wa.me/${formattedWaPhone}?text=${waMessage}`;
   }
 
@@ -161,7 +161,7 @@ export default async function SuccessPage({ params }: { params: { orderId: strin
             <div>
               <h4 className="text-amber-900 dark:text-amber-500 font-bold text-sm mb-1">What happens next?</h4>
               <ul className="text-amber-800 dark:text-amber-200/80 text-xs font-medium space-y-1.5 list-disc list-inside">
-                <li>Keep your phone nearby. Our team will contact you to arrange delivery in Kabale.</li>
+                <li>Keep your phone nearby. Our team will contact you to arrange delivery At your door.</li>
                 <li>Inspect your items carefully upon arrival.</li>
               </ul>
             </div>
