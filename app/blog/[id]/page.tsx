@@ -29,13 +29,13 @@ export async function generateMetadata(
     const displayImage =
       post?.featuredImage || post?.image || "/og-image.jpg";
 
-    const url = `https://www.kabaleonline.com/blog/${params.id}`;
+    const url = `https://www.oweitushop.com/blog/${params.id}`;
 
     return {
-      title: `${post?.title} | Kabale Online Journal`,
+      title: `${post?.title} | Oweitu Shop Journal`,
       description:
         post?.excerpt ||
-        "Read the latest updates and insights on Kabale Online.",
+        "Read the latest updates and insights on Oweitu Shop.",
       alternates: {
         canonical: url,
       },
