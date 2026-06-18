@@ -329,10 +329,10 @@ export default function FloatingHelpButton() {
                     ✨
                   </div>
                   <div>
-                    <h3 className="font-bold text-base md:text-lg tracking-tight">Kabale AI Guide</h3>
+                    <h3 className="font-bold text-base md:text-lg tracking-tight">Oweitu AI Guide</h3>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                      <p className={`text-[11px] font-medium ${isMobile ? 'text-slate-400' : 'text-slate-300'}`}>Online & ready to help</p>
+                      <p className={`text-[11px] font-medium ${isMobile ? 'text-slate-400' : 'text-slate-300'}`}>Shop & ready to help</p>
                     </div>
                   </div>
                 </div>
