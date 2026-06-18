@@ -47,8 +47,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   if (!service) return { title: "Service Not Found" };
 
   return {
-    title: `${service.title} | Kabale Online Services`,
-    description: service.description || `Book ${service.title} provided by ${service.sellerName} on Kabale Online.`,
+    title: `${service.title} | Oweitu Shop Online Services`,
+    description: service.description || `Book ${service.title} provided by ${service.sellerName} on Oweitu Shop.`,
   };
 }
 
