@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       // ==========================================
       const data = userDoc.data() || {};
 
-      const parsedName = data.displayName || data.fullName || data.name || name || "Kabale User";
+      const parsedName = data.displayName || data.fullName || data.name || name || "Oweitu User";
       const parsedPhoto = data.photoURL || data.picture || picture || "";
 
       let parsedRole = data.role || "customer";
