@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       userData = {
         id: uid,
         email: email || "",
-        displayName: name || "Kabale User",
+        displayName: name || "Oweitu User",
         photoURL: picture || "",
         role: admin === true ? "admin" : "customer", 
         createdAt: Date.now(),
