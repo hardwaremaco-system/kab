@@ -20,7 +20,7 @@ const campaignDisplayNames: Record<string, string> = {
 };
 
 const campaignDescriptions: Record<string, string> = {
-  "flash-sales": "Grab massive discounts before time runs out! Shop the best flash sales on electronics and accessories in Kabale.",
+  "flash-sales": "Grab massive discounts before time runs out! Shop the best flash sales on electronics and accessories in Uganda.",
   "weekend-deals": "Exclusive weekend price drops! Upgrade your gadgets with fast local delivery from Oweitu Shop.",
   "clearance": "Huge clearance markdowns! Get these products at unbeatable prices before they are gone forever.",
   "student-deals": "Special student discounts for campus essentials. Save big on tech and accessories for your hostel.",
@@ -50,9 +50,9 @@ export async function generateMetadata({
   // Generate exact description
   const description = campaignFilter && campaignDescriptions[campaignFilter]
     ? campaignDescriptions[campaignFilter]
-    : "Discover the best deals, discounts, and flash sales on Oweitu Shop. Fast local delivery available on all items in Kabale.";
+    : "Discover the best deals, discounts, and flash sales on Oweitu Shop. Fast local delivery available on all items in Uganda.";
 
-  const currentUrl = `https://www.kabaleonline.com/deals${campaignFilter ? `?campaign=${campaignFilter}` : ''}`;
+  const currentUrl = `https://www.oweitushop.com/deals${campaignFilter ? `?campaign=${campaignFilter}` : ''}`;
   
   // 🔥 BUILD THE DYNAMIC OG IMAGE URL FOR THE DEALS PAGE
   const ogImage = `https://www.oweitushop.com/api/og?title=${encodeURIComponent(baseTitle)}&desc=${encodeURIComponent(description)}`;
@@ -153,8 +153,8 @@ export default async function DealsPage({
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": pageTitle,
-    "description": campaignFilter && campaignDescriptions[campaignFilter] ? campaignDescriptions[campaignFilter] : "Active deals on Kabale Online",
-    "url": `https://www.kabaleonline.com/deals${campaignFilter ? `?campaign=${campaignFilter}` : ''}`,
+    "description": campaignFilter && campaignDescriptions[campaignFilter] ? campaignDescriptions[campaignFilter] : "Active deals on oweitu shop",
+    "url": `https://www.oweitushop.com/deals${campaignFilter ? `?campaign=${campaignFilter}` : ''}`,
   };
 
   return (
