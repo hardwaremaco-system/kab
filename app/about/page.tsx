@@ -2,7 +2,7 @@ export default function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto py-16 px-4">
       <h1 className="text-4xl font-black mb-6 text-slate-900">
-        About Kabale Online
+        About Oweitu Shop 
       </h1>
 
       <div className="prose prose-slate lg:prose-lg">
@@ -21,7 +21,7 @@ export default function AboutPage() {
           Our mission is simple: make buying, selling, and discovering opportunities 
           in Kabale easier, safer, and faster. Whether you're searching for a hostel 
           near campus, selling a second-hand laptop, promoting your retail shop, or 
-          checking current market prices for Irish potatoes, Kabale Online helps 
+          checking current market prices for Irish potatoes, Oweitu Shop helps 
           you do it without unnecessary movement or middlemen.
         </p>
 
