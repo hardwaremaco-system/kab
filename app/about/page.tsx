@@ -8,8 +8,8 @@ export default function AboutPage() {
       <div className="prose prose-slate lg:prose-lg">
         <p className="text-xl text-slate-600 leading-relaxed mb-8">
           Oweitu Shop is the digital marketplace and community notice board 
-          for Kabale town and the greater Kigezi region. We connect 
-          <strong> Kabale University students</strong>, local <strong>farmers</strong>, 
+          for Western region. We connect 
+          <strong> University students</strong>, local <strong>farmers</strong>, 
           small <strong>business owners</strong>, and everyday residents in one 
           trusted online space.
         </p>
@@ -19,7 +19,7 @@ export default function AboutPage() {
         </h2>
         <p className="mb-6">
           Our mission is simple: make buying, selling, and discovering opportunities 
-          in Kabale easier, safer, and faster. Whether you're searching for a hostel 
+          in Western Uganda easier, safer, and faster. Whether you're searching for a hostel 
           near campus, selling a second-hand laptop, promoting your retail shop, or 
           checking current market prices for Irish potatoes, Oweitu Shop helps 
           you do it without unnecessary movement or middlemen.
@@ -29,7 +29,7 @@ export default function AboutPage() {
           Why We Built Oweitu Shop
         </h2>
         <p className="mb-6">
-          Kabale is a vibrant and growing town full of hardworking students, 
+          Western Uganda is a vibrant and growing region full of hardworking students, 
           entrepreneurs, and farmers. However, information often moves slowly 
           and opportunities can be hard to find. We created Oweitu Shop to 
           bridge that gap — bringing the entire community into one digital space 
@@ -38,11 +38,11 @@ export default function AboutPage() {
 
         <div className="bg-amber-50 border border-amber-100 p-8 rounded-2xl mb-8">
           <h3 className="font-bold text-amber-900 mb-2 italic">
-            "Built for Kabale. Powered by Community."
+            "Built for Western Uganda. Powered by Community."
           </h3>
           <p className="text-amber-800 text-sm m-0">
             From a student selling furniture after graduation to a farmer in 
-            Rubanda looking for bulk buyers — Kabale Online exists to make 
+            Rubanda looking for bulk buyers — Oweitu Shop exists to make 
             local trade simple and community-driven.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function AboutPage() {
           <li>Advertise hostels and rental properties</li>
           <li>Promote local businesses and services</li>
           <li>Connect directly with buyers and sellers</li>
-          <li>Discover verified opportunities within Kabale district</li>
+          <li>Discover verified opportunities within Western Uganda</li>
         </ul>
 
         <h2 className="font-bold text-2xl mb-4 text-slate-900">
@@ -68,7 +68,7 @@ export default function AboutPage() {
           </li>
           <li>
             <strong>Local First:</strong> We prioritize vendors, services, and 
-            opportunities within Kabale and the Kigezi region.
+            opportunities within Ankole and the Kigezi region.
           </li>
           <li>
             <strong>Empowerment:</strong> We support students and young 
@@ -84,9 +84,9 @@ export default function AboutPage() {
           Our Vision
         </h2>
         <p>
-          We envision a digitally connected Kabale where information flows 
+          We envision a digitally connected western where information flows 
           freely, businesses grow faster, and the community thrives together. 
-          Kabale Online is more than a website — it’s a platform built to 
+          Oweitu Shop is more than a website — it’s a platform built to 
           strengthen local commerce and create real economic impact in the region.
         </p>
       </div>
