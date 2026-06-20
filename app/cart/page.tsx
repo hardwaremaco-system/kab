@@ -50,7 +50,7 @@ export default function CartPage() {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const { deliveryFee, progress, message, isFreeDelivery } = useMemo(() => {
-    if (cartTotal >= 20000) {
+    if (cartTotal >= 1000000) {
       return { deliveryFee: 0, progress: 100, message: "Your order qualifies for FREE delivery!", isFreeDelivery: true };
     }
     if (totalItems >= 4) {
