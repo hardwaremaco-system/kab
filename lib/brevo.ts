@@ -56,7 +56,7 @@ const emailWrapper = (content: string) => `
 
 // --- 1. ADMIN ORDER ALERT ---
 export async function sendAdminAlert(orderNumber: string, itemName: string, total: number, buyerPhone: string, sellerPhone: string) {
-  const masterEmail = "shopkabale@gmail.com"; 
+  const masterEmail = "hardwaremaco@gmail.com"; 
   const content = `
     <h2 style="color: #dc2626; margin-top: 0;">🚨 New Order Received!</h2>
     <p>A new transaction has been initiated on Oweitu Shop.</p>
@@ -102,7 +102,7 @@ export async function sendSellerNotification(sellerEmail: string, sellerName: st
 
 // --- 4. ADMIN PAYOUT ALERT ---
 export async function sendAdminPayoutAlert(requestId: string, sellerId: string, amount: number, newStatus: string) {
-  const masterEmail = "shopkabale@gmail.com"; 
+  const masterEmail = "hardwaremaco@gmail.com"; 
   const content = `
     <h2 style="color: #0f172a; margin-top: 0;">💰 Payout Update: ${newStatus.toUpperCase()}</h2>
     <p>Request ID: ${requestId}</p>
