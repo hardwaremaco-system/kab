@@ -43,7 +43,7 @@ export default function WhatsAppPopup() {
             Join our WhatsApp Channel for new arrivals, exclusive offers & restocks.
           </p>
           <a 
-            href="https://whatsapp.com/channel/0029Vb7mKqmKGGGKqH0bvq2D" 
+            href="https://whatsapp.com/channel/0029VbDPgdfFXUuRvlO2c73b" 
             target="_blank" 
             rel="noreferrer" 
             onClick={handleClose} 
