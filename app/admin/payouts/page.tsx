@@ -52,7 +52,7 @@ export default function AdminPayoutsPage() {
         setRequests(prev => prev.map(req => 
           req.id === requestId ? { ...req, status: newStatus } : req
         ));
-        alert(`Payout marked as ${newStatus.toUpperCase()}! Email ledger sent to shopkabale@gmail.com.`);
+        alert(`Payout marked as ${newStatus.toUpperCase()}! Email ledger sent to hardwaremaco@gmail.com.`);
       } else {
         const errorData = await res.json();
         alert(`Error: ${errorData.error}`);
