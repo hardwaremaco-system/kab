@@ -32,16 +32,7 @@ export default function BottomNav() {
 
   const isAdmin = user?.role === "admin";
 
-  // 1. Admin Session Cookie Management
-  useEffect(() => {
-    if (isAdmin) {
-      document.cookie = "kabale_admin_session=true; path=/; max-age=86400; secure; samesite=strict";
-    } else {
-      document.cookie = "kabale_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    }
-  }, [isAdmin]);
-
-  // 2. Handle Scroll Behavior
+  // 1. Handle Scroll Behavior
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -53,14 +44,14 @@ export default function BottomNav() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  // 3. Mobile Menu Listener
+  // 2. Mobile Menu Listener
   useEffect(() => {
     const handleMenuState = (e: any) => setIsMenuOpen(e.detail);
     window.addEventListener("mobileMenuState", handleMenuState);
     return () => window.removeEventListener("mobileMenuState", handleMenuState);
   }, []);
 
-  // 4. Navigation Items
+  // 3. Navigation Items
   const baseNavItems = [
     { label: "Home", href: "/", Icon: Home },
     { label: "Categories", isTrigger: true, Icon: LayoutGrid }, 
@@ -159,7 +150,7 @@ export default function BottomNav() {
         </div>
       </div>
 
-      {/* CATEGORIES SLIDE-UP MODAL (Remains unchanged) */}
+      {/* CATEGORIES SLIDE-UP MODAL */}
       {isCategoryModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity">
           <div className="bg-[#1a1a1a] w-full sm:w-[400px] rounded-t-3xl sm:rounded-3xl p-6 text-white animate-slide-up border border-slate-800 shadow-2xl">
