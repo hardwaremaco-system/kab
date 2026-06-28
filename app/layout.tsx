@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
 import LayoutClient from "@/components/LayoutClient";
+import BottomNav from "@/components/BottomNav"; // 🔥 Imported BottomNav
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
@@ -64,10 +65,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen bg-background text-slate-900 transition-colors">
-        
+
         {/* CLIENT LAYOUT (handles banner, navbar, auth, etc.) */}
         <LayoutClient>
           {children}
+          
+          {/* 🔥 Added BottomNav here to ensure it has access to Auth and Cart contexts */}
+          <BottomNav />
         </LayoutClient>
 
         {/* Vercel Analytics */}
