@@ -59,7 +59,10 @@ function SearchResults() {
           title: hit.title || hit.name,
           price: hit.price,
           category: hit.category,
-          images: hit.image ? [optimizeImage(hit.image)] : [],
+          // ✅ FIXED: Safely checking for the 'images' array and mapping through it
+          images: hit.images && Array.isArray(hit.images) && hit.images.length > 0 
+            ? hit.images.map((img: string) => optimizeImage(img)) 
+            : [],
           status: hit.status || "active",
           isApprovedQuality: hit.isApprovedQuality || false,
           isOfficialStore: hit.isOfficialStore || false,
@@ -106,7 +109,7 @@ function SearchResults() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0a0a0a] pb-10 pt-2 sm:pt-4 font-sans selection:bg-[#FF6A00] selection:text-white">
       <div className="w-full max-w-[1400px] mx-auto px-0 sm:px-4">
-        
+
         <div className="flex flex-col md:flex-row items-start gap-4 w-full">
 
           {/* 🔥 THE INVISIBLE SCROLLBAR SIDEBAR */}
@@ -124,7 +127,7 @@ function SearchResults() {
 
           {/* 🔥 MAIN FEED */}
           <div className="flex-grow min-w-0 flex flex-col w-full px-3 sm:px-0 py-4 sm:py-8">
-            
+
             {loading ? (
               <div className="flex flex-col items-center justify-start pt-24 h-full">
                 <svg className="animate-spin w-16 h-16 text-[#D97706] drop-shadow-md mb-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
