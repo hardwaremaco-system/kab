@@ -16,7 +16,8 @@ import {
   Speaker, 
   Headphones, 
   Plug, 
-  Package
+  Package,
+  PlusCircle // 🔥 Added for the Sell button
 } from "lucide-react";
 
 export default function BottomNav() {
@@ -24,7 +25,6 @@ export default function BottomNav() {
   const { user } = useAuth(); 
   const { cartCount } = useCart();
 
-  // ALL HOOKS MUST RUN FIRST
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -51,10 +51,11 @@ export default function BottomNav() {
     return () => window.removeEventListener("mobileMenuState", handleMenuState);
   }, []);
 
-  // 3. Navigation Items
+  // 3. Navigation Items (Sell is positioned directly in the middle for normal users)
   const baseNavItems = [
     { label: "Home", href: "/", Icon: Home },
     { label: "Categories", isTrigger: true, Icon: LayoutGrid }, 
+    { label: "Sell", href: "/sell", Icon: PlusCircle }, // 🔥 Middle Button
     { label: "Cart", href: "/cart", Icon: ShoppingCart },
     { label: "Profile", href: "/profile", Icon: User },
   ];
@@ -78,52 +79,48 @@ export default function BottomNav() {
 
   return (
     <>
-      {/* FLOATING PILL BOTTOM NAVIGATION BAR */}
+      {/* FULL WIDTH BOTTOM NAVIGATION BAR */}
       <div 
-        className={`fixed bottom-6 left-1/2 -translate-x-1/2 w-max bg-[#f4f4f5] dark:bg-[#1a1a1a] p-2 rounded-full z-50 transition-transform duration-300 xl:hidden shadow-lg border border-white/50 dark:border-white/10 ${
-          isVisible && !isMenuOpen ? "translate-y-0" : "translate-y-[200%]"
+        className={`fixed bottom-0 left-0 w-full bg-white dark:bg-[#1a1a1a] border-t border-slate-200 dark:border-slate-800 z-50 transition-transform duration-300 xl:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)] ${
+          isVisible && !isMenuOpen ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex justify-around items-center h-[65px] px-1 pb-[env(safe-area-inset-bottom)]">
           {navItems.map(({ label, href, isTrigger, Icon }) => {
             const isActive = !isTrigger && (pathname === href || (href !== "/" && pathname?.startsWith(href || "")));
 
             const content = (
-              <div 
-                className={`flex items-center gap-2 transition-all duration-300 ease-in-out ${
-                  isActive 
-                    ? "bg-white dark:bg-black px-5 py-3 rounded-full shadow-sm" 
-                    : "px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 rounded-full"
-                }`}
-              >
+              <div className="flex flex-col items-center justify-center gap-1 w-full h-full pt-1">
                 {/* SVG Icon */}
                 <div className="relative flex items-center justify-center">
                   <Icon 
                     size={24} 
                     strokeWidth={isActive ? 2.5 : 2} 
-                    className={`transition-colors duration-300 ${
-                      isActive ? "text-black dark:text-white" : "text-gray-500 dark:text-gray-400"
+                    className={`transition-colors duration-200 ${
+                      isActive ? "text-[#FF6A00]" : "text-slate-500 dark:text-slate-400"
                     }`} 
                   />
 
                   {/* Cart Badge */}
                   {label === "Cart" && cartCount > 0 && (
-                    <span className="absolute -top-1.5 -right-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#f4f4f5] dark:border-[#1a1a1a] shadow-sm leading-none z-10">
-                      {cartCount}
+                    <span className="absolute -top-1.5 -right-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white dark:border-[#1a1a1a] shadow-sm leading-none z-10">
+                      {cartCount > 99 ? '99+' : cartCount}
                     </span>
                   )}
                 </div>
 
-                {/* Text Label - Visually matches the image by only showing when active */}
-                {isActive && (
-                  <span className="text-sm font-semibold text-black dark:text-white whitespace-nowrap">
-                    {label}
-                  </span>
-                )}
+                {/* Text Label - Now Always Visible */}
+                <span 
+                  className={`text-[10px] sm:text-xs font-semibold tracking-wide transition-colors duration-200 ${
+                    isActive ? "text-[#FF6A00]" : "text-slate-500 dark:text-slate-400"
+                  }`}
+                >
+                  {label}
+                </span>
               </div>
             );
 
-            const itemClassName = "focus:outline-none tap-highlight-transparent";
+            const itemClassName = "flex-1 flex flex-col justify-center items-center h-full focus:outline-none tap-highlight-transparent hover:bg-slate-50 dark:hover:bg-white/5 active:bg-slate-100 dark:active:bg-white/10 transition-colors rounded-xl mx-1";
 
             if (isTrigger) {
               return (
