@@ -17,7 +17,10 @@ import {
   Headphones, 
   Plug, 
   Package,
-  PlusCircle // 🔥 Added for the Sell button
+  PlusCircle,
+  ShoppingBasket,
+  Shirt,
+  Sparkles
 } from "lucide-react";
 
 export default function BottomNav() {
@@ -55,7 +58,7 @@ export default function BottomNav() {
   const baseNavItems = [
     { label: "Home", href: "/", Icon: Home },
     { label: "Categories", isTrigger: true, Icon: LayoutGrid }, 
-    { label: "Sell", href: "/sell", Icon: PlusCircle }, // 🔥 Middle Button
+    { label: "Sell", href: "/sell", Icon: PlusCircle },
     { label: "Cart", href: "/cart", Icon: ShoppingCart },
     { label: "Profile", href: "/profile", Icon: User },
   ];
@@ -64,13 +67,20 @@ export default function BottomNav() {
     ? [...baseNavItems, { label: "Admin", href: "/admin", Icon: ShieldAlert }]
     : baseNavItems;
 
-  const categoryLinks = [
-    { label: "Watches", href: "/category/watches", Icon: Watch },
+  // 4. Uniform Categories matching Navbar.tsx
+  const dailyCategories = [
+    { label: "Supermarket", href: "/category/supermarket", Icon: ShoppingBasket },
+    { label: "Fashion & Shoes", href: "/category/fashion", Icon: Shirt },
+    { label: "Health & Beauty", href: "/category/beauty", Icon: Sparkles },
+  ];
+
+  const electronicCategories = [
     { label: "Phones & TVs", href: "/category/phones-tvs", Icon: Smartphone },
     { label: "Sound Systems", href: "/category/sound-systems", Icon: Speaker },
-    { label: "Accessories", href: "/category/accessories", Icon: Headphones },
     { label: "Appliances", href: "/category/appliances", Icon: Plug },
-    { label: "Other Products", href: "/category/other-products", Icon: Package }
+    { label: "Accessories", href: "/category/accessories", Icon: Headphones },
+    { label: "Watches", href: "/category/watches", Icon: Watch },
+    { label: "View All Products", href: "/products", Icon: Package }
   ];
 
   if (pathname?.startsWith("/admin") || pathname?.startsWith("/product/")) {
@@ -150,25 +160,47 @@ export default function BottomNav() {
       {/* CATEGORIES SLIDE-UP MODAL */}
       {isCategoryModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity">
-          <div className="bg-[#1a1a1a] w-full sm:w-[400px] rounded-t-3xl sm:rounded-3xl p-6 text-white animate-slide-up border border-slate-800 shadow-2xl">
+          <div className="bg-[#1a1a1a] w-full sm:w-[400px] rounded-t-3xl sm:rounded-3xl p-6 text-white animate-slide-up border border-slate-800 shadow-2xl flex flex-col max-h-[85vh]">
 
             {/* Drag Handle */}
-            <div className="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-6"></div>
+            <div className="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-6 shrink-0"></div>
 
             {/* Title */}
-            <h3 className="text-center text-xl font-bold mb-6 tracking-wide">Categories</h3>
+            <h3 className="text-center text-xl font-bold mb-4 tracking-wide shrink-0">Categories</h3>
 
-            {/* Categories List */}
-            <div className="flex flex-col gap-2 text-lg font-medium">
-              {categoryLinks.map(({ label, href, Icon }) => (
+            {/* Categories List (Scrollable) */}
+            <div className="flex flex-col gap-1 text-base font-medium overflow-y-auto overflow-x-hidden pb-4 
+              [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-700 hover:[&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:rounded-full">
+              
+              {/* Buy Again & Again Group */}
+              <div className="px-2 pt-2 mb-1">
+                <span className="text-xs font-black text-slate-400 tracking-wide uppercase">Buy Again & Again</span>
+              </div>
+              {dailyCategories.map(({ label, href, Icon }) => (
                 <Link 
                   key={label}
                   href={href} 
                   onClick={() => setIsCategoryModalOpen(false)} 
-                  className="flex items-center gap-4 hover:text-[#FF6A00] transition-colors py-3 px-2 rounded-lg hover:bg-slate-800/50"
+                  className="flex items-center gap-4 hover:text-[#FF6A00] transition-colors py-2.5 px-3 rounded-lg hover:bg-slate-800/50"
                 >
-                  <Icon className="text-slate-400" size={20} />
-                  {label}
+                  <Icon className="text-slate-400 shrink-0" size={20} />
+                  <span className="truncate">{label}</span>
+                </Link>
+              ))}
+
+              {/* Step-Up Electronics Group */}
+              <div className="px-2 pt-4 mb-1 border-t border-slate-800 mt-2">
+                <span className="text-xs font-black text-slate-400 tracking-wide uppercase">Step-Up Electronics</span>
+              </div>
+              {electronicCategories.map(({ label, href, Icon }) => (
+                <Link 
+                  key={label}
+                  href={href} 
+                  onClick={() => setIsCategoryModalOpen(false)} 
+                  className="flex items-center gap-4 hover:text-[#FF6A00] transition-colors py-2.5 px-3 rounded-lg hover:bg-slate-800/50"
+                >
+                  <Icon className="text-slate-400 shrink-0" size={20} />
+                  <span className="truncate">{label}</span>
                 </Link>
               ))}
             </div>
@@ -176,7 +208,7 @@ export default function BottomNav() {
             {/* Close Button */}
             <button 
               onClick={() => setIsCategoryModalOpen(false)} 
-              className="mt-8 w-full py-3.5 bg-slate-800 rounded-xl font-bold hover:bg-slate-700 active:scale-[0.98] transition-all text-white"
+              className="mt-6 w-full py-3.5 bg-slate-800 rounded-xl font-bold hover:bg-slate-700 active:scale-[0.98] transition-all text-white shrink-0"
             >
               Close
             </button>
