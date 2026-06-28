@@ -71,7 +71,7 @@ export default function ProductActions({ product, children }: { product: Product
   let toastMessage = "Add 1 more item and save UGX 500 on delivery.";
   let isFree = false;
 
-  if (cartTotal >= 20000 || totalItems >= 4) {
+  if (cartTotal >= 100000 || totalItems >= 4) {
     progress = 100;
     toastMessage = "🎉 You have FREE delivery!";
     isFree = true;
