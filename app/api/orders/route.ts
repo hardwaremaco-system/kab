@@ -90,8 +90,8 @@ export async function POST(request: Request) {
       const sName = sData?.displayName || "Partner";
 
       if (sEmail) {
-        notificationPromises.push(sendSellerNotification(sEmail, sName, orderNumber, allProductsString, sellerOrdersMap[sellerId].subtotal));
-      }
+        notificationPromises.push(sendSellerNotification(sEmail, sName, orderNumber, allProductsString, sellerOrdersMap[sellerId].subtotal, contactPhone));
+}
       
       // Notify via WhatsApp
       notificationPromises.push(NotificationService.notifySeller(sPhone, sName, orderNumber, allProductsString, sellerOrdersMap[sellerId].subtotal, buyerName, location, contactPhone));
