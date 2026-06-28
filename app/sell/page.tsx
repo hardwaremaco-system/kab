@@ -62,12 +62,26 @@ export default function SellPage() {
           useWebWorker: true,
         };
 
-        const compressedFilesPromises = newFiles.map(file => imageCompression(file, options));
-        const compressedFiles = await Promise.all(compressedFilesPromises);
+        const processedFilesPromises = newFiles.map(async (file) => {
+          // Check if the file is a standard format that can be compressed natively
+          const supportedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/bmp'];
+          
+          if (supportedTypes.includes(file.type)) {
+            // Compress supported formats
+            return await imageCompression(file, options);
+          } else {
+            // Skip compression for HEIC, GIF, etc.
+            // Cloudinary will automatically convert these later
+            console.log(`Skipping compression for unsupported format: ${file.type || file.name}`);
+            return file; 
+          }
+        });
 
-        setImageFiles(prev => [...prev, ...compressedFiles]);
+        const processedFiles = await Promise.all(processedFilesPromises);
 
-        const newPreviews = compressedFiles.map(file => URL.createObjectURL(file));
+        setImageFiles(prev => [...prev, ...processedFiles]);
+
+        const newPreviews = processedFiles.map(file => URL.createObjectURL(file));
         setImagePreviews(prev => [...prev, ...newPreviews]);
 
       } catch (error) {
