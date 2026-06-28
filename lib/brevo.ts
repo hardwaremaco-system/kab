@@ -87,17 +87,33 @@ export async function sendBuyerReceipt(buyerEmail: string, buyerName: string, or
 }
 
 // --- 3. SELLER NOTIFICATION ---
-export async function sendSellerNotification(sellerEmail: string, sellerName: string, orderNumber: string, itemName: string, total: number) {
+export async function sendSellerNotification(
+  sellerEmail: string, 
+  sellerName: string, 
+  orderNumber: string, 
+  itemName: string, 
+  total: number,
+  buyerPhone: string
+) {
   const content = `
     <h2 style="color: #FF6A00; margin-top: 0;">🚀 You Made a Sale!</h2>
     <p>Hi ${sellerName}, congratulations on your sale!</p>
     <div style="background-color: #fff7ed; padding: 16px; border-radius: 8px; margin: 24px 0;">
-      <p><strong>Item Sold:</strong> ${itemName}</p>
-      <p><strong>Payout Amount:</strong> UGX ${total.toLocaleString()}</p>
+      <p style="margin: 0 0 8px 0;"><strong>Order ID:</strong> ${orderNumber}</p>
+      <p style="margin: 0 0 8px 0;"><strong>Item Sold:</strong> ${itemName}</p>
+      <p style="margin: 0 0 8px 0;"><strong>Payout Amount:</strong> UGX ${total.toLocaleString()}</p>
+      <hr style="border: 0; border-top: 1px solid #fed7aa; margin: 12px 0;">
+      <p style="margin: 0; color: #9a3412;"><strong>Buyer Phone:</strong> ${buyerPhone}</p>
     </div>
-    <p>Please check your Oweitu Shop seller dashboard to manage fulfillment.</p>
+    <p>Please contact the buyer at <strong>${buyerPhone}</strong> to coordinate delivery as soon as possible.</p>
+    <p>You can also check your Oweitu Shop seller dashboard to manage this fulfillment.</p>
   `;
-  await sendEmail({ to: [{ email: sellerEmail, name: sellerName }], subject: `You sold an item on Oweitu Shop!`, htmlContent: emailWrapper(content) });
+  
+  await sendEmail({ 
+    to: [{ email: sellerEmail, name: sellerName }], 
+    subject: `You sold an item on Oweitu Shop! (#${orderNumber})`, 
+    htmlContent: emailWrapper(content) 
+  });
 }
 
 // --- 4. ADMIN PAYOUT ALERT ---
