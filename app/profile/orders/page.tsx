@@ -17,7 +17,7 @@ export default function OrdersPage() {
         <Link href="/profile" className="p-2 -ml-2 bg-slate-100 rounded-full text-slate-600 active:bg-slate-200 transition-colors">
           <ArrowLeft size={18} />
         </Link>
-        <h1 className="text-lg font-black text-slate-900">Sales & Orders</h1>
+        <h1 className="text-lg font-black text-slate-900">Orders</h1>
       </div>
       <div className="p-4">
         <OrdersTab userId={user.id} />
