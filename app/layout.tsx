@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     title: "Oweitu Shop",
   },
   openGraph: {
-    title: "Oweitu Shop | The Better Way To Buy and Sell in Ankole and the entire western Region",
+    title: "Oweitu Shop | The Better Way To Buy and Sell in Ankole and the Entire Western Region",
     description: "Buy and sell locally in Ankole with strictly Cash on Delivery.",
     url: "https://www.oweitushop.com",
     siteName: "Oweitu Shop",
