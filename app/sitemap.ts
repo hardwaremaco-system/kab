@@ -18,7 +18,7 @@ const parseDate = (val: any): Date => {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://www.oweitushop.com";
+  const baseUrl = "https://www.mbararaonline.com";
   
   let productEntries: MetadataRoute.Sitemap = [];
   let blogEntries: MetadataRoute.Sitemap = [];
