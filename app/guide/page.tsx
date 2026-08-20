@@ -2,20 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Documentation & Guide | Oweitu Shop",
-  description: "Learn how to buy, sell, and grow your business on Ankole and Kigezi's premier online marketplace. Complete guide and promotion steps.",
-  keywords: ["oweitu shop guide", "how to sell in Ankole", "buy online Uganda", "Kigezi e-commerce setup", "boost ads Oweitu", "cash on delivery"],
+  title: "Documentation & Guide | Mbarara Online",
+  description: "Learn how to buy, sell, and grow your business on Mbarara City's premier online marketplace. Complete guide and promotion steps.",
+  keywords: ["mbarara online guide", "how to sell in Mbarara", "buy online Uganda", "Mbarara e-commerce setup", "boost ads Mbarara", "cash on delivery", "used and new products Mbarara"],
   openGraph: {
-    title: "Documentation & Guide | Oweitu Shop",
-    description: "The complete guide to buying, selling, and growing your business on Oweitu Shop.",
-    url: "https://oweitushop.com/guide",
-    siteName: "Oweitu Shop",
+    title: "Documentation & Guide | Mbarara Online",
+    description: "The complete guide to buying, selling, and growing your business on Mbarara Online.",
+    url: "https://www.mbararaonline.com/guide",
+    siteName: "Mbarara Online",
     images: [
       {
         url: "/guide-og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Oweitu Shop Documentation",
+        alt: "Mbarara Online Documentation",
       },
     ],
     locale: "en_UG",
@@ -30,12 +30,12 @@ export default function GuidePage() {
       {/* HEADER */}
       <header className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#111] pt-12 pb-8 px-4 sm:px-6 sticky top-0 z-10">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[#FF6A00] font-bold text-sm mb-2 uppercase tracking-wider">Oweitu Shop</p>
+          <p className="text-[#FF6A00] font-bold text-sm mb-2 uppercase tracking-wider">Mbarara Online</p>
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
             Platform Documentation
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2 text-base">
-            The complete user guide to buying, selling, and growing your business locally.
+            The complete user guide to buying, selling, and growing your business locally in Mbarara City.
           </p>
         </div>
       </header>
@@ -50,13 +50,13 @@ export default function GuidePage() {
               1. How to Sell
             </h2>
             <ol className="list-decimal list-outside ml-5 space-y-3 text-slate-600 dark:text-slate-400">
-              <li>Visit <Link href="/sell" className="text-[#FF6A00] hover:underline">oweitushop.com/sell</Link></li>
-              <li>Fill in product details & upload photos</li>
+              <li>Visit <Link href="/sell" className="text-[#FF6A00] hover:underline">mbararaonline.com/sell</Link></li>
+              <li>Fill in product details (clarifying used vs. new condition) & upload photos</li>
               <li>Tap <strong>Post Product Now</strong></li>
               <li>Login with Google and select your email</li>
             </ol>
             <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 rounded-lg text-sm border border-blue-100 dark:border-blue-900">
-              <strong>Why we ask for your email:</strong> We send you instant notifications the moment someone orders your product.
+              <strong>Why we ask for your email:</strong> We send you instant notifications the moment a buyer orders your product.
             </div>
           </div>
 
@@ -65,7 +65,7 @@ export default function GuidePage() {
               2. How to Buy
             </h2>
             <ol className="list-decimal list-outside ml-5 space-y-3 text-slate-600 dark:text-slate-400">
-              <li>Visit <Link href="/" className="text-[#FF6A00] hover:underline">Oweitu Shop</Link></li>
+              <li>Visit <Link href="/" className="text-[#FF6A00] hover:underline">Mbarara Online</Link></li>
               <li>Browse or search for what you need</li>
               <li>Tap <strong>Buy Fast</strong> (no login required)</li>
               <li>Enter your name and phone number</li>
@@ -78,7 +78,7 @@ export default function GuidePage() {
               </p>
               <p className="flex items-start gap-2">
                 <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0-2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <strong>Cash on Delivery (COD)</strong> is available — you pay when you receive your item.
+                <strong>Cash on Delivery (COD)</strong> is standard — inspect your item and pay on arrival.
               </p>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function GuidePage() {
               ))}
             </div>
             <Link href="/ladies" className="text-pink-600 dark:text-pink-400 hover:underline font-bold text-sm flex items-center gap-1">
-              Visit oweitushop.com/ladies &rarr;
+              Visit mbararaonline.com/ladies &rarr;
             </Link>
           </div>
         </section>
@@ -133,7 +133,7 @@ export default function GuidePage() {
               </div>
               <div className="p-5 text-slate-600 dark:text-slate-400 text-sm">
                 <ul className="list-disc ml-4 space-y-1">
-                  <li>Premium visibility</li>
+                  <li>Premium visibility across Mbarara City</li>
                   <li>Duration: 72 hours (3 Days)</li>
                 </ul>
               </div>
@@ -189,12 +189,12 @@ export default function GuidePage() {
 
             <div>
               <h3 className="font-semibold text-slate-900 dark:text-white mb-2">💰 Make an Offer</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">Open a product, tap <strong>➕ &rarr; Make Offer</strong>, enter your price and send.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Open a product, tap <strong>➕ &rarr; Make Offer</strong>, enter your price and send directly to the seller.</p>
             </div>
 
             <div className="sm:col-span-2">
               <h3 className="font-semibold text-slate-900 dark:text-white mb-2">🏆 Official Store</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">We connect buyers directly to verified sellers. Enjoy COD, trusted local businesses, genuine listings, and affordable prices with no hidden charges.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">We connect buyers directly to verified sellers across Mbarara. Enjoy COD, trusted local businesses, genuine listings, and affordable prices with no hidden charges.</p>
             </div>
           </div>
         </section>
@@ -207,14 +207,15 @@ export default function GuidePage() {
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 font-medium">To get more orders:</p>
             <ul className="list-disc ml-5 space-y-2 text-sm text-slate-600 dark:text-slate-400">
-              <li>Use clear, bright images</li>
+              <li>Use clear, bright photos of the actual item</li>
+              <li>State clearly whether the product is used or brand new</li>
               <li>Price competitively</li>
-              <li>Reply quickly to customers</li>
-              <li>Use Boost (UGX 1,000)</li>
-              <li>Post trending items (phones, fashion, perfumes)</li>
+              <li>Reply quickly to customer calls and messages</li>
+              <li>Use Boost (UGX 1,000) for instant homepage exposure</li>
+              <li>Post trending items (smartphones, fashion, appliances, student gear)</li>
             </ul>
             <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-400 rounded text-sm border border-amber-100 dark:border-amber-900/50">
-              💡 <strong>Tip:</strong> First 5 products are very important — make them strong.
+              💡 <strong>Tip:</strong> Your first 5 listings set your seller reputation — make them clear and accurately described.
             </div>
           </div>
 
@@ -223,28 +224,28 @@ export default function GuidePage() {
               7. How to Find Best Deals
             </h2>
             <ul className="list-disc ml-5 space-y-2 text-sm text-slate-600 dark:text-slate-400">
-              <li>Check "Hot Deals" section</li>
+              <li>Check the "Hot Deals" and "Flash Sales" sections</li>
               <li>Look for 🔥 Trending or Discount tags</li>
-              <li>Use "Make Offer" to negotiate prices</li>
-              <li>Visit daily for new listings</li>
+              <li>Use "Make Offer" to negotiate prices on used items</li>
+              <li>Visit daily for fresh second-hand and retail listings in Mbarara</li>
             </ul>
           </div>
         </section>
 
-        {/* SECTION: WHY OWEITU SHOP & CONTACT */}
+        {/* SECTION: WHY MBARARA ONLINE & CONTACT */}
         <section id="about" className="space-y-8">
           <div className="bg-slate-50 dark:bg-[#111] p-6 rounded-lg border border-slate-200 dark:border-slate-800">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-              ⚡ Why Oweitu Shop?
+              ⚡ Why Mbarara Online?
             </h2>
             <ul className="grid sm:grid-cols-2 gap-3 text-sm text-slate-600 dark:text-slate-400">
-              <li className="flex items-center gap-2">✔ No shop needed — sell from anywhere</li>
-              <li className="flex items-center gap-2">✔ Reach real buyers in Ankole & Kigezi</li>
-              <li className="flex items-center gap-2">✔ Fast ordering system</li>
-              <li className="flex items-center gap-2">✔ Cash on Delivery (COD)</li>
-              <li className="flex items-center gap-2">✔ Affordable promotion tools</li>
-              <li className="flex items-center gap-2">✔ Built for local sellers & buyers</li>
-              <li className="flex items-center gap-2">✔ Simple, mobile-friendly platform</li>
+              <li className="flex items-center gap-2">✔ No physical shop needed — sell from anywhere in Mbarara</li>
+              <li className="flex items-center gap-2">✔ Reach real buyers across Mbarara City</li>
+              <li className="flex items-center gap-2">✔ Fast local ordering system</li>
+              <li className="flex items-center gap-2">✔ Cash on Delivery (COD) for maximum trust</li>
+              <li className="flex items-center gap-2">✔ Affordable promotion and spotlight tools</li>
+              <li className="flex items-center gap-2">✔ Built for students, residents, and local merchants</li>
+              <li className="flex items-center gap-2">✔ Lightweight, mobile-friendly interface</li>
             </ul>
           </div>
 
@@ -255,15 +256,15 @@ export default function GuidePage() {
             <div className="grid sm:grid-cols-2 gap-6 text-sm text-slate-600 dark:text-slate-400">
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-300 mb-2">Delivery Information</h3>
-                <p>Same-day delivery available.</p>
+                <p>Same-day local delivery & pickup points available.</p>
                 <p>Applies for orders between 6:00 AM – 3:00 PM.</p>
-                <p>Delivery arranged after order confirmation.</p>
+                <p>Delivery arranged directly after order confirmation.</p>
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-300 mb-2">Contact Us</h3>
-                <p>📍 Ankole & Kigezi, Uganda</p>
+                <p>📍 Mbarara City, Western Region, Uganda</p>
                 <p>📞 WhatsApp: <a href="https://wa.me/256779094664" className="text-[#FF6A00] hover:underline">+256 779 094664</a></p>
-                <p>📧 support@oweitushop.com</p>
+                <p>📧 support@mbararaonline.com</p>
                 <p>🕒 24/7 Support available</p>
               </div>
             </div>
@@ -273,8 +274,8 @@ export default function GuidePage() {
           {/* SUMMARY BLOCK */}
           <div className="bg-[#FF6A00] text-white p-6 rounded-lg text-center shadow-md">
             <h2 className="text-xl font-bold mb-2">🟢 Summary</h2>
-            <p className="font-medium text-orange-50">Oweitu Shop is your Marketplace, Selling platform, Buying hub, and Business growth tool.</p>
-            <p className="mt-2 text-sm text-orange-100 font-semibold uppercase tracking-wider">We make local buying and selling simple, fast, and trusted.</p>
+            <p className="font-medium text-orange-50">Mbarara Online is your Marketplace, Selling platform, Buying hub, and Business growth tool.</p>
+            <p className="mt-2 text-sm text-orange-100 font-semibold uppercase tracking-wider">We make local buying and selling simple, fast, and trusted across Mbarara City.</p>
           </div>
         </section>
 
