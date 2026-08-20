@@ -23,13 +23,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const docSnap = await adminDb.collection("item_requests").doc(params.requestId).get();
 
     if (!docSnap.exists) {
-      return { title: "Request Not Found | Oweitu Shop" }; // FIXED: Old brand name removed
+      return { title: "Request Not Found | Mbarara Online" };
     }
 
     const data = docSnap.data();
     const formattedBudget = Number(data?.budget).toLocaleString();
     const title = `${data?.buyerName} is looking for: ${data?.itemNeeded}`;
-    const description = `Budget: UGX ${formattedBudget}. Do you have this item in Western Uganda? Tap to message ${data?.buyerName} directly on Oweitu shop!`;
+    const description = `Budget: UGX ${formattedBudget}. Do you have this item in Mbarara City? Tap to message ${data?.buyerName} directly on Mbarara Online!`;
 
     return {
       title,
@@ -37,9 +37,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       openGraph: {
         title,
         description,
-        url: `https://www.oweitushop.com/requests/${params.requestId}`,
-        siteName: "Oweitu Shop",
-        images: [{ url: "/og-image.jpg", width: 1200, height: 630 }], // Uses your default OG image
+        url: `https://www.mbararaonline.com/requests/${params.requestId}`,
+        siteName: "Mbarara Online",
+        images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
         type: "website",
       },
       twitter: {
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
     };
   } catch (error) {
-    return { title: "Buyer Request | Oweitu Shop" };
+    return { title: "Buyer Request | Mbarara Online" };
   }
 }
 
@@ -64,9 +64,9 @@ export default async function SingleRequestPage({ params }: PageProps) {
   const req = docSnap.data();
   const dateStr = req?.createdAt?.toDate ? req.createdAt.toDate().toLocaleDateString() : "Recently";
   
-  // FIXED: Formatted the phone number and updated the WhatsApp message text
+  // Formatted phone number and updated WhatsApp message text
   const formattedPhone = formatWhatsAppNumber(req?.buyerPhone);
-  const whatsappLink = `https://wa.me/${formattedPhone}?text=Hi%20${req?.buyerName},%20I%20saw%20your%20request%20for%20"${req?.itemNeeded}"%20on%20Oweitu%20Shop.%20I%20have%20this%20item!`;
+  const whatsappLink = `https://wa.me/${formattedPhone}?text=Hi%20${req?.buyerName},%20I%20saw%20your%20request%20for%20"${req?.itemNeeded}"%20on%20Mbarara%20Online.%20I%20have%20this%20item!`;
 
   return (
     <div className="max-w-3xl mx-auto py-16 px-4 min-h-screen">
