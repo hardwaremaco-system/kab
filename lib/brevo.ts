@@ -1,6 +1,6 @@
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
-const SENDER_EMAIL = "support@oweitushop.com";
-const SENDER_NAME = "Oweitu Shop";
+const SENDER_EMAIL = "support@mbararaonline.com";
+const SENDER_NAME = "Mbarara Online";
 const YEAR = new Date().getFullYear();
 
 // --- BASE EMAIL SENDER ---
@@ -42,12 +42,12 @@ const emailWrapper = (content: string) => `
 <body style="font-family: sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #334155;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
     <div style="background-color: #FF6A00; padding: 24px; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 900;">Oweitu Shop</h1>
+      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 900;">Mbarara Online</h1>
     </div>
     <div style="padding: 32px 24px;">${content}</div>
     <div style="background-color: #f1f5f9; padding: 24px; text-align: center; font-size: 13px; color: #64748b; border-top: 1px solid #e2e8f0;">
-      <p style="margin: 0; font-weight: 600;">Oweitu Shop Operations</p>
-      <p style="margin: 12px 0 0 0;">&copy; ${YEAR} Oweitu Shop. All rights reserved.</p>
+      <p style="margin: 0; font-weight: 600;">Mbarara Online Operations</p>
+      <p style="margin: 12px 0 0 0;">&copy; ${YEAR} Mbarara Online. All rights reserved.</p>
     </div>
   </div>
 </body>
@@ -59,7 +59,7 @@ export async function sendAdminAlert(orderNumber: string, itemName: string, tota
   const masterEmail = "hardwaremaco@gmail.com"; 
   const content = `
     <h2 style="color: #dc2626; margin-top: 0;">🚨 New Order Received!</h2>
-    <p>A new transaction has been initiated on Oweitu Shop.</p>
+    <p>A new transaction has been initiated on Mbarara Online.</p>
     <div style="background-color: #fef2f2; padding: 16px; border-radius: 8px; margin: 24px 0;">
       <p><strong>Order ID:</strong> ${orderNumber}</p>
       <p><strong>Item:</strong> ${itemName}</p>
@@ -75,7 +75,7 @@ export async function sendAdminAlert(orderNumber: string, itemName: string, tota
 export async function sendBuyerReceipt(buyerEmail: string, buyerName: string, orderNumber: string, itemName: string, total: number) {
   const content = `
     <h2 style="color: #16a34a; margin-top: 0;">🎉 Order Confirmed!</h2>
-    <p>Hi ${buyerName}, thank you for shopping with Oweitu Shop!</p>
+    <p>Hi ${buyerName}, thank you for shopping with Mbarara Online!</p>
     <div style="background-color: #f0fdf4; padding: 16px; border-radius: 8px; margin: 24px 0;">
       <p><strong>Order ID:</strong> ${orderNumber}</p>
       <p><strong>Item:</strong> ${itemName}</p>
@@ -106,12 +106,12 @@ export async function sendSellerNotification(
       <p style="margin: 0; color: #9a3412;"><strong>Buyer Phone:</strong> ${buyerPhone}</p>
     </div>
     <p>Please contact the buyer at <strong>${buyerPhone}</strong> to coordinate delivery as soon as possible.</p>
-    <p>You can also check your Oweitu Shop seller dashboard to manage this fulfillment.</p>
+    <p>You can also check your Mbarara Online seller dashboard to manage this fulfillment.</p>
   `;
-  
+
   await sendEmail({ 
     to: [{ email: sellerEmail, name: sellerName }], 
-    subject: `You sold an item on Oweitu Shop! (#${orderNumber})`, 
+    subject: `You sold an item on Mbarara Online! (#${orderNumber})`, 
     htmlContent: emailWrapper(content) 
   });
 }
