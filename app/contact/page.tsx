@@ -23,7 +23,7 @@ export default function ContactPage() {
           setSettings({
             whatsappNumber: data.whatsappNumber || "256779094664", // 🔥 FIXED
             contactPhone: data.contactPhone || "+256 779 094664", // 🔥 FIXED
-            supportEmail: data.supportEmail || "support@oweitushop.com"
+            supportEmail: data.supportEmail || "support@mbararaonline.com"
           });
         }
       } catch (error) {
