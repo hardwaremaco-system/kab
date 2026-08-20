@@ -19,13 +19,13 @@ export async function GET(request: Request) {
 
     // Grab the dynamic text passed in the URL, with safe fallbacks and Invite Overrides
     const title = isInvite 
-      ? `${name} invited you to Oweitu Shop! 🎁`
-      : (searchParams.get('title') || 'Oweitu Marketplace');
+      ? `${name} invited you to Mbarara Online! 🎁`
+      : (searchParams.get('title') || 'Mbarara Online Marketplace');
 
-    // 🔥 FIXED: Strictly e-commerce focused messaging
+    // 🔥 Strictly e-commerce focused messaging for Mbarara
     const description = isInvite
-      ? 'Accept the invite and shop safely on campus with Cash on Delivery.'
-      : (searchParams.get('desc') || 'The Better Way to Buy and Sell Locally');
+      ? 'Accept the invite and buy or sell used and new items safely in Mbarara.'
+      : (searchParams.get('desc') || 'The Better Way to Buy and Sell in Mbarara City');
 
     return new ImageResponse(
       (
@@ -37,29 +37,29 @@ export async function GET(request: Request) {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#0f172a', // A sleek dark slate background
+            backgroundColor: '#0f172a', // Sleek dark slate background
             fontFamily: 'sans-serif',
             padding: '40px',
-            borderTop: isInvite ? '20px solid #D97706' : '0px', // 🔥 Orange highlight only for invites
+            borderTop: isInvite ? '20px solid #D97706' : '0px',
           }}
         >
           {/* Logo / Brand Name */}
           <div style={{ display: 'flex', fontSize: 48, fontWeight: 'black', marginBottom: '20px', letterSpacing: '-0.05em' }}>
-            <span style={{ color: 'white' }}>Oweitu</span>
-            <span style={{ color: '#D97706' }}>Shop</span>
+            <span style={{ color: 'white' }}>Mbarara</span>
+            <span style={{ color: '#D97706' }}>Online</span>
           </div>
 
-          {/* 🔥 NEW: Deal Badge (Only renders if dealType is provided) */}
+          {/* 🔥 Deal Badge (Only renders if dealType is provided) */}
           {isDeal && dealType && (
             <div style={{ display: 'flex', background: 'rgba(217, 119, 6, 0.15)', border: '2px solid #D97706', padding: '10px 25px', borderRadius: '12px', fontSize: 26, fontWeight: 'bold', color: '#fdba74', textTransform: 'uppercase', marginBottom: '20px' }}>
               {dealType} {discount && <span style={{ color: '#ef4444', marginLeft: '12px' }}> -{discount}%</span>}
             </div>
           )}
 
-          {/* Dynamic Category Title */}
+          {/* Dynamic Title */}
           <div style={{ 
             display: 'flex', 
-            fontSize: isInvite ? 72 : (isDeal ? 64 : 84), // Slightly smaller if it's a long invite name or a deal
+            fontSize: isInvite ? 72 : (isDeal ? 64 : 84),
             fontWeight: 'black', 
             color: 'white', 
             textAlign: 'center', 
@@ -70,7 +70,7 @@ export async function GET(request: Request) {
             {title}
           </div>
 
-          {/* 🔥 NEW: Deal Price (Only renders if price is provided) */}
+          {/* 🔥 Deal Price (Only renders if price is provided) */}
           {isDeal && price && (
             <div style={{ display: 'flex', fontSize: 80, fontWeight: 'black', color: '#f59e0b', marginBottom: '20px' }}>
               UGX {price}
@@ -82,10 +82,10 @@ export async function GET(request: Request) {
             {description}
           </div>
 
-          {/* 🔥 NEW: Extra Trust Badge specifically for Invites */}
+          {/* 🔥 Trust Badge specifically for Invites */}
           {isInvite && (
             <div style={{ display: 'flex', marginTop: '50px', background: 'rgba(217, 119, 6, 0.2)', border: '2px solid #D97706', color: '#fdba74', padding: '15px 40px', borderRadius: '15px', fontSize: '28px', fontWeight: 'bold' }}>
-              Verified Partner Link
+              Verified Mbarara Partner Link
             </div>
           )}
         </div>
