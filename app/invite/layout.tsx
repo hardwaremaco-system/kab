@@ -1,22 +1,22 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Refer & Earn | oweitu shop Partner Program",
+  title: "Refer & Earn | Mbarara Online Partner Program",
   description:
-    "Invite friends to Oweitu Shop and earn 3,000 UGX directly to your Mobile Money for every new customer. Join the campus partner program today!",
+    "Invite friends to Mbarara Online and earn 3,000 UGX directly to your Mobile Money for every new customer. Join the Mbarara partner program today!",
   openGraph: {
-    title: "Earn 3,000 UGX per Referral | oweitu shop",
+    title: "Earn 3,000 UGX per Referral | Mbarara Online",
     description:
-      "Get paid directly to your MTN/Airtel Mobile Money when you invite friends to shop official items on Oweitu Shop. Start earning today!",
-    url: "https://www.oweitushop.com/invite",
-    siteName: "Oweitu Shop",
+      "Get paid directly to your MTN/Airtel Mobile Money when you invite friends to shop and trade items on Mbarara Online. Start earning today!",
+    url: "https://www.mbararaonline.com/invite",
+    siteName: "Mbarara Online",
     images: [
       {
         // 🚀 Points to the dynamic image generator
-        url: "https://www.oweitushop.com/api/og", 
+        url: "https://www.mbararaonline.com/api/og", 
         width: 1200,
         height: 630,
-        alt: "Oweitu Partner Program",
+        alt: "Mbarara Online Partner Program",
       },
     ],
     locale: "en_UG",
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Earn 3,000 UGX per Referral | oweitu shop",
-    description: "Get paid to your Mobile Money when you invite friends to shop on Oweitu Shop.",
-    images: ["https://www.oweitushop.com/api/og"],
+    title: "Earn 3,000 UGX per Referral | Mbarara Online",
+    description: "Get paid to your Mobile Money when you invite friends to shop and trade on Mbarara Online.",
+    images: ["https://www.mbararaonline.com/api/og"],
   },
 };
 
