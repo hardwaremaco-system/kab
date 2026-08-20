@@ -13,7 +13,7 @@ export const optimizeImage = (url: string): string => {
 };
 
 // ==========================================
-// OWEITU SHOP DEPOSIT LOGIC (New)
+// MBARARA ONLINE DEPOSIT LOGIC (New)
 // ==========================================
 export const calculateDepositAmount = (price: number, isAdminRestricted: boolean = false): number => {
   // If it's under 20k AND the admin hasn't forced a deposit, charge 0 (Pure COD)
