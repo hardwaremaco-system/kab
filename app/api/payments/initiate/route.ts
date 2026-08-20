@@ -119,7 +119,7 @@ export async function POST(request: Request) {
           amount: securePaymentAmount, 
           currency: "UGX",
           reference: referenceId,
-          description: `Oweitu Shop Order ${orderNumber}`
+          description: `Mbarara Online Order ${orderNumber}`
         })
       });
     } catch (err) {
