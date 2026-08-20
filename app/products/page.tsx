@@ -17,9 +17,9 @@ import {
 
 export const revalidate = 3600;
 
-export const metadata = {
-  title: "All Products | Oweitu Shop",
-  description: "Browse all premium electronics and items available in Kigezi and Ankole.",
+export const metadata: Metadata = {
+  title: "All Products | Mbarara Online",
+  description: "Browse all used and new products, electronics, and daily essentials available in Mbarara City.",
 };
 
 // 🔥 Set to 100 as requested
