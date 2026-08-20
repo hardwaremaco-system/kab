@@ -15,35 +15,36 @@ export const viewport: Viewport = {
 
 // SEO & PWA METADATA
 export const metadata: Metadata = {
-  title: "Oweitu Shop | The Better Way To Buy and Sell in Kigezi and Ankole Region",
+  title: "Mbarara Online | Buy and Sell Used and New Products in Mbarara City",
   description:
-    "Connect with buyers and sellers , local farmers, and verified vendors for safe, Cash-on-Delivery commerce.",
+    "Connect with buyers and sellers in Mbarara to trade used and new products safely with Cash-on-Delivery commerce.",
   keywords: [
-    "Kabale",
-    "Kabale University",
+    "Mbarara City",
+    "Mbarara Online",
     "buy and sell",
+    "used products Mbarara",
+    "new products Mbarara",
     "Uganda",
     "marketplace",
     "student market",
-    "agriculture",
   ],
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Oweitu Shop",
+    title: "Mbarara Online",
   },
   openGraph: {
-    title: "Oweitu Shop | The Better Way To Buy and Sell in Ankole and the Entire Western Region",
-    description: "Buy and sell locally in Ankole with strictly Cash on Delivery.",
-    url: "https://www.oweitushop.com",
-    siteName: "Oweitu Shop",
+    title: "Mbarara Online | The Better Way To Buy and Sell in Mbarara",
+    description: "Buy and sell used and new products locally in Mbarara City with strictly Cash on Delivery.",
+    url: "https://www.mbararaonline.com",
+    siteName: "Mbarara Online",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Oweitu Shop",
+        alt: "Mbarara Online",
       },
     ],
     locale: "en_UG",
@@ -51,8 +52,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Oweitu Shop",
-    description: "The Better Way To Buy and Sell in Kigezi and the Ankole Region",
+    title: "Mbarara Online",
+    description: "The Better Way To Buy and Sell Used and New Products in Mbarara City.",
     images: ["/og-image.jpg"],
   },
 };
