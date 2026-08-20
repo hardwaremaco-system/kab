@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase/config"; 
+// 🔥 Updated to use firestore/lite for better performance on Edge/Serverless environments
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore/lite";
+// 🔥 Updated to import dbLite
+import { dbLite } from "@/lib/firebase/config"; 
 import ProductFeed from "@/components/ProductFeed";
 import LeftSidebar from "@/components/LeftSidebar"; 
 import { 
@@ -29,7 +32,7 @@ export default async function AllProductsPage() {
   // ==========================================
   // INITIAL SERVER FETCH: Fastest load, best SEO
   // ==========================================
-  const productsRef = collection(db, "products");
+  const productsRef = collection(dbLite, "products");
   const q = query(productsRef, orderBy("createdAt", "desc"), limit(PAGE_SIZE));
 
   const snapshot = await getDocs(q);
@@ -90,7 +93,7 @@ export default async function AllProductsPage() {
                   All Marketplace Items
                 </h1>
                 <p className="text-slate-300 text-sm md:text-base font-medium leading-relaxed max-w-xl">
-                  Discover the best local deals for premium electronics and gadgets. Fast delivery, pay securely on arrival.
+                  Discover the best local deals for used and new electronics, gadgets, and daily essentials. Fast delivery across Mbarara City, pay securely on arrival.
                 </p>
               </div>
             </div>
