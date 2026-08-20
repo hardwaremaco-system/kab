@@ -20,7 +20,7 @@ function SuccessContent() {
       </h1>
       
       <p className="text-slate-600 mb-6 text-[15px] font-medium">
-        Thank you for shopping with Oweitu Shop. We are processing your order.
+        Thank you for shopping with Mbarara Online. We are processing your order.
       </p>
 
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-8">
