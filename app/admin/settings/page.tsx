@@ -161,7 +161,7 @@ export default function AdminSettingsPage() {
             <div className="sm:col-span-2">
               <label className="block text-sm font-semibold mb-2">Support Email Address</label>
               <input type="email" className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none" 
-                value={settings.supportEmail} onChange={e => setSettings({...settings, supportEmail: e.target.value})} placeholder="support@oweitushop.com" />
+                value={settings.supportEmail} onChange={e => setSettings({...settings, supportEmail: e.target.value})} placeholder="support@mbararaonline.com" />
             </div>
           </div>
         </div>
