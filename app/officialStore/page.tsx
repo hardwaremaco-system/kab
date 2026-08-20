@@ -10,26 +10,26 @@ export const dynamic = "force-dynamic";
 // SEO & OPEN GRAPH METADATA
 // ==========================================
 export const metadata: Metadata = {
-  title: "Official Store | Oweitu Shop",
-  description: "Shop premium, verified products sold directly by Oweitu Shop. Guaranteed quality, secure mobile payments, and fast delivery across the Ankole and Kigezi regions.",
+  title: "Official Store | Mbarara Online",
+  description: "Shop premium, verified products sold directly by Mbarara Online. Guaranteed quality, secure mobile payments, and fast delivery across Mbarara City.",
   keywords: [
-    "Oweitu Shop Official Store", 
-    "verified products Ankole Kigezi", 
+    "Mbarara Online Official Store", 
+    "verified products Mbarara", 
     "secure shopping Uganda", 
-    "Kigezi e-commerce", 
-    "buy premium items Oweitu Shop"
+    "Mbarara e-commerce", 
+    "buy premium items Mbarara Online"
   ],
   openGraph: {
-    title: "Official Store | Oweitu Shop",
-    description: "Shop premium, verified products sold directly by Oweitu Shop. Guaranteed quality, secure mobile payments, and fast delivery.",
-    url: "https://oweitushop.com/officialStore",
-    siteName: "Oweitu Shop",
+    title: "Official Store | Mbarara Online",
+    description: "Shop premium, verified products sold directly by Mbarara Online. Guaranteed quality, secure mobile payments, and fast delivery across Mbarara City.",
+    url: "https://www.mbararaonline.com/officialStore",
+    siteName: "Mbarara Online",
     images: [
       {
         url: "/official-og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Oweitu Shop Official Store",
+        alt: "Mbarara Online Official Store",
       },
     ],
     locale: "en_UG",
@@ -37,8 +37,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Official Store | Oweitu Shop",
-    description: "Shop premium, verified products sold directly by Oweitu Shop. Guaranteed quality and fast delivery.",
+    title: "Official Store | Mbarara Online",
+    description: "Shop premium, verified products sold directly by Mbarara Online. Guaranteed quality and fast delivery across Mbarara City.",
     images: ["/official-og-image.jpg"],
   },
 };
@@ -86,19 +86,18 @@ export default async function OfficialStorePage() {
 
               <div className="relative z-10">
                 <span className="inline-block bg-[#FF6A00] text-white px-3 py-1.5 rounded-sm text-[9px] sm:text-[10px] font-black uppercase tracking-widest mb-3 sm:mb-4 shadow-md">
-                  Verified by Oweitu Shop
+                  Verified by Mbarara Online
                 </span>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 sm:mb-3 tracking-tight">
                   Official Store
                 </h1>
                 <p className="text-slate-400 text-xs sm:text-sm md:text-base font-medium max-w-2xl leading-relaxed">
-                  Shop premium, verified products sold directly by us. Guaranteed quality, secure mobile payments, and fast delivery across the Ankole and Kigezi regions.
+                  Shop premium, verified products sold directly by us. Guaranteed quality, secure mobile payments, and fast delivery across Mbarara City.
                 </p>
               </div>
             </div>
 
             {/* PRODUCT GRID FEED */}
-            {/* Wrapper is totally transparent. The component itself forms the White Island. */}
             <div className="w-full">
               <OfficialProductFeed initialProducts={initialProducts} />
             </div>
