@@ -24,8 +24,8 @@ export default function Footer() {
     }`;
 
   // URL-encoded prefilled message for WhatsApp
-  const whatsappMessage = encodeURIComponent("Hello Oweitu Shop! I would like to place an order/shop with you.");
-  const officialWhatsApp = "256779094664"; // 🔥 FIXED 
+  const whatsappMessage = encodeURIComponent("Hello Mbarara Online! I would like to place an order or buy/sell an item.");
+  const officialWhatsApp = "256779094664";
   const whatsappLink = `https://wa.me/${officialWhatsApp}?text=${whatsappMessage}`;
 
   return (
@@ -40,14 +40,14 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-center text-center mb-16">
           {/* Custom Rectangle Logo */}
           <div className="border-2 border-white px-4 py-1 mb-6 flex items-center justify-center rounded-sm">
-            <span className="font-bold tracking-[0.2em] text-lg uppercase">Oweitu</span>
+            <span className="font-bold tracking-[0.2em] text-lg uppercase">Mbarara Online</span>
           </div>
 
           <h2 className="text-3xl md:text-4xl font-bold mb-2 tracking-tight">
-            Oweitu Marketplace
+            Mbarara Online Marketplace
           </h2>
           <p className="text-gray-300 text-sm md:text-base mb-6">
-            Everything You Need, Delivered across Ankole & Kigezi.
+            Buy and Sell Used & New Products safely across Mbarara City.
           </p>
 
           {/* WhatsApp CTA */}
@@ -73,9 +73,9 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-bold text-base mb-5">Contact</h3>
             <div className="space-y-1 text-sm text-gray-300 mb-6">
-              <p>Ankole & Kigezi, Uganda</p>
+              <p>Mbarara City, Western Region, Uganda</p>
               <p>+256 779 094664</p>
-              <p>support@oweitushop.com</p>
+              <p>support@mbararaonline.com</p>
             </div>
 
             {/* Social Icons */}
@@ -98,7 +98,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/profile" className={getLinkStyle('/profile')}>My Profile</Link></li>
               <li><Link href="/invite" className={getLinkStyle('/invite')}>Refer & Earn</Link></li>
-              <li><Link href="/sell" className={getLinkStyle('/sell')}>Sell on Oweitu</Link></li>
+              <li><Link href="/sell" className={getLinkStyle('/sell')}>Sell on Mbarara Online</Link></li>
               <li><Link href="/requests" className={getLinkStyle('/requests')}>Buyer Requests</Link></li>
             </ul>
           </div>
@@ -152,7 +152,7 @@ export default function Footer() {
             <Link href="/faq" className="underline hover:text-blue-400">FAQ</Link>
           </div>
           <p className="text-[15px] text-gray-200 tracking-wide">
-            © 2025-{new Date().getFullYear()} Oweitu Shop.
+            © 2025-{new Date().getFullYear()} Mbarara Online.
           </p>
         </div>
       </div>
