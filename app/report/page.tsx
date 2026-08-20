@@ -54,7 +54,7 @@ export default function ReportPage() {
         <CheckCircle2 className="text-[#25D366] w-20 h-20 mb-6" />
         <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-4">Report Submitted</h1>
         <p className="text-slate-600 dark:text-slate-300 max-w-md mb-8">
-          Thank you for helping keep Oweitu Shop safe. Our admin team will review this immediately.
+          Thank you for helping keep Mbarara Online safe. Our admin team will review this immediately.
         </p>
         <Link href="/" className="bg-[#FF6A00] text-white px-8 py-3 rounded-full font-bold hover:bg-orange-600 transition-colors">
           Return to Home
@@ -101,7 +101,7 @@ export default function ReportPage() {
             <label className="font-bold text-slate-900 dark:text-white">Product Link or URL (Optional)</label>
             <input 
               type="text"
-              placeholder="e.g. https://oweitushop.com/product/123"
+              placeholder="e.g. https://mbararaonline.com/product/123"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00]"
