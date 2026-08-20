@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     // This gives you a history of what the seller replied to the customer.
     try {
       await addDoc(collection(db, "whatsapp_messages"), {
-        senderPhone: "Oweitu Shop (Seller/Admin)",
+        senderPhone: "Mbarara Online (Seller/Admin)",
         recipientPhone: toPhone,
         content: text,
         status: "sent",
