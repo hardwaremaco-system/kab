@@ -6,9 +6,9 @@ import { db } from "@/lib/firebase/config";
 
 export default function ContactPage() {
   const [settings, setSettings] = useState({
-    whatsappNumber: "256779094664", // 🔥 FIXED
-    contactPhone: "+256 779 094664", // 🔥 FIXED
-    supportEmail: "support@oweitushop.com"
+    whatsappNumber: "256779094664",
+    contactPhone: "+256 779 094664",
+    supportEmail: "support@mbararaonline.com"
   });
 
   const [loading, setLoading] = useState(true);
@@ -21,8 +21,8 @@ export default function ContactPage() {
         if (snap.exists()) {
           const data = snap.data();
           setSettings({
-            whatsappNumber: data.whatsappNumber || "256779094664", // 🔥 FIXED
-            contactPhone: data.contactPhone || "+256 779 094664", // 🔥 FIXED
+            whatsappNumber: data.whatsappNumber || "256779094664",
+            contactPhone: data.contactPhone || "+256 779 094664",
             supportEmail: data.supportEmail || "support@mbararaonline.com"
           });
         }
@@ -39,12 +39,12 @@ export default function ContactPage() {
     <div className="max-w-2xl mx-auto py-16 px-4">
       <h1 className="text-4xl font-black mb-4">Contact Support</h1>
       <p className="text-slate-600 mb-8 text-lg">
-        We're here to help the Ankole and Kigezi community. Reach out through any channel below.
+        We're here to help the Mbarara City community. Reach out through any channel below.
       </p>
 
       <div className="space-y-6">
         <div className="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm relative overflow-hidden">
-          
+
           {loading && (
             <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
               <div className="w-6 h-6 border-2 border-[#FF6A00] border-t-transparent rounded-full animate-spin"></div>
@@ -62,7 +62,7 @@ export default function ContactPage() {
                 </a>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <span className="text-2xl">💬</span>
               <div>
@@ -72,7 +72,7 @@ export default function ContactPage() {
                 </a>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <span className="text-2xl">📞</span>
               <div>
@@ -83,7 +83,7 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>
