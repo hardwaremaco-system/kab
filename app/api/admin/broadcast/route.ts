@@ -30,8 +30,8 @@ export async function POST(req: Request) {
 
     // 4. BREVO CONFIG
     const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
-    const SENDER_EMAIL = "support@oweitushop.com"; 
-    const SENDER_NAME = "Oweitu Shop Admin";
+    const SENDER_EMAIL = "support@mbararaonline.com"; 
+    const SENDER_NAME = "Mbarara Online Admin";
 
     // 5. CHUNK EMAILS (40 at a time for maximum deliverability)
     const chunkSize = 40;
@@ -55,20 +55,20 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           sender: { email: SENDER_EMAIL, name: SENDER_NAME },
-          to: [{ email: SENDER_EMAIL, name: "Oweitu Community" }], 
+          to: [{ email: SENDER_EMAIL, name: "Mbarara Online Community" }], 
           bcc: bccList, 
           subject: subject,
           htmlContent: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #334155;">
               <div style="background-color: #D97706; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Oweitu Shop</h1>
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Mbarara Online</h1>
               </div>
               <div style="padding: 30px 20px; background-color: #ffffff; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; line-height: 1.6;">
                 ${htmlContent}
               </div>
               <div style="text-align: center; padding: 20px; font-size: 12px; color: #94a3b8;">
-                You are receiving this because you have an account on Oweitu Shop.<br>
-                Kabale, Western Region, Uganda.
+                You are receiving this because you have an account on Mbarara Online.<br>
+                Mbarara City, Western Region, Uganda.
               </div>
             </div>
           `,
