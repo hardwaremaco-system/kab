@@ -3,9 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation"; 
 import { Suspense } from "react";
-// 🔥 Updated to use firestore/lite
 import { collection, query, where, getDocs, orderBy, limit } from "firebase/firestore/lite";
-// 🔥 Updated to import dbLite
 import { dbLite } from "@/lib/firebase/config";
 import CategoryProductFeed from "@/components/CategoryProductFeed";
 import LeftSidebar from "@/components/LeftSidebar"; 
@@ -26,24 +24,24 @@ import {
 export const revalidate = 3600;
 
 // ==========================================
-// NEW FRONTEND BUCKETS MAPPING (Daily + Electronics)
+// FRONTEND BUCKETS MAPPING (Daily + Electronics)
 // ==========================================
 const frontendCategoryMap: Record<string, { title: string; description: string; backendCategories: string[]; bgImage: string }> = {
   "supermarket": {
     title: "Supermarket",
-    description: "Fresh food, soap, sugar, and daily everyday essentials.",
+    description: "Fresh food, groceries, soap, sugar, and daily essentials in Mbarara.",
     backendCategories: ["supermarket", "food", "groceries", "essentials"],
     bgImage: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80"
   },
   "fashion": {
     title: "Fashion & Shoes",
-    description: "Jerseys, t-shirts, sneakers, slippers, and stylish apparel.",
+    description: "Jerseys, t-shirts, sneakers, slippers, and stylish apparel in Mbarara.",
     backendCategories: ["fashion", "shoes", "clothing", "apparel"],
     bgImage: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200&q=80"
   },
   "beauty": {
     title: "Health & Beauty",
-    description: "Cosmetics, skincare, hair products, and daily hygiene.",
+    description: "Cosmetics, skincare, hair products, and daily hygiene essentials.",
     backendCategories: ["beauty", "health", "cosmetics", "skincare", "health-beauty"],
     bgImage: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1200&q=80"
   },
@@ -55,13 +53,13 @@ const frontendCategoryMap: Record<string, { title: string; description: string; 
   },
   "phones-tvs": {
     title: "Phones & TVs",
-    description: "The latest smartphones, tablets, and high-definition televisions.",
+    description: "New and used smartphones, tablets, screens, and televisions.",
     backendCategories: ["phones", "tvs", "phones-tvs", "smartphones"],
     bgImage: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200&q=80"
   },
   "sound-systems": {
     title: "Sound Systems",
-    description: "Home theaters, soundbars, amplifiers, and premium speakers.",
+    description: "Home theaters, soundbars, amplifiers, and high-quality speakers.",
     backendCategories: ["sound-systems", "audio", "speakers"],
     bgImage: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=1200&q=80"
   },
@@ -79,14 +77,14 @@ const frontendCategoryMap: Record<string, { title: string; description: string; 
   },
   "other-products": {
     title: "Other Products",
-    description: "Explore a variety of other great products and lifestyle items.",
+    description: "Explore a variety of used and new products across Mbarara City.",
     backendCategories: ["other", "other-products", "general", "agriculture", "student_item"], 
     bgImage: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1200&q=80"
   }
 };
 
 // ==========================================
-// AUTOMATIC REDIRECT MAP (To handle legacy SEO links)
+// AUTOMATIC REDIRECT MAP (Handles legacy SEO links)
 // ==========================================
 const legacyMapping: Record<string, string> = {
   "tech-appliances": "appliances",
@@ -117,30 +115,36 @@ export async function generateMetadata({ params }: { params: { categorySlug: str
   const categoryData = frontendCategoryMap[slug];
 
   const title = categoryData ? categoryData.title : `${slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
-  const description = categoryData ? categoryData.description : `Shop the best local deals for ${slug.replace(/_/g, ' ')} delivered fast to your location.`;
+  const description = categoryData ? categoryData.description : `Shop the best used and new local deals for ${slug.replace(/_/g, ' ')} delivered fast in Mbarara.`;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.oweitushop.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.mbararaonline.com";
   const currentUrl = `${baseUrl}/category/${slug}`;
-  const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(title)}&desc=${encodeURIComponent("Fast Local Delivery in Kabale")}`;
+  const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(title)}&desc=${encodeURIComponent("Fast Local Delivery in Mbarara City")}`;
 
   return {
-    title: `${title} | Oweitu Shop`,
+    title: `${title} | Mbarara Online`,
     description: description,
     keywords: [
-      title, "Oweitu Shop", "Oweitu Marketplace", "buy electronics Kabale", slug.replace(/_/g, ' '), "buy online"
+      title, 
+      "Mbarara Online", 
+      "Mbarara Marketplace", 
+      "buy and sell Mbarara", 
+      "used and new products Mbarara", 
+      slug.replace(/_/g, ' '), 
+      "buy online Uganda"
     ],
     openGraph: {
-      title: `${title} | Oweitu Shop`,
+      title: `${title} | Mbarara Online`,
       description: description,
       url: currentUrl,
-      siteName: "Oweitu Shop",
-      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${title} on Owetu Shop` }],
+      siteName: "Mbarara Online",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${title} on Mbarara Online` }],
       locale: "en_UG",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | Oweitu Shop`,
+      title: `${title} | Mbarara Online`,
       description: description,
       images: [ogImageUrl],
     },
@@ -174,10 +178,9 @@ export default async function CategoryPage({
   const backendCategoriesToFetch = categoryData ? categoryData.backendCategories : [slug];
   const displayTitle = categoryData ? categoryData.title : slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   const displayDesc = categoryData ? categoryData.description : `Browse all items in ${slug.replace(/_/g, ' ')}.`;
-  const bgImageUrl = categoryData ? categoryData.bgImage : "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&q=80"; // Default abstract pattern
+  const bgImageUrl = categoryData ? categoryData.bgImage : "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&q=80";
 
-  // 3. DYNAMIC FIREBASE QUERY 
-  // 🔥 Updated to use dbLite
+  // 3. DYNAMIC FIREBASE QUERY
   const categoryQ = query(
     collection(dbLite, "products"),
     where("category", "in", backendCategoriesToFetch),
@@ -203,7 +206,7 @@ export default async function CategoryPage({
     } as any; 
   });
 
-  // 5. THE MASTER EXPLORE CATEGORIES ARRAY
+  // 5. MASTER EXPLORE CATEGORIES ARRAY
   const masterExploreCategories = [
     { name: "Supermarket", link: "supermarket", desc: "Groceries & daily essentials", Icon: ShoppingBasket },
     { name: "Fashion & Shoes", link: "fashion", desc: "Apparel, shoes & jerseys", Icon: Shirt },
@@ -216,7 +219,7 @@ export default async function CategoryPage({
     { name: "Other Products", link: "other-products", desc: "Explore more great deals", Icon: Package }
   ];
 
-  // Dynamically pull exactly 6 categories to maintain a perfect grid, excluding the current one
+  // Dynamically pull exactly 6 categories to maintain grid alignment, excluding current category
   const exploreCategories = masterExploreCategories.filter(cat => cat.link !== slug).slice(0, 6);
 
   return (
@@ -241,7 +244,7 @@ export default async function CategoryPage({
           {/* CENTER CONTENT */}
           <div className="flex-grow min-w-0 flex flex-col w-full gap-4">
 
-            {/* PREMIUM CINEMATIC CATEGORY BANNER */}
+            {/* CINEMATIC CATEGORY BANNER */}
             <div className="relative w-full rounded-none md:rounded-xl overflow-hidden shadow-md min-h-[220px] md:min-h-[260px] flex flex-col justify-center px-6 sm:px-10 py-12">
               <Image 
                 src={bgImageUrl} 
@@ -262,7 +265,7 @@ export default async function CategoryPage({
               </div>
             </div>
 
-            {/* THE PAGINATED FEED */}
+            {/* PAGINATED FEED */}
             <div className="w-full">
               {initialProducts.length > 0 ? (
                  <Suspense fallback={<div className="w-full h-[400px] bg-slate-50 dark:bg-slate-900/50 animate-pulse rounded-md" />}>
@@ -277,7 +280,7 @@ export default async function CategoryPage({
                   <Package className="w-12 h-12 text-slate-300 dark:text-slate-700 mb-4" />
                   <h3 style={{ color: '#1A1A1A' }} className="text-sm font-black dark:text-white uppercase tracking-widest mb-2">No items yet</h3>
                   <p style={{ color: '#6B6B6B' }} className="text-xs font-medium max-w-md dark:text-slate-400">
-                    Check back soon! New local deals are posted here daily.
+                    Check back soon! New local deals across Mbarara City are posted here daily.
                   </p>
                 </div>
               )}
