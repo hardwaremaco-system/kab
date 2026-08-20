@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 
 export default function InviteHubPage() {
-  // 🚀 FIXED: Destructured signInWithGoogle instead of the old signIn
+  // 🚀 Destructured signInWithGoogle instead of the old signIn
   const { user, signInWithGoogle, loading } = useAuth();
   const [copied, setCopied] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false); 
@@ -17,7 +17,6 @@ export default function InviteHubPage() {
   const handleSignIn = async () => {
     setIsLoggingIn(true);
     try {
-      // 🚀 FIXED: Calling the new Google sign-in method
       await signInWithGoogle();
     } catch (error) {
       console.error(error);
@@ -44,7 +43,7 @@ export default function InviteHubPage() {
         <div className="max-w-[480px] md:max-w-2xl mx-auto p-4 pt-8 md:pt-12 flex flex-col w-full">
           <div className="text-center mb-8 w-full">
             <span className="text-[#D97706] font-black tracking-widest uppercase text-[11px] mb-2 block">Creator & Affiliate Network</span>
-            <h1 className="text-3xl font-black text-slate-900 mb-3 leading-tight">Promote Oweitu Shop.<br/>Earn Real Cash.</h1>
+            <h1 className="text-3xl font-black text-slate-900 mb-3 leading-tight">Promote Mbarara Online.<br/>Earn Real Cash.</h1>
             <p className="text-slate-500 text-[15px] px-2 w-full font-medium">Earn up to <strong className="text-slate-900">3,000 UGX</strong> directly to your Mobile Money every time someone buys using your link.</p>
           </div>
 
@@ -62,7 +61,7 @@ export default function InviteHubPage() {
                 <div className="bg-slate-100 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"><FaWhatsapp className="text-slate-400 text-[16px]" /></div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-black text-slate-900 text-[15px]">2. Share with your audience</h3>
-                  <p className="text-[13px] text-slate-500 mt-1 leading-snug">Post your links on WhatsApp statuses, class groups, or to friends directly.</p>
+                  <p className="text-[13px] text-slate-500 mt-1 leading-snug">Post your links on WhatsApp statuses, Mbarara community groups, or to friends directly.</p>
                 </div>
               </div>
               <div className="flex gap-3 items-start w-full min-w-0">
@@ -84,11 +83,10 @@ export default function InviteHubPage() {
 
   // LOGGED-IN HUB VIEW
   const referralCode = user.referralCode || "PENDING";
-  const referralLink = `https://www.oweitushop.com/invite/${referralCode}`;
+  const referralLink = `https://www.mbararaonline.com/invite/${referralCode}`;
   const balance = user.referralBalance || 0;
-  const currentDisplayName = user.referralName || user.displayName?.split(' ')[0] || "Oweitu User";
+  const currentDisplayName = user.referralName || user.displayName?.split(' ')[0] || "Mbarara User";
 
-  // 🚀 FIXED: TypeScript will accept this perfectly.
   const currentPhone = user.phone;
 
   const handleCopy = () => {
@@ -98,7 +96,7 @@ export default function InviteHubPage() {
     });
   };
 
-  const rawGeneralShareMsg = `Hey! 👋\n\nI get my campus supplies safely from *Oweitu Shop*.\n\nUse my link to order your stuff with Cash on Delivery:\n👉 ${referralLink}`;
+  const rawGeneralShareMsg = `Hey! 👋\n\nI buy and sell used and new items safely on *Mbarara Online*.\n\nUse my link to order your stuff with Cash on Delivery:\n👉 ${referralLink}`;
 
   return (
     <div className="w-full min-h-screen bg-slate-50 overflow-x-hidden pb-10">
