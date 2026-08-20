@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config"; // Your existing client config
+import { db } from "@/lib/firebase/config";
 import { FaShieldAlt, FaWhatsapp, FaLock } from "react-icons/fa";
 
 export default function WhatsAppCheckoutPage() {
@@ -43,7 +43,7 @@ export default function WhatsAppCheckoutPage() {
     fetchCart();
   }, [rawPhone]);
 
-  // 2. Execute Payment (Matches your existing CartPage logic exactly)
+  // 2. Execute Payment
   const handlePayment = async () => {
     if (!buyerName.trim()) return alert("Please enter your name for delivery.");
     
@@ -54,11 +54,10 @@ export default function WhatsAppCheckoutPage() {
 
     setProcessing(true);
 
-    // Format the payload exactly how your LivePay API expects it
     const masterOrderPayload = {
       buyerName: buyerName.trim(),
       contactPhone: cleanPhone,
-      userId: "WHATSAPP_GUEST", // Tagging them as a WhatsApp user
+      userId: "WHATSAPP_GUEST",
       referralCodeUsed: null,
       cartItems: cart.items.map((item: any) => ({
         productId: item.productId,
@@ -124,7 +123,7 @@ export default function WhatsAppCheckoutPage() {
           It looks like you've already paid for this order, or your cart is empty. 
         </p>
         <a 
-          href="https://wa.me/256740373021" 
+          href="https://wa.me/256779094664" 
           className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 px-8 rounded-xl shadow-md transition-all flex items-center gap-2"
         >
           <FaWhatsapp className="text-xl" /> Return to WhatsApp
@@ -141,7 +140,7 @@ export default function WhatsAppCheckoutPage() {
         <div className="bg-[#111111] p-6 text-center relative">
           <div className="absolute top-0 left-0 w-full h-1 bg-[#FF6A00]"></div>
           <h1 className="text-white text-xl font-black tracking-tight flex items-center justify-center gap-2">
-            Oweitu Shop <FaLock className="text-[#FF6A00] text-sm" />
+            Mbarara Online <FaLock className="text-[#FF6A00] text-sm" />
           </h1>
           <p className="text-slate-400 text-xs mt-1 font-medium">Secure WhatsApp Checkout</p>
         </div>
@@ -218,7 +217,7 @@ export default function WhatsAppCheckoutPage() {
           {/* Trust Badge */}
           <div className="mt-6 flex items-center justify-center gap-2 text-xs font-bold text-slate-400">
             <FaShieldAlt className="text-green-500" />
-            Protected by Oweitu Shop Security
+            Protected by Mbarara Online Security
           </div>
         </div>
       </div>
