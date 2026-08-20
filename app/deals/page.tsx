@@ -20,11 +20,11 @@ const campaignDisplayNames: Record<string, string> = {
 };
 
 const campaignDescriptions: Record<string, string> = {
-  "flash-sales": "Grab massive discounts before time runs out! Shop the best flash sales on electronics and accessories in Uganda.",
-  "weekend-deals": "Exclusive weekend price drops! Upgrade your gadgets with fast local delivery from Oweitu Shop.",
+  "flash-sales": "Grab massive discounts before time runs out! Shop the best flash sales on used and new products in Mbarara.",
+  "weekend-deals": "Exclusive weekend price drops! Upgrade your gadgets with fast local delivery across Mbarara City from Mbarara Online.",
   "clearance": "Huge clearance markdowns! Get these products at unbeatable prices before they are gone forever.",
-  "student-deals": "Special student discounts for campus essentials. Save big on tech and accessories for your hostel.",
-  "mega-sale": "Our biggest deals of the season! Massive savings on top-rated electronics and more."
+  "student-deals": "Special student discounts for campus essentials in Mbarara. Save big on tech and accessories for your hostel.",
+  "mega-sale": "Our biggest deals of the season! Massive savings on top-rated electronics and everyday items in Mbarara."
 };
 
 // ==========================================
@@ -45,17 +45,17 @@ export async function generateMetadata({
     ? campaignFilter.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
     : "Active Deals & Discounts";
 
-  const pageTitle = `${baseTitle} | Oweitu Shop`;
+  const pageTitle = `${baseTitle} | Mbarara Online`;
 
   // Generate exact description
   const description = campaignFilter && campaignDescriptions[campaignFilter]
     ? campaignDescriptions[campaignFilter]
-    : "Discover the best deals, discounts, and flash sales on Oweitu Shop. Fast local delivery available on all items in Uganda.";
+    : "Discover the best deals, discounts, and flash sales on Mbarara Online. Fast local delivery available on all items in Mbarara City.";
 
-  const currentUrl = `https://www.oweitushop.com/deals${campaignFilter ? `?campaign=${campaignFilter}` : ''}`;
+  const currentUrl = `https://www.mbararaonline.com/deals${campaignFilter ? `?campaign=${campaignFilter}` : ''}`;
   
   // 🔥 BUILD THE DYNAMIC OG IMAGE URL FOR THE DEALS PAGE
-  const ogImage = `https://www.oweitushop.com/api/og?title=${encodeURIComponent(baseTitle)}&desc=${encodeURIComponent(description)}`;
+  const ogImage = `https://www.mbararaonline.com/api/og?title=${encodeURIComponent(baseTitle)}&desc=${encodeURIComponent(description)}`;
 
   return {
     title: pageTitle,
@@ -67,7 +67,7 @@ export async function generateMetadata({
       title: pageTitle,
       description: description,
       url: currentUrl,
-      siteName: "Oweitu Shop",
+      siteName: "Mbarara Online",
       images: [{ url: ogImage, width: 1200, height: 630, alt: baseTitle }],
       type: "website",
     },
@@ -153,8 +153,8 @@ export default async function DealsPage({
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": pageTitle,
-    "description": campaignFilter && campaignDescriptions[campaignFilter] ? campaignDescriptions[campaignFilter] : "Active deals on oweitu shop",
-    "url": `https://www.oweitushop.com/deals${campaignFilter ? `?campaign=${campaignFilter}` : ''}`,
+    "description": campaignFilter && campaignDescriptions[campaignFilter] ? campaignDescriptions[campaignFilter] : "Active deals on Mbarara Online",
+    "url": `https://www.mbararaonline.com/deals${campaignFilter ? `?campaign=${campaignFilter}` : ''}`,
   };
 
   return (
@@ -186,7 +186,7 @@ export default async function DealsPage({
             <p className="text-white/90 font-medium max-w-xl text-sm sm:text-base">
               {campaignFilter && campaignDescriptions[campaignFilter] 
                 ? campaignDescriptions[campaignFilter] 
-                : "Grab these limited-time offers before they expire. Fast local delivery available."}
+                : "Grab these limited-time offers before they expire. Fast local delivery available across Mbarara."}
             </p>
           </div>
 
@@ -216,7 +216,7 @@ export default async function DealsPage({
             </h2>
 
             <p className="text-slate-500 dark:text-slate-400 font-medium max-w-md mb-8">
-              The deals for this campaign have either sold out or expired. Keep an eye out—we launch new flash sales and massive discounts regularly!
+              The deals for this campaign have either sold out or expired. Keep an eye out—we launch new flash sales and massive discounts regularly across Mbarara City!
             </p>
 
             <Link 
