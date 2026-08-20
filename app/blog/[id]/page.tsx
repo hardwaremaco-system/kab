@@ -20,7 +20,7 @@ export async function generateMetadata(
     const snap = await adminDb.collection("blog_posts").doc(params.id).get();
     if (!snap.exists) {
       return {
-        title: "Article Not Found | Oweitu Shop",
+        title: "Article Not Found | Mbarara Online",
         description: "This article does not exist.",
       };
     }
@@ -29,13 +29,13 @@ export async function generateMetadata(
     const displayImage =
       post?.featuredImage || post?.image || "/og-image.jpg";
 
-    const url = `https://www.oweitushop.com/blog/${params.id}`;
+    const url = `https://www.mbararaonline.com/blog/${params.id}`;
 
     return {
-      title: `${post?.title} | Oweitu Shop Journal`,
+      title: `${post?.title} | Mbarara Online Journal`,
       description:
         post?.excerpt ||
-        "Read the latest updates and insights on Oweitu Shop.",
+        "Read the latest updates, guides, and insights on Mbarara Online.",
       alternates: {
         canonical: url,
       },
@@ -43,7 +43,7 @@ export async function generateMetadata(
         title: post?.title,
         description: post?.excerpt,
         url,
-        siteName: "Kabale Online",
+        siteName: "Mbarara Online",
         images: [
           {
             url: displayImage,
@@ -51,7 +51,7 @@ export async function generateMetadata(
             height: 630,
           },
         ],
-        locale: "en_US",
+        locale: "en_UG",
         type: "article",
       },
       twitter: {
@@ -64,7 +64,7 @@ export async function generateMetadata(
   } catch (error) {
     console.error("Metadata error:", error);
     return {
-      title: "Journal | Kabale Online",
+      title: "Journal | Mbarara Online",
     };
   }
 }
@@ -177,7 +177,7 @@ export default async function BlogPostPage({ params }: Props) {
                     color: "#111",
                   }}
                 >
-                  {post.author || "Kabale Online"}
+                  {post.author || "Mbarara Online"}
                 </span>
                 <br />
                 <span
