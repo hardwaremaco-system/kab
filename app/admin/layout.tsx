@@ -30,7 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="h-screen flex flex-col items-center justify-center bg-slate-50 px-4 text-center">
         <div className="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-6 text-4xl shadow-sm">⛔</div>
         <h1 className="text-3xl font-extrabold text-slate-900 mb-4">Classified Area</h1>
-        <p className="text-slate-600 mb-8 max-w-md">You need Official Staff privileges to access the Oweitu Command Center.</p>
+        <p className="text-slate-600 mb-8 max-w-md">You need Official Staff privileges to access the Mbarara Online Command Center.</p>
         <Link href="/" className="bg-[#D97706] text-white px-8 py-4 rounded-xl font-bold hover:bg-amber-600 transition-colors shadow-md">
           Return to Marketplace
         </Link>
@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const visibleNavItems = navItems.filter(item => item.roles.includes(user.role as string));
   const safeDisplayName = user.displayName || "Staff Member";
-  const safeFirstLetter = safeDisplayName.charAt(0) || "O";
+  const safeFirstLetter = safeDisplayName.charAt(0) || "M";
   const roleDisplay = user.role === "admin" ? "System Admin" : "Content Editor";
 
   return (
@@ -69,7 +69,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="h-20 flex items-center px-8 border-b border-slate-800 relative z-10">
           <Link href="/" className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
             <span className="text-3xl">🛡️</span>
-            <div>Oweitu<span className="text-[#D97706]">Admin</span></div>
+            <div>Mbarara<span className="text-[#D97706]">Admin</span></div>
           </Link>
         </div>
         <nav className="flex-1 overflow-y-auto py-8 px-4 space-y-2 relative z-10 custom-scrollbar">
@@ -111,7 +111,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className={`fixed inset-y-0 left-0 w-72 bg-slate-950 text-white flex flex-col z-50 transform transition-transform duration-300 ease-in-out md:hidden shadow-2xl ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="h-20 flex items-center justify-between px-6 border-b border-slate-800">
           <Link href="/" className="text-xl font-black tracking-tight text-white flex items-center gap-2">
-            <span>🛡️</span> Oweitu<span className="text-[#D97706]">Admin</span>
+            <span>🛡️</span> Mbarara<span className="text-[#D97706]">Admin</span>
           </Link>
           <button onClick={() => setIsMobileMenuOpen(false)} className="text-slate-400 hover:text-white p-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -141,7 +141,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
           <Link href="/admin" className="text-lg font-black tracking-tight text-slate-900 absolute left-1/2 -translate-x-1/2">
-            Oweitu<span className="text-[#D97706]">Admin</span>
+            Mbarara<span className="text-[#D97706]">Admin</span>
           </Link>
           <div className="w-8 h-8 rounded-full bg-[#D97706] text-white flex items-center justify-center font-bold text-xs shadow-md">
             {safeFirstLetter}
