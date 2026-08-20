@@ -11,7 +11,7 @@ export default function TermsPage() {
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">1. Acceptance of Terms</h2>
         <p>
-          By accessing or using Oweitu Shop, you agree to comply with and be 
+          By accessing or using Mbarara Online, you agree to comply with and be 
           bound by these Terms & Conditions. If you do not agree with any part 
           of these terms, you should not use the platform.
         </p>
@@ -20,9 +20,9 @@ export default function TermsPage() {
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">2. Our Role & Platform Facilitation</h2>
         <p>
-          Oweitu Shop is a digital marketplace that connects buyers and sellers 
-          within the Ankole and Kigezi regions. While we primarily facilitate 
-          these connections, we may coordinate logistics and deliveries to improve 
+          Mbarara Online is a digital marketplace that connects buyers and sellers 
+          within Mbarara City and surrounding areas. While we primarily facilitate 
+          these connections, we may coordinate logistics and local deliveries to improve 
           the user experience. However, the core transaction remains between the 
           buyer and the seller.
         </p>
@@ -41,8 +41,8 @@ export default function TermsPage() {
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">4. Safety & Payments</h2>
         <p>
-          Oweitu Shop strongly recommends Cash on Delivery (COD). Users should 
-          meet in safe, public locations and verify items before payment. We are 
+          Mbarara Online strongly recommends Cash on Delivery (COD). Users should 
+          meet in safe, public locations across Mbarara and verify items before payment. We are 
           not liable for fraudulent transactions, payment disputes, damages, or 
           losses resulting from user interactions.
         </p>
@@ -53,7 +53,7 @@ export default function TermsPage() {
         <p>
           Users may not list illegal substances, stolen property, counterfeit 
           goods, weapons, hazardous materials, or any items prohibited under 
-          Ugandan law. Oweitu Shop reserves the right to remove any listing 
+          Ugandan law. Mbarara Online reserves the right to remove any listing 
           that violates these rules without prior notice.
         </p>
       </section>
@@ -62,21 +62,21 @@ export default function TermsPage() {
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">6. Buyer Terms & Responsibilities</h2>
-        <p><strong>Order Accuracy:</strong> Buyers must provide a correct name, active phone number, and accurate delivery location. Failure to do so may result in order cancellation or account restriction.</p>
+        <p><strong>Order Accuracy:</strong> Buyers must provide a correct name, active phone number, and accurate delivery location within Mbarara. Failure to do so may result in order cancellation or account restriction.</p>
         <p><strong>Order Commitment:</strong> By placing an order, the buyer agrees to be available at the delivery time and accept the delivery if the item matches the description.</p>
         <p><strong>Refusals:</strong> Buyers may only refuse orders if the item is incorrect, damaged, or does not match the listing. Unjustified refusals or repeated cancellations may lead to warnings, limited ordering ability, or permanent account bans.</p>
       </section>
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">7. Seller Terms & Obligations</h2>
-        <p><strong>Listing Accuracy & Stock:</strong> Sellers must ensure accurate descriptions, real images, and correct pricing. Sellers must only list available items and update stock regularly. Listing unavailable items is a direct violation.</p>
+        <p><strong>Listing Accuracy & Stock:</strong> Sellers must ensure accurate descriptions (clearly identifying used vs. new items), real images, and correct pricing. Sellers must only list available items and update stock regularly. Listing unavailable items is a direct violation.</p>
         <p><strong>Order Fulfillment:</strong> Sellers must confirm orders within the specified time and prepare items immediately. Sellers may not cancel confirmed orders without a valid reason.</p>
-        <p><strong>Performance Monitoring:</strong> Oweitu Shop tracks delivery success rates, response times, and cancellation rates. Low-performing sellers may be deprioritized in search results or removed from the platform entirely.</p>
+        <p><strong>Performance Monitoring:</strong> Mbarara Online tracks delivery success rates, response times, and cancellation rates. Low-performing sellers may be deprioritized in search results or removed from the platform entirely.</p>
       </section>
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">8. Enforcement, Penalties & Consequences</h2>
-        <p>Oweitu Shop enforces strict compliance to maintain trust. We utilize a warning system where first violations receive a warning, and repeated violations result in stricter actions.</p>
+        <p>Mbarara Online enforces strict compliance to maintain trust. We utilize a warning system where first violations receive a warning, and repeated violations result in stricter actions.</p>
         <p>Penalties for violating platform rules may include reduced listing visibility, temporary suspension, permanent account removal, and potential financial penalties for failed fulfillment.</p>
       </section>
 
@@ -88,18 +88,18 @@ export default function TermsPage() {
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">10. Referral & Cookie Tracking</h2>
-        <p>Oweitu Shop uses cookies and internal systems to attribute referrals. Referrals are valid within a limited time window. Users acknowledge that tracking systems may not be perfect, and Oweitu Shop's system records dictate final attribution.</p>
+        <p>Mbarara Online uses cookies and internal systems to attribute referrals. Referrals are valid within a limited time window. Users acknowledge that tracking systems may not be perfect, and Mbarara Online's system records dictate final attribution.</p>
       </section>
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">11. Delivery & Fulfillment Disclaimer</h2>
-        <p>While Oweitu Shop may facilitate delivery and coordinate logistics, we do not strictly guarantee delivery times or total seller compliance. We are not legally liable for delays caused by sellers or failed deliveries due to user error.</p>
+        <p>While Mbarara Online may facilitate delivery and coordinate logistics, we do not strictly guarantee delivery times or total seller compliance. We are not legally liable for delays caused by sellers or failed deliveries due to user error.</p>
       </section>
 
       <section className="mb-8">
         <h2 className="font-bold text-xl mb-2">12. Platform Control Rights & Dispute Resolution</h2>
-        <p>Oweitu Shop reserves the right to remove listings, restrict users, adjust visibility, and modify platform rules at its sole discretion to maintain platform integrity.</p>
-        <p>Users are encouraged to resolve disputes amicably between themselves. While Oweitu Shop may intervene to mediate, we are not obligated to do so, and platform decisions are final where applicable.</p>
+        <p>Mbarara Online reserves the right to remove listings, restrict users, adjust visibility, and modify platform rules at its sole discretion to maintain platform integrity.</p>
+        <p>Users are encouraged to resolve disputes amicably between themselves. While Mbarara Online may intervene to mediate, we are not obligated to do so, and platform decisions are final where applicable.</p>
       </section>
 
       <hr className="my-10 border-slate-300" />
@@ -116,7 +116,7 @@ export default function TermsPage() {
         <h2 className="font-bold text-xl mb-2">14. Contact</h2>
         <p>
           If you have questions regarding these Terms & Conditions, please 
-          contact us through the official Oweitu Shop communication channels.
+          contact us through the official Mbarara Online communication channels.
         </p>
       </section>
     </div>
