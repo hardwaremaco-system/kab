@@ -39,7 +39,7 @@ export default async function SuccessPage({ params }: { params: { orderId: strin
     displayPhone = serviceItem.sellerPhone;
     const cleanPhone = displayPhone.replace(/\D/g, "");
     const formattedWaPhone = cleanPhone.startsWith("0") ? `256${cleanPhone.slice(1)}` : cleanPhone;
-    const waMessage = encodeURIComponent(`Hello! I just paid the deposit for your service (${serviceItem.name.replace("Booking Deposit: ", "")}) on Oweitu Shop. When can we schedule the meetup?`);
+    const waMessage = encodeURIComponent(`Hello! I just paid the deposit for your service (${serviceItem.name.replace("Booking Deposit: ", "")}) on Mbarara Online. When can we schedule the meetup?`);
     waLink = `https://wa.me/${formattedWaPhone}?text=${waMessage}`;
   }
 
