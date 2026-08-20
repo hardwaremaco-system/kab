@@ -253,7 +253,7 @@ export default function SellPage() {
           Item Posted Successfully!
         </h1>
         <p className="text-slate-600 mb-8 text-lg">
-          Your <span className="font-bold text-slate-900">{successData.title}</span> is now live on Oweitu Shop. 
+          Your <span className="font-bold text-slate-900">{successData.title}</span> is now live on Mbarara Online.
         </p>
 
         <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4 mb-8">
