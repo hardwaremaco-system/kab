@@ -15,7 +15,7 @@ export default function AdminBroadcastPage() {
     e.preventDefault();
     if (!user || user.role !== "admin") return;
 
-    if (!window.confirm("🚨 WARNING: This will send an email to EVERY registered user on Oweitu Shop. Are you absolutely sure?")) {
+    if (!window.confirm("🚨 WARNING: This will send an email to EVERY registered user on Mbarara Online. Are you absolutely sure?")) {
       return;
     }
 
@@ -82,7 +82,7 @@ export default function AdminBroadcastPage() {
               required
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="e.g. Big Update: New Sellers on Oweitu Shop!"
+              placeholder="e.g. Big Update: New Sellers on Mbarara Online!"
               className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:border-[#D97706] focus:ring-1 focus:ring-[#D97706] transition-colors font-medium"
             />
           </div>
