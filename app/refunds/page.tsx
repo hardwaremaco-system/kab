@@ -8,7 +8,7 @@ export default function ReturnsPage() {
   const [settings, setSettings] = useState({
     whatsappNumber: "256779094664", 
     contactPhone: "+256 779 094664", 
-    supportEmail: "support@oweitushop.com"
+    supportEmail: "support@mbararaonline.com"
   });
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function ReturnsPage() {
           setSettings({
             whatsappNumber: data.whatsappNumber || "256779094664", 
             contactPhone: data.contactPhone || "+256 779 094664", 
-            supportEmail: data.supportEmail || "support@oweitushop.com"
+            supportEmail: data.supportEmail || "support@mbararaonline.com"
           });
         }
       } catch (error) {
@@ -40,7 +40,7 @@ export default function ReturnsPage() {
         </h1>
 
         <p className="text-slate-600 mb-10 text-lg">
-          At Oweitu Shop, customer satisfaction is important to us. 
+          At Mbarara Online, customer satisfaction is important to us. 
           If you receive a damaged, defective, or wrong item, we are here to help.
         </p>
 
