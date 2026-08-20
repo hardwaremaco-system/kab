@@ -3,44 +3,44 @@ import Link from "next/link";
 export default function FAQPage() {
   const faqs = [
     {
-      q: "What is Oweitu Shop?",
-      a: "Oweitu Shop is a digital marketplace connecting students, farmers, and small businesses across the Ankole and Kigezi regions. It allows users to securely buy, sell, and promote goods and services within their local community."
+      q: "What is Mbarara Online?",
+      a: "Mbarara Online is a digital marketplace connecting buyers and sellers across Mbarara City. It allows students, residents, and local vendors to buy, sell, and discover both used and brand-new products within the local community."
+    },
+    {
+      q: "Can I sell both used and new items?",
+      a: "Yes. Whether you are clearing out second-hand electronics, household items, or running a shop with brand-new inventory, Mbarara Online supports listings for both used and new products."
     },
     {
       q: "Is delivery free?",
-      a: "Delivery arrangements are negotiated directly between the buyer and seller. We recommend meeting at central town locations, university campuses, or well-lit public areas for convenience and safety."
+      a: "Delivery arrangements are agreed upon directly between the buyer and seller. We recommend meeting at central spots in Mbarara City, university campuses (e.g., MUST), or well-lit public areas for convenience and safety."
     },
     {
       q: "How do I pay?",
-      a: "We strongly recommend Cash on Delivery (COD). Always meet in person, inspect the item carefully, and confirm its condition before making payment. Avoid sending Mobile Money in advance to unknown sellers."
+      a: "We strongly recommend Cash on Delivery (COD). Always meet in person, inspect the product carefully to verify its condition (especially for used items), and only pay once satisfied. Avoid sending Mobile Money in advance."
     },
     {
       q: "How do I post an item for sale?",
-      a: "Create an account, click on 'Sell Now', upload clear photos, write a detailed description, set your price, and publish. The more clear and honest your listing is, the faster it will sell."
+      a: "Create an account, click 'Sell Now', upload clear photos of your item, write a detailed description indicating if it is new or used, set your price, and publish."
     },
     {
-      q: "Can I sell farm produce?",
-      a: "Yes. Oweitu Shop proudly supports local farmers. You can list Irish potatoes, matooke, onions, beans, vegetables, and other produce to reach bulk buyers and retailers across the region."
+      q: "Can I advertise services, hostels, or rental rooms?",
+      a: "Yes. Landlords, property managers, and service providers can list available rentals and services with pricing and contact details to connect directly with students and local residents."
     },
     {
-      q: "Can I advertise my hostel or rental rooms?",
-      a: "Yes. Landlords and hostel managers can list available rooms, include pricing, location details, and contact information to attract university students and other tenants."
-    },
-    {
-      q: "Is Oweitu Shop involved in transactions?",
-      a: "No. Oweitu Shop only connects buyers and sellers. We do not handle payments, deliveries, or hold goods. All agreements are made directly between users."
+      q: "Is Mbarara Online involved in payments or transactions?",
+      a: "No. Mbarara Online directly connects local buyers and sellers. We do not handle payments, deliveries, or escrow. All agreements and transactions happen directly between the two parties."
     },
     {
       q: "How do I stay safe while buying or selling?",
-      a: "Always meet in public places, avoid advance payments, verify items before paying, and communicate clearly. If something feels suspicious, do not proceed with the transaction."
+      a: "Always meet in busy public locations in Mbarara, avoid paying in advance, thoroughly inspect used or refurbished items before paying, and report any suspicious listings immediately."
     },
     {
       q: "Are there fees for posting?",
-      a: "Basic listings are free. Premium promotional options (like Homepage Flash Sales) are available for businesses that want maximum visibility."
+      a: "Basic listings are completely free. Optional promotional features (like Homepage Highlights and Featured Ads) are available for sellers seeking faster visibility."
     },
     {
-      q: "Who can use Oweitu Shop?",
-      a: "Anyone in the Ankole and Kigezi regions — students, farmers, entrepreneurs, shop owners, and residents — can use the platform to connect and trade locally."
+      q: "Who can use Mbarara Online?",
+      a: "Anyone living, studying, or doing business in Mbarara City and neighboring areas — university students, shop owners, independent sellers, and residents — can trade on the platform."
     }
   ];
 
@@ -51,7 +51,7 @@ export default function FAQPage() {
       </h1>
 
       <p className="text-slate-600 mb-10 text-lg">
-        Everything you need to know about using Oweitu Shop safely and effectively.
+        Everything you need to know about buying and selling safely on Mbarara Online.
       </p>
 
       <div className="space-y-4">
@@ -75,10 +75,13 @@ export default function FAQPage() {
           Still Have Questions?
         </h3>
         <p className="text-slate-600 mb-4">
-          If your question isn’t listed here, feel free to contact us directly.
-          We're here to support the community.
+          If your question isn’t listed here, feel free to reach out directly.
+          We're here to help keep Mbarara's local commerce safe and smooth.
         </p>
-        <Link href="/contact" className="inline-block px-6 py-3 bg-[#FF6A00] text-white rounded-xl font-bold hover:bg-[#e65c00] shadow-sm transition-colors">
+        <Link 
+          href="/contact" 
+          className="inline-block px-6 py-3 bg-[#FF6A00] text-white rounded-xl font-bold hover:bg-[#e65c00] shadow-sm transition-colors"
+        >
           Contact Support
         </Link>
       </div>
