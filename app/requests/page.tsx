@@ -90,15 +90,15 @@ export default function RequestsPage() {
   };
 
   const copyToClipboard = (id: string) => {
-    const url = `https://www.oweitushop.com/requests/${id}`;
+    const url = `https://www.mbararaonline.com/requests/${id}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
   };
 
   const shareToWhatsApp = (req: ItemRequest) => {
-    const url = `https://www.oweitushop.com/requests/${req.id}`;
-    const text = `I am looking for a ${req.itemNeeded} on Oweitu Shop! Budget: UGX ${Number(req.budget).toLocaleString()}. Know anyone selling? Check it out here: ${url}`;
+    const url = `https://www.mbararaonline.com/requests/${req.id}`;
+    const text = `I am looking for a ${req.itemNeeded} on Mbarara Online! Budget: UGX ${Number(req.budget).toLocaleString()}. Know anyone selling in Mbarara? Check it out here: ${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -113,7 +113,7 @@ export default function RequestsPage() {
           </span>
           <h1 className="text-3xl sm:text-5xl font-black mb-4">Can't find what you need?</h1>
           <p className="text-slate-300 text-lg max-w-2xl mx-auto mb-8">
-            Post what you are looking for and your maximum budget. Sellers in the world will contact you directly with offers!
+            Post what you are looking for and your maximum budget. Sellers across Mbarara City will contact you directly with offers!
           </p>
           <button 
             onClick={() => { setIsModalOpen(true); setSuccessData(null); }}
@@ -144,7 +144,7 @@ export default function RequestsPage() {
             
             // USE THE FORMATTER HERE!
             const formattedPhone = formatWhatsAppNumber(req.buyerPhone);
-            const whatsappLink = `https://wa.me/${formattedPhone}?text=Hi%20${req.buyerName},%20I%20saw%20your%20request%20for%20"${req.itemNeeded}"%20on%20Oweitu%20Shop.%20I%20have%20this%20item!`;
+            const whatsappLink = `https://wa.me/${formattedPhone}?text=Hi%20${req.buyerName},%20I%20saw%20your%20request%20for%20"${req.itemNeeded}"%20on%20Mbarara%20Online.%20I%20have%20this%20item!`;
 
             return (
               <div key={req.id} className="flex flex-col bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow relative">
@@ -197,7 +197,7 @@ export default function RequestsPage() {
 
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-6">
                   <h3 className="font-bold text-slate-900 mb-2 text-lg">What's Next?</h3>
-                  <p className="text-sm text-slate-500 mb-4">Share this directly to your WhatsApp Status or friends to find sellers 10x faster!</p>
+                  <p className="text-sm text-slate-500 mb-4">Share this directly to your WhatsApp Status or friends to find sellers in Mbarara 10x faster!</p>
 
                   <button 
                     onClick={() => copyToClipboard(successData.id)}
@@ -207,7 +207,7 @@ export default function RequestsPage() {
                   </button>
 
                   <a 
-                    href={`https://wa.me/?text=${encodeURIComponent(`I am looking for a ${successData.item} on Oweitu Shop! Know anyone selling? Check it out here: https://www.oweitushop.com/requests/${successData.id}`)}`}
+                    href={`https://wa.me/?text=${encodeURIComponent(`I am looking for a ${successData.item} on Mbarara Online! Know anyone selling? Check it out here: https://www.mbararaonline.com/requests/${successData.id}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full block bg-[#25D366] text-white py-3 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-md"
@@ -224,12 +224,12 @@ export default function RequestsPage() {
               // SUBMISSION FORM
               <div className="p-6 md:p-8">
                 <h2 className="text-2xl font-black text-slate-900 mb-2">Request an Item</h2>
-                <p className="text-slate-500 text-sm mb-6">Tell the community what you're looking for.</p>
+                <p className="text-slate-500 text-sm mb-6">Tell the Mbarara community what you're looking for.</p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-1">What do you need?</label>
-                    <input type="text" required value={formData.itemNeeded} onChange={e => setFormData({...formData, itemNeeded: e.target.value})} className="w-full p-3 border border-slate-300 rounded-xl outline-none focus:border-[#D97706]" placeholder="e.g. iPhone 11 Pro Max" />
+                    <input type="text" required value={formData.itemNeeded} onChange={e => setFormData({...formData, itemNeeded: e.target.value})} className="w-full p-3 border border-slate-300 rounded-xl outline-none focus:border-[#D97706]" placeholder="e.g. iPhone 11 Pro Max (Used/New)" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
