@@ -133,7 +133,7 @@ function SearchResults() {
                 <svg className="animate-spin w-16 h-16 text-[#D97706] drop-shadow-md mb-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="7" className="opacity-90" strokeDasharray="200" strokeDashoffset="50" />
                 </svg>
-                <p className="font-bold text-slate-500 animate-pulse">Searching Oweitu Shop for "{query}"...</p>
+                <p className="font-bold text-slate-500 animate-pulse">Searching Mbarara Online for "{query}"...</p>
               </div>
             ) : (
               <>
