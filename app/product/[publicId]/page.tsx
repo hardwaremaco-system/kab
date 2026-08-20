@@ -19,7 +19,7 @@ import { MdVerifiedUser } from "react-icons/md";
 
 export async function generateMetadata({ params }: { params: { publicId: string } }): Promise<Metadata> {
   const product = await getProductByPublicId(params.publicId);
-  if (!product) return { title: "Item Not Found | Oweitu Shop" };
+  if (!product) return { title: "Item Not Found | Mbarara Online" };
 
   const productRef = doc(db, "products", product.id);
   const rawSnap = await getDoc(productRef);
@@ -33,19 +33,19 @@ export async function generateMetadata({ params }: { params: { publicId: string 
   }
 
   const safeName = product.name || "Unnamed Item";
-  
+
   const currentPrice = rawData.isSale === true && saleEndDateMs > Date.now() 
     ? Number(product.price) 
     : (Number(rawData.originalPrice) || Number(product.price));
 
   const formattedPrice = currentPrice === 0 ? "Negotiable" : `UGX ${(currentPrice || 0).toLocaleString()}`;
-  const title = `${safeName} - Available in western Uganda | ${formattedPrice}`;
-  const description = product.description?.slice(0, 150) || `Buy this ${safeName} for ${formattedPrice}. Pay strictly Cash on Delivery in Western Uganda.`;
-  const imageUrl = product.images?.[0] || "https://www.oweitushop.com/og-image.jpg";
+  const title = `${safeName} - Available in Mbarara City | ${formattedPrice}`;
+  const description = product.description?.slice(0, 150) || `Buy this ${safeName} for ${formattedPrice}. Pay strictly Cash on Delivery in Mbarara City.`;
+  const imageUrl = product.images?.[0] || "https://www.mbararaonline.com/og-image.jpg";
 
   return {
     title, description,
-    openGraph: { title, description, url: `https://www.oweitushop.com/product/${params.publicId}`, siteName: "Oweitu Shop", images: [{ url: imageUrl, width: 1200, height: 630, alt: safeName }], type: "website" },
+    openGraph: { title, description, url: `https://www.mbararaonline.com/product/${params.publicId}`, siteName: "Mbarara Online", images: [{ url: imageUrl, width: 1200, height: 630, alt: safeName }], type: "website" },
     twitter: { card: "summary_large_image", title, description, images: [imageUrl] },
   };
 }
@@ -78,7 +78,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
   if (product.category === "services") redirect(`/service/${product.id}`); 
 
   const safeName = product.name || "Unnamed Item";
-  
+
   // ==========================================
   // 🔥 DEAL LOGIC 
   // ==========================================
@@ -120,7 +120,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
   const isMainProductNew = checkIsNew(product);
   const isMainApproved = pAny.isApprovedQuality;
   const isMainOfficial = pAny.isOfficialStore || pAny.isAdminUpload;
-  
+
   let safeStock = 1;
   if (product.stock !== undefined && product.stock !== null) {
     const parsed = Number(product.stock);
@@ -130,7 +130,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
   const isLowStock = safeStock > 0 && safeStock <= 5;
   const isSoldOut = safeStock <= 0 || product.status === "sold";
   const sellerNameStr = String(product.sellerName || "").toLowerCase();
-  const isAdmin = sellerNameStr.includes('admin') || sellerNameStr.includes('kabale online') || sellerNameStr.includes('official');
+  const isAdmin = sellerNameStr.includes('admin') || sellerNameStr.includes('mbarara online') || sellerNameStr.includes('official');
 
   const optimizedImages = product.images?.map((img: string) => optimizeImage(img)) || [];
   const rawCategoryProducts = await getProducts(safeCategory, 12);
@@ -155,8 +155,8 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
 
   const jsonLd = {
     "@context": "https://schema.org", "@type": "Product", "name": safeName, "image": optimizedImages[0] || "",
-    "description": product.description || `Buy ${safeName} safely in Western Uganda.`,
-    "offers": { "@type": "Offer", "url": `https://www.oweituShop.com/product/${params.publicId}`, "priceCurrency": "UGX", "price": safePrice, "availability": isSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock", "itemCondition": safeCondition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition", "seller": { "@type": "Organization", "name": product.sellerName || "Oweitu Shop" } }
+    "description": product.description || `Buy ${safeName} safely in Mbarara City.`,
+    "offers": { "@type": "Offer", "url": `https://www.mbararaonline.com/product/${params.publicId}`, "priceCurrency": "UGX", "price": safePrice, "availability": isSoldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock", "itemCondition": safeCondition === "new" ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition", "seller": { "@type": "Organization", "name": product.sellerName || "Mbarara Online" } }
   };
 
   const campaignTitle = campaignType 
@@ -178,7 +178,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
 
       {/* MAIN E-COMMERCE LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">  
-        
+
         {/* LEFT: IMAGE GALLERY */}
         <div className="w-full flex flex-col lg:sticky lg:top-24 h-fit">  
           <ImageGallery images={optimizedImages} title={safeName} />  
@@ -187,7 +187,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
 
         {/* RIGHT: DETAILS, PRICING & CTA */}
         <div className="flex flex-col overflow-hidden">  
-          
+
           {/* 🔥 TOP ROW: Campaign Badge, Discount & Scarcity (all clumped together) */}
           <div className="flex flex-wrap items-center gap-2.5 mb-4 w-full">
             {isSale && campaignType && (
@@ -242,7 +242,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
               <div className="p-0 bg-white overflow-x-auto">
                 <table className="w-full text-sm text-left"><tbody className="divide-y divide-slate-100">
                     <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Condition</th><td className="px-4 py-3 text-[#1A1A1A] capitalize">{safeCondition}</td></tr>
-                    <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Location</th><td className="px-4 py-3 text-[#1A1A1A]">Available locally in Western Uganda</td></tr>
+                    <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Location</th><td className="px-4 py-3 text-[#1A1A1A]">Available locally in Mbarara City</td></tr>
                     <tr><th className="w-1/3 px-4 py-3 font-semibold text-slate-700 bg-slate-50/50">Sold By</th><td className="px-4 py-3 text-[#1A1A1A] font-bold flex items-center gap-2">{product.sellerName || "Verified Seller"} {isAdmin && <span className="text-blue-600"><MdVerifiedUser /></span>}</td></tr>
                 </tbody></table>
               </div>
@@ -268,7 +268,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
               const isRelNew = checkIsNew(relProduct);
               const isRelApproved = relAny.isApprovedQuality;
               const isRelOfficial = relAny.isOfficialStore || relAny.isAdminUpload;
-              
+
               let relPrice = Number(relProduct.price) || 0;
               let relOrigPrice = Number(relAny.originalPrice) || 0;
               let relEndDateMs = relAny.saleEndDate ? (typeof relAny.saleEndDate === 'object' && relAny.saleEndDate.seconds ? relAny.saleEndDate.seconds * 1000 : new Date(relAny.saleEndDate).getTime()) : 0;
@@ -308,7 +308,7 @@ export default async function ProductDetailsPage({ params }: { params: { publicI
 
       <div className="mt-8 mb-12 border-t border-slate-200 pt-8 text-center px-4">
         <p className="text-[#6B6B6B] text-sm font-medium">Got something to sell?{' '}
-          <Link href="/sell" className="text-[#FF6A00] font-bold underline decoration-2 underline-offset-4">Start selling on Oweitu Shop</Link>
+          <Link href="/sell" className="text-[#FF6A00] font-bold underline decoration-2 underline-offset-4">Start selling on Mbarara Online</Link>
         </p>
       </div>
     </div>
