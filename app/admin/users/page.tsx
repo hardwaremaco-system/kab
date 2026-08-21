@@ -11,6 +11,9 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
+  // 🔥 NEW: Search state
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     const fetchAllUsers = async () => {
       if (!user || user.role !== "admin") return;
@@ -79,11 +82,37 @@ export default function AdminUsersPage() {
     }
   };
 
+  // 🔥 NEW: Filter users based on search query
+  const filteredUsers = users.filter(u => {
+    const query = searchQuery.toLowerCase();
+    const nameMatch = u.displayName?.toLowerCase().includes(query);
+    const emailMatch = u.email?.toLowerCase().includes(query);
+    const idMatch = u.id?.toLowerCase().includes(query);
+    
+    return nameMatch || emailMatch || idMatch;
+  });
+
   return (
     <div className="max-w-6xl mx-auto pb-20 md:pb-0">
-      <div className="mb-8 border-b border-slate-200 pb-6">
-        <h1 className="text-3xl font-extrabold text-slate-900">User & Role Management</h1>
-        <p className="text-slate-600 mt-2 font-medium">Control platform access for Mbarara Online, assign content editors, and manage vendors.</p>
+      <div className="mb-8 border-b border-slate-200 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900">User & Role Management</h1>
+          <p className="text-slate-600 mt-2 font-medium">Control platform access for Mbarara Online, assign content editors, and manage vendors.</p>
+        </div>
+
+        {/* 🔥 NEW: Search Bar UI */}
+        <div className="relative w-full md:w-72">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <input
+            type="text"
+            placeholder="Search user, email, or ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00] transition-colors"
+          />
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -103,12 +132,14 @@ export default function AdminUsersPage() {
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Loading registered users...</td>
                 </tr>
-              ) : users.length === 0 ? (
+              ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500 font-medium">No users found.</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500 font-medium">
+                    {searchQuery ? "No users match your search." : "No users found."}
+                  </td>
                 </tr>
               ) : (
-                users.map((u) => {
+                filteredUsers.map((u) => {
                   const safeName = u.displayName ?? "Unknown User";
                   const isSelf = user?.id === u.id;
 
