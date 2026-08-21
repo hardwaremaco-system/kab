@@ -130,7 +130,7 @@ export default function SellPage() {
         const signRes = await fetch("/api/cloudinary/sign", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ folder: "kabale_online" })
+          body: JSON.stringify({ folder: "mbarara_online" })
         });
 
         if (!signRes.ok) throw new Error("Failed to get upload signature from server.");
@@ -147,7 +147,7 @@ export default function SellPage() {
           formDataCloudinary.append("api_key", apiKey);
           formDataCloudinary.append("timestamp", signData.timestamp.toString());
           formDataCloudinary.append("signature", signData.signature);
-          formDataCloudinary.append("folder", "kabale_online");
+          formDataCloudinary.append("folder", "mbarara_online");
 
           const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
             method: "POST",
@@ -182,7 +182,7 @@ export default function SellPage() {
         sellerPhone: formData.sellerPhone,
         images: imageUrls,
         sellerId: currentUser.id,
-        sellerName: currentUser.displayName || "Oweitu Seller",
+        sellerName: currentUser.displayName || "Mbarara Seller",
       };
 
       const dbRes = await fetch("/api/products", {
@@ -197,20 +197,19 @@ export default function SellPage() {
         throw new Error(dbData.error || "Database rejected the product.");
       }
 
-      // 3. 🔥 PUSH TO ALGOLIA IMMEDIATELY (Manual Sync)
+      // 3. PUSH TO ALGOLIA IMMEDIATELY (Manual Sync)
       try {
         await fetch("/api/sync-algolia", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
             ...productPayload, 
-            id: dbData.publicId, // Mapping the generated DB ID to Algolia's objectID
-            name: productPayload.title // Algolia often expects 'name' depending on your config
+            id: dbData.publicId,
+            name: productPayload.title
           })
         });
         console.log("Product successfully synced to Algolia!");
       } catch (syncError) {
-        // We log the error but don't break the user experience if Algolia fails momentarily
         console.error("Failed to sync with Algolia search engine:", syncError);
       }
 
@@ -236,7 +235,7 @@ export default function SellPage() {
   const shareToWhatsApp = () => {
     if (!successData) return;
     const url = `${window.location.origin}/product/${successData.publicId}`;
-    const text = `Hey! I'm offering *${successData.title}* on Oweitu Shop. Check it out here: \n\n${url}`;
+    const text = `Hey! I'm offering *${successData.title}* on Mbarara Online. Check it out here: \n\n${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -386,14 +385,14 @@ export default function SellPage() {
               <select className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none bg-slate-50"
                 value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
 
-                {/* 🔥 GROUP 1: BUY AGAIN & AGAIN */}
+                {/* GROUP 1: BUY AGAIN & AGAIN */}
                 <optgroup label="Buy Again & Again">
                   <option value="supermarket">Supermarket (Groceries, Soap, etc.)</option>
                   <option value="fashion">Fashion & Shoes</option>
                   <option value="beauty">Health & Beauty</option>
                 </optgroup>
 
-                {/* 🔥 GROUP 2: STEP-UP ELECTRONICS */}
+                {/* GROUP 2: STEP-UP ELECTRONICS */}
                 <optgroup label="Step-Up Electronics">
                   <option value="phones-tvs">Phones & TVs</option>
                   <option value="sound-systems">Sound Systems</option>
@@ -402,7 +401,7 @@ export default function SellPage() {
                   <option value="watches">Watches</option>
                 </optgroup>
 
-                {/* 🔥 GROUP 3: OTHERS */}
+                {/* GROUP 3: OTHERS */}
                 <optgroup label="More">
                   <option value="other">Other Products</option>
                 </optgroup>
@@ -434,7 +433,7 @@ export default function SellPage() {
             <input required type="tel" placeholder="e.g. 07..." className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-[#FF6A00] outline-none bg-slate-50"
               value={formData.sellerPhone} onChange={e => setFormData({...formData, sellerPhone: e.target.value})} />
             <p className="text-xs text-slate-500 mt-1">
-              Buyers need this to message you directly about this item.
+              Buyers need this to message you directly about this item in Mbarara.
             </p>
           </div>
         </div>
