@@ -12,6 +12,9 @@ export default function AdminProductsPage() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  
+  // 🔥 NEW: Search state
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Pagination states
   const [lastDocId, setLastDocId] = useState<string | null>(null);
@@ -22,12 +25,11 @@ export default function AdminProductsPage() {
       if (isLoadMore) setLoadingMore(true);
       else setLoading(true);
 
-      // Append the last document ID to the URL if we are loading more
       const url = new URL("/api/products", window.location.origin);
       if (isLoadMore && lastDocId) {
         url.searchParams.append("cursor", lastDocId);
       }
-      url.searchParams.append("limit", "25"); // Ask for 25 at a time
+      url.searchParams.append("limit", "25");
 
       const res = await fetch(url.toString());
       if (res.ok) {
@@ -35,7 +37,7 @@ export default function AdminProductsPage() {
         const fetchedProducts = data.products || [];
 
         if (fetchedProducts.length < 25) {
-          setHasMore(false); // No more products left in database
+          setHasMore(false); 
         }
 
         if (isLoadMore) {
@@ -60,9 +62,6 @@ export default function AdminProductsPage() {
     fetchProducts();
   }, []);
 
-  // ============================================================================
-  // INLINE CATEGORY QUICK-EDIT
-  // ============================================================================
   const handleCategoryChange = async (productId: string, newCategory: string) => {
     if (!user || user.role !== "admin") return;
     setUpdatingId(productId);
@@ -75,7 +74,6 @@ export default function AdminProductsPage() {
       });
 
       if (res.ok) {
-        // Update the UI instantly without reloading
         setProducts(prev => prev.map(p => p.id === productId ? { ...p, category: newCategory } : p));
       } else {
         alert("Failed to update category.");
@@ -88,9 +86,6 @@ export default function AdminProductsPage() {
     }
   };
 
-  // ============================================================================
-  // FORCE DELETE
-  // ============================================================================
   const handleForceDelete = async (productId: string) => {
     if (!user || user.role !== "admin") return;
     const confirm = window.confirm("ADMIN ACTION: Are you sure you want to permanently delete this product from the marketplace?");
@@ -113,11 +108,37 @@ export default function AdminProductsPage() {
     }
   };
 
+  // 🔥 NEW: Filter products based on search query
+  const filteredProducts = products.filter(product => {
+    const query = searchQuery.toLowerCase();
+    const nameMatch = product.name?.toLowerCase().includes(query);
+    const idMatch = product.publicId?.toLowerCase().includes(query) || product.id?.toLowerCase().includes(query);
+    const sellerMatch = product.sellerName?.toLowerCase().includes(query);
+    
+    return nameMatch || idMatch || sellerMatch;
+  });
+
   return (
     <div className="max-w-6xl mx-auto pb-20 md:pb-0">
-      <div className="mb-8 border-b border-slate-200 pb-6">
-        <h1 className="text-3xl font-extrabold text-slate-900">Product Management</h1>
-        <p className="text-slate-600 mt-2 font-medium">Review user uploads across Mbarara, fix categories, and clean up the database for the new inventory structure.</p>
+      <div className="mb-8 border-b border-slate-200 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900">Product Management</h1>
+          <p className="text-slate-600 mt-2 font-medium">Review user uploads across Mbarara, fix categories, and clean up the database.</p>
+        </div>
+        
+        {/* 🔥 NEW: Search Bar UI */}
+        <div className="relative w-full md:w-72">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <input
+            type="text"
+            placeholder="Search item, ID, or seller..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00] transition-colors"
+          />
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
@@ -138,12 +159,14 @@ export default function AdminProductsPage() {
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-500">Loading products...</td>
                 </tr>
-              ) : products.length === 0 ? (
+              ) : filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500 font-medium">No products found in the marketplace.</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500 font-medium">
+                    {searchQuery ? "No products match your search." : "No products found in the marketplace."}
+                  </td>
                 </tr>
               ) : (
-                products.map((product) => (
+                filteredProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -166,7 +189,6 @@ export default function AdminProductsPage() {
                       UGX {Number(product.price).toLocaleString()}
                     </td>
 
-                    {/* 🔥 Inline Category Dropdown - UPDATED 🔥 */}
                     <td className="px-6 py-4">
                       <select 
                         disabled={updatingId === product.id}
@@ -175,15 +197,11 @@ export default function AdminProductsPage() {
                         className={`text-xs font-bold rounded-lg border px-2 py-1.5 outline-none transition-colors ${updatingId === product.id ? 'opacity-50' : 'border-slate-300 bg-white hover:border-[#FF6A00]'}`}
                       >
                         <option value="uncategorized" disabled>Select...</option>
-
-                        {/* 🔥 GROUP 1: BUY AGAIN & AGAIN */}
                         <optgroup label="Buy Again & Again">
                           <option value="supermarket">Supermarket (Groceries, Soap, etc.)</option>
                           <option value="fashion">Fashion & Shoes</option>
                           <option value="beauty">Health & Beauty</option>
                         </optgroup>
-
-                        {/* 🔥 GROUP 2: STEP-UP ELECTRONICS */}
                         <optgroup label="Step-Up Electronics">
                           <option value="phones-tvs">Phones & TVs</option>
                           <option value="sound-systems">Sound Systems</option>
@@ -191,13 +209,9 @@ export default function AdminProductsPage() {
                           <option value="accessories">Accessories</option>
                           <option value="watches">Watches</option>
                         </optgroup>
-
-                        {/* 🔥 GROUP 3: OTHERS */}
                         <optgroup label="More">
                           <option value="other">Other Products</option>
                         </optgroup>
-
-                        {/* LEGACY CATEGORIES FOR CLEANUP REFERENCE */}
                         <optgroup label="Legacy Categories (Needs Update)" className="text-slate-400 italic">
                           <option value="electronics">Old: Electronics</option>
                           <option value="bundles">Old: Bundles</option>
@@ -254,7 +268,7 @@ export default function AdminProductsPage() {
         </div>
       </div>
 
-      {!loading && hasMore && (
+      {!loading && hasMore && !searchQuery && (
         <div className="flex justify-center mb-8">
           <button 
             onClick={() => fetchProducts(true)}
