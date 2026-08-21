@@ -72,10 +72,10 @@ export default function AdminUsersPage() {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'admin': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'editor': return 'bg-emerald-100 text-emerald-800 border-emerald-200'; // 🔥 New Editor Badge
+      case 'editor': return 'bg-emerald-100 text-emerald-800 border-emerald-200'; 
       case 'vendor': return 'bg-sky-100 text-sky-800 border-sky-200';
       case 'suspended': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-slate-100 text-slate-700 border-slate-200'; // customer
+      default: return 'bg-slate-100 text-slate-700 border-slate-200'; 
     }
   };
 
@@ -83,7 +83,7 @@ export default function AdminUsersPage() {
     <div className="max-w-6xl mx-auto pb-20 md:pb-0">
       <div className="mb-8 border-b border-slate-200 pb-6">
         <h1 className="text-3xl font-extrabold text-slate-900">User & Role Management</h1>
-        <p className="text-slate-600 mt-2 font-medium">Control platform access, assign content editors, and manage vendors.</p>
+        <p className="text-slate-600 mt-2 font-medium">Control platform access for Mbarara Online, assign content editors, and manage vendors.</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
