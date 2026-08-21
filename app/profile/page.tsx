@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 
 export default function ProfilePage() {
-  // 🚀 FIXED: Swapped 'signIn' for 'signInWithGoogle'
   const { user, loading: authLoading, signInWithGoogle, signOut } = useAuth();
   const [verificationStatus, setVerificationStatus] = useState<"unverified" | "pending" | "verified">("unverified");
   const [metrics, setMetrics] = useState({ views: 0, chats: 0, avgScore: 0, totalItems: -1, isLoaded: false });
@@ -96,12 +95,11 @@ export default function ProfilePage() {
       <div className="w-full min-h-screen bg-slate-50 overflow-x-hidden">
         <div className="max-w-[480px] md:max-w-2xl mx-auto p-4 pt-8 md:pt-12 flex flex-col w-full">
           <div className="text-center mb-8 w-full">
-            <span className="text-[#D97706] font-black tracking-widest uppercase text-[11px] mb-2 block">Kabale ID</span>
+            <span className="text-[#D97706] font-black tracking-widest uppercase text-[11px] mb-2 block">Mbarara ID</span>
             <h1 className="text-3xl font-black text-slate-900 mb-3 leading-tight">Your Personal<br/>Workspace.</h1>
             <p className="text-slate-500 text-[15px] px-2 w-full font-medium">Log in to manage your purchases, saved items, and local sales pipeline.</p>
           </div>
-          
-          {/* 🚀 FIXED: Swapped 'signIn' for 'signInWithGoogle' */}
+
           <button onClick={signInWithGoogle} className="w-full bg-[#D97706] hover:bg-amber-600 text-white font-bold py-4 rounded-xl shadow-md transition-all text-[16px] flex items-center justify-center">
             Log In Securely
           </button>
@@ -127,7 +125,7 @@ export default function ProfilePage() {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-black text-slate-900 truncate w-full">{user.displayName || "Oweitu User"}</h1>
+            <h1 className="text-xl font-black text-slate-900 truncate w-full">{user.displayName || "Mbarara User"}</h1>
             <p className="text-slate-500 font-medium text-[13px] truncate w-full">{user.email}</p>
           </div>
         </div>
