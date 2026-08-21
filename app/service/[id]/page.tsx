@@ -21,7 +21,7 @@ async function getServiceData(lookupId: string) {
   // 1. Try fetching by the Long Firebase ID first
   const docRef = doc(db, "products", lookupId);
   const snap = await getDoc(docRef);
-  
+
   if (snap.exists()) {
     return { id: snap.id, ...snap.data() } as any;
   }
@@ -29,7 +29,7 @@ async function getServiceData(lookupId: string) {
   // 2. Fallback: Try fetching by the Short ID (publicId)
   const q = query(collection(db, "products"), where("publicId", "==", lookupId), limit(1));
   const qSnap = await getDocs(q);
-  
+
   if (!qSnap.empty) {
     return { id: qSnap.docs[0].id, ...qSnap.docs[0].data() } as any;
   }
@@ -44,11 +44,11 @@ async function getServiceData(lookupId: string) {
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const service = await getServiceData(params.id);
 
-  if (!service) return { title: "Service Not Found" };
+  if (!service) return { title: "Service Not Found | Mbarara Online" };
 
   return {
-    title: `${service.title} | Oweitu Shop Online Services`,
-    description: service.description || `Book ${service.title} provided by ${service.sellerName} on Oweitu Shop.`,
+    title: `${service.title} | Mbarara Online Services`,
+    description: service.description || `Book ${service.title} provided by ${service.sellerName} on Mbarara Online.`,
   };
 }
 
@@ -56,8 +56,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 // MAIN PAGE RENDER
 // ==========================================
 export default async function ServiceDetailsPage({ params }: { params: { id: string } }) {
-  
-  // Fetch using the bulletproof engine
+
+  // Fetch using the dual-lookup engine
   const service = await getServiceData(params.id);
 
   if (!service) {
@@ -74,7 +74,7 @@ export default async function ServiceDetailsPage({ params }: { params: { id: str
   const commitmentDeposit = calculatedDeposit < 1000 ? 1000 : calculatedDeposit; 
   const remainingBalance = Math.max(0, basePrice - commitmentDeposit);
 
-  // 🔥 FETCH RELATED SERVICES
+  // FETCH RELATED SERVICES
   const relatedQ = query(
     collection(db, "products"),
     where("category", "==", "services"),
@@ -169,7 +169,7 @@ export default async function ServiceDetailsPage({ params }: { params: { id: str
             </div>
           </div>
 
-          {/* RIGHT COLUMN: The Revenue Lock */}
+          {/* RIGHT COLUMN: Booking Card */}
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-[#151515] p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-2 border-[#FF6A00] shadow-xl sticky top-24">
               <h3 style={{ color: '#6B6B6B' }} className="text-[11px] font-black uppercase tracking-widest mb-6 text-center dark:text-slate-400">Booking Summary</h3>
@@ -202,7 +202,7 @@ export default async function ServiceDetailsPage({ params }: { params: { id: str
               <ul className="space-y-3.5">
                 <li style={{ color: '#6B6B6B' }} className="flex items-start gap-3 text-xs sm:text-sm font-medium dark:text-slate-400">
                   <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                  <span className="leading-snug">Secure your booking instantly.</span>
+                  <span className="leading-snug">Secure your booking instantly in Mbarara City.</span>
                 </li>
                 <li style={{ color: '#6B6B6B' }} className="flex items-start gap-3 text-xs sm:text-sm font-medium dark:text-slate-400">
                   <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
@@ -210,7 +210,7 @@ export default async function ServiceDetailsPage({ params }: { params: { id: str
                 </li>
                 <li style={{ color: '#6B6B6B' }} className="flex items-start gap-3 text-xs sm:text-sm font-medium dark:text-slate-400">
                   <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                  <span className="leading-snug">Pay the remaining balance in cash after the job is done.</span>
+                  <span className="leading-snug">Pay the remaining balance in cash after the job is completed.</span>
                 </li>
               </ul>
             </div>
@@ -224,7 +224,7 @@ export default async function ServiceDetailsPage({ params }: { params: { id: str
           <div className="mt-16 sm:mt-24 pt-12 sm:pt-16 border-t border-slate-200 dark:border-slate-800">
             <h2 style={{ color: '#1A1A1A' }} className="text-2xl sm:text-3xl font-black dark:text-white tracking-tight mb-8 sm:mb-10 flex items-center gap-3">
               <Wrench className="w-7 h-7 text-[#FF6A00]" />
-              Other Services You Might Need
+              Other Services in Mbarara
             </h2>
 
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
