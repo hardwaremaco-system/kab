@@ -93,7 +93,7 @@ export default function CartPage() {
         source: "web",
         buyerName,
         contactPhone,
-        location: location || "Kabale",
+        location: location || "Mbarara",
         cartItems: cart.map(item => ({
           productId: item.id,
           name: item.title,
@@ -278,7 +278,7 @@ export default function CartPage() {
 
           <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-medium">
             <FaShieldAlt className="text-slate-400" /> 
-            Secure purchase powered by Oweitu Shop
+            Secure purchase powered by Mbarara Online
           </div>
         </div>
       </div>
@@ -289,7 +289,7 @@ export default function CartPage() {
       {showCheckoutModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-200 flex flex-col max-h-[90vh]">
-            
+
             <div className="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50">
               <h3 className="text-lg font-black text-slate-900">Delivery Details</h3>
               <button onClick={() => setShowCheckoutModal(false)} className="text-slate-400 hover:text-slate-700 font-bold text-xl">×</button>
@@ -316,7 +316,7 @@ export default function CartPage() {
                     required 
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
-                    placeholder="e.g. 0740373021"
+                    placeholder="e.g. 0779094664"
                     className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                   />
                 </div>
@@ -328,7 +328,7 @@ export default function CartPage() {
                     rows={3}
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    placeholder="e.g. Kigongi, opposite total station, room 4"
+                    placeholder="e.g. Kakoba, High Street, near MUST gate, room 4"
                     className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none"
                   ></textarea>
                 </div>
@@ -368,7 +368,7 @@ export default function CartPage() {
                 Cancel
               </button>
             </div>
-            
+
           </div>
         </div>
       )}
