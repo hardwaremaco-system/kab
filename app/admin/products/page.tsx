@@ -117,7 +117,7 @@ export default function AdminProductsPage() {
     <div className="max-w-6xl mx-auto pb-20 md:pb-0">
       <div className="mb-8 border-b border-slate-200 pb-6">
         <h1 className="text-3xl font-extrabold text-slate-900">Product Management</h1>
-        <p className="text-slate-600 mt-2 font-medium">Review user uploads, fix categories, and clean up the database for the new inventory structure.</p>
+        <p className="text-slate-600 mt-2 font-medium">Review user uploads across Mbarara, fix categories, and clean up the database for the new inventory structure.</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
