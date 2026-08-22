@@ -1,5 +1,5 @@
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
-const SENDER_EMAIL = "support@mbararaonline.com";
+const SENDER_EMAIL = "cs@mbararaonline.com";
 const SENDER_NAME = "Mbarara Online";
 const YEAR = new Date().getFullYear();
 
